@@ -19,13 +19,17 @@ object DatabaseFactory {
 
         try {
             database = if (databaseUrl != null) {
-                // Railway/Production: Parse DATABASE_URL and use HikariCP
+                // Railway/Production: Use individual environment variables
+                val host = System.getenv("PGHOST") ?: "localhost"
+                val port = System.getenv("PGPORT") ?: "5432"
+                val dbName = System.getenv("PGDATABASE") ?: "railway"
+                val user = System.getenv("PGUSER") ?: "postgres"
+                val password = System.getenv("PGPASSWORD") ?: ""
+
                 val config = HikariConfig().apply {
-                    jdbcUrl = if (databaseUrl.startsWith("postgresql://")) {
-                        databaseUrl.replaceFirst("postgresql://", "jdbc:postgresql://")
-                    } else {
-                        databaseUrl
-                    }
+                    jdbcUrl = "jdbc:postgresql://$host:$port/$dbName"
+                    username = user
+                    this.password = password
                     driverClassName = "org.postgresql.Driver"
                     maximumPoolSize = 10
                 }
