@@ -1,0 +1,25 @@
+<configuration>
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{YYYY-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- SECURITY: Set root level to INFO to prevent sensitive data exposure in logs -->
+    <root level="INFO">
+        <appender-ref ref="STDOUT"/>
+    </root>
+
+    <!-- Suppress third-party verbose logging -->
+    <logger name="org.eclipse.jetty" level="INFO"/>
+    <logger name="io.netty" level="INFO"/>
+
+    <!-- SECURITY: Suppress SQL query logging to prevent password hashes, SSNs, and sensitive data exposure -->
+    <logger name="Exposed" level="INFO"/>
+    <logger name="org.jetbrains.exposed" level="INFO"/>
+    <logger name="org.jetbrains.exposed.sql" level="INFO"/>
+
+    <!-- Application logging -->
+    <logger name="org.dals.project" level="INFO"/>
+    <logger name="io.ktor.server.Application" level="INFO"/>
+</configuration>

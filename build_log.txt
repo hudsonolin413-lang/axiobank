@@ -1,0 +1,866 @@
+Reusing configuration cache.
+> Task :composeApp:preBuild UP-TO-DATE
+> Task :composeApp:copyNonXmlValueResourcesForAndroidDebug NO-SOURCE
+> Task :composeApp:debugAssetsCopyForAGP NO-SOURCE
+> Task :composeApp:convertXmlValueResourcesForAndroidDebug NO-SOURCE
+> Task :composeApp:preDebugBuild UP-TO-DATE
+> Task :composeApp:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :shared:preBuild UP-TO-DATE
+> Task :composeApp:mergeDebugNativeDebugMetadata NO-SOURCE
+> Task :composeApp:generateExpectResourceCollectorsForCommonMain UP-TO-DATE
+> Task :composeApp:generateComposeResClass UP-TO-DATE
+> Task :composeApp:copyNonXmlValueResourcesForAndroidMain NO-SOURCE
+> Task :composeApp:prepareComposeResourcesTaskForAndroidDebug NO-SOURCE
+> Task :composeApp:createDebugCompatibleScreenManifests UP-TO-DATE
+> Task :composeApp:convertXmlValueResourcesForAndroidMain NO-SOURCE
+> Task :composeApp:javaPreCompileDebug UP-TO-DATE
+> Task :composeApp:generateResourceAccessorsForAndroidDebug NO-SOURCE
+> Task :composeApp:generateDebugResValues UP-TO-DATE
+> Task :composeApp:prepareComposeResourcesTaskForAndroidMain NO-SOURCE
+> Task :composeApp:generateResourceAccessorsForAndroidMain NO-SOURCE
+> Task :composeApp:desugarDebugFileDependencies UP-TO-DATE
+> Task :composeApp:generateDebugResources UP-TO-DATE
+> Task :composeApp:mapDebugSourceSetPaths UP-TO-DATE
+> Task :composeApp:checkDebugDuplicateClasses UP-TO-DATE
+> Task :composeApp:extractDeepLinksDebug UP-TO-DATE
+> Task :composeApp:copyNonXmlValueResourcesForCommonMain UP-TO-DATE
+> Task :composeApp:mergeDebugResources UP-TO-DATE
+> Task :composeApp:convertXmlValueResourcesForCommonMain NO-SOURCE
+> Task :composeApp:mergeLibDexDebug UP-TO-DATE
+> Task :composeApp:mergeDebugJniLibFolders UP-TO-DATE
+> Task :composeApp:validateSigningDebug UP-TO-DATE
+> Task :composeApp:prepareComposeResourcesTaskForCommonMain UP-TO-DATE
+> Task :composeApp:packageDebugResources UP-TO-DATE
+> Task :composeApp:writeDebugAppMetadata UP-TO-DATE
+> Task :composeApp:generateResourceAccessorsForCommonMain UP-TO-DATE
+> Task :composeApp:generateActualResourceCollectorsForAndroidMain UP-TO-DATE
+> Task :composeApp:mergeExtDexDebug UP-TO-DATE
+> Task :shared:preDebugBuild UP-TO-DATE
+> Task :composeApp:parseDebugLocalResources UP-TO-DATE
+> Task :composeApp:writeDebugSigningConfigVersions UP-TO-DATE
+> Task :shared:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :shared:mergeDebugJniLibFolders UP-TO-DATE
+> Task :shared:generateDebugResValues UP-TO-DATE
+> Task :shared:mergeDebugShaders UP-TO-DATE
+> Task :shared:generateDebugResources UP-TO-DATE
+> Task :composeApp:mergeDebugShaders UP-TO-DATE
+> Task :composeApp:compileDebugShaders NO-SOURCE
+> Task :shared:mergeDebugNativeLibs NO-SOURCE
+> Task :composeApp:generateDebugAssets UP-TO-DATE
+> Task :shared:extractDeepLinksForAarDebug UP-TO-DATE
+> Task :shared:compileDebugShaders NO-SOURCE
+> Task :shared:stripDebugDebugSymbols NO-SOURCE
+> Task :shared:generateDebugAssets UP-TO-DATE
+> Task :composeApp:checkDebugAarMetadata UP-TO-DATE
+> Task :shared:packageDebugResources UP-TO-DATE
+> Task :shared:javaPreCompileDebug UP-TO-DATE
+> Task :shared:copyDebugJniLibsProjectAndLocalJars UP-TO-DATE
+> Task :shared:debugAssetsCopyForAGP NO-SOURCE
+> Task :shared:prepareDebugArtProfile UP-TO-DATE
+> Task :shared:prepareLintJarForPublish UP-TO-DATE
+> Task :shared:processDebugManifest UP-TO-DATE
+> Task :composeApp:mergeDebugNativeLibs UP-TO-DATE
+> Task :composeApp:stripDebugDebugSymbols UP-TO-DATE
+> Task :shared:writeDebugAarMetadata UP-TO-DATE
+> Task :shared:mergeDebugAssets UP-TO-DATE
+> Task :composeApp:processDebugMainManifest UP-TO-DATE
+> Task :composeApp:copyDebugComposeResourcesToAndroidAssets UP-TO-DATE
+> Task :shared:parseDebugLocalResources UP-TO-DATE
+> Task :composeApp:processDebugManifest UP-TO-DATE
+> Task :shared:generateDebugRFile UP-TO-DATE
+> Task :composeApp:processDebugManifestForPackage UP-TO-DATE
+> Task :composeApp:mergeDebugAssets UP-TO-DATE
+> Task :composeApp:compressDebugAssets UP-TO-DATE
+> Task :shared:compileDebugKotlinAndroid UP-TO-DATE
+> Task :shared:extractDebugAnnotations UP-TO-DATE
+> Task :shared:compileDebugJavaWithJavac NO-SOURCE
+> Task :shared:mergeDebugGeneratedProguardFiles UP-TO-DATE
+> Task :shared:processDebugJavaRes UP-TO-DATE
+> Task :shared:mergeDebugConsumerProguardFiles UP-TO-DATE
+> Task :shared:mergeDebugJavaResource UP-TO-DATE
+> Task :shared:syncDebugLibJars UP-TO-DATE
+> Task :shared:bundleDebugAar UP-TO-DATE
+> Task :shared:assembleDebug UP-TO-DATE
+> Task :composeApp:processDebugResources UP-TO-DATE
+
+> Task :composeApp:compileDebugKotlinAndroid
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/androidMain/kotlin/org/dals/project/utils/FilePickerUtils.android.kt:14:14 'actual class PlatformFilePickerManager : FilePickerManager' has no corresponding members for expected class members:
+
+    expect constructor(): PlatformFilePickerManager
+
+    The following declaration is incompatible because number of value parameters is different:
+        constructor(context: Context): PlatformFilePickerManager
+
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/androidMain/kotlin/org/dals/project/utils/FilePickerUtils.android.kt:79:14 'actual class PlatformCameraManager : CameraManager' has no corresponding members for expected class members:
+
+    expect constructor(): PlatformCameraManager
+
+    The following declaration is incompatible because number of value parameters is different:
+        constructor(context: Context): PlatformCameraManager
+
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/androidMain/kotlin/org/dals/project/utils/FilePickerUtils.android.kt:126:36 Argument type mismatch: actual type is 'android.net.Uri?', but 'android.net.Uri' was expected.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/androidMain/kotlin/org/dals/project/utils/FilePickerUtils.android.kt:150:14 'actual class PlatformLocationManager : LocationManager' has no corresponding members for expected class members:
+
+    expect constructor(): PlatformLocationManager
+
+    The following declaration is incompatible because number of value parameters is different:
+        constructor(context: Context): PlatformLocationManager
+
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/androidMain/kotlin/org/dals/project/utils/FilePickerUtils.android.kt:162:14 'actual class PlatformFileManager : FileManager' has no corresponding members for expected class members:
+
+    expect constructor(): PlatformFileManager
+
+    The following declaration is incompatible because number of value parameters is different:
+        constructor(context: Context): PlatformFileManager
+
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/components/CountryPicker.kt:9:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/components/CountryPicker.kt:10:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/components/CountryPicker.kt:11:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/components/CountryPicker.kt:132:31 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/components/CountryPicker.kt:211:43 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/components/MpesaTransactionHistoryDialog.kt:7:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/components/MpesaTransactionHistoryDialog.kt:8:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/components/MpesaTransactionHistoryDialog.kt:104:30 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/components/MpesaTransactionHistoryDialog.kt:135:37 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/components/MpesaTransactionHistoryDialog.kt:251:26 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/components/MpesaTransactionHistoryDialog.kt:262:49 Function 'component1()' is ambiguous for this expression: 
+fun <T> Array<out T>.component1(): T
+fun ByteArray.component1(): Byte
+fun ShortArray.component1(): Short
+fun IntArray.component1(): Int
+fun LongArray.component1(): Long
+fun FloatArray.component1(): Float
+fun DoubleArray.component1(): Double
+fun BooleanArray.component1(): Boolean
+fun CharArray.component1(): Char
+fun <T> List<T>.component1(): T
+fun <K, V> Map.Entry<K, V>.component1(): K
+fun UIntArray.component1(): UInt
+fun ULongArray.component1(): ULong
+fun UByteArray.component1(): UByte
+fun UShortArray.component1(): UShort.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/components/MpesaTransactionHistoryDialog.kt:262:49 Function 'component2()' is ambiguous for this expression: 
+fun <T> Array<out T>.component2(): T
+fun ByteArray.component2(): Byte
+fun ShortArray.component2(): Short
+fun IntArray.component2(): Int
+fun LongArray.component2(): Long
+fun FloatArray.component2(): Float
+fun DoubleArray.component2(): Double
+fun BooleanArray.component2(): Boolean
+fun CharArray.component2(): Char
+fun <T> List<T>.component2(): T
+fun <K, V> Map.Entry<K, V>.component2(): V
+fun UIntArray.component2(): UInt
+fun ULongArray.component2(): ULong
+fun UByteArray.component2(): UByte
+fun UShortArray.component2(): UShort.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/components/MpesaTransactionHistoryDialog.kt:262:49 Function 'component3()' is ambiguous for this expression: 
+fun <T> Array<out T>.component3(): T
+fun ByteArray.component3(): Byte
+fun ShortArray.component3(): Short
+fun IntArray.component3(): Int
+fun LongArray.component3(): Long
+fun FloatArray.component3(): Float
+fun DoubleArray.component3(): Double
+fun BooleanArray.component3(): Boolean
+fun CharArray.component3(): Char
+fun <T> List<T>.component3(): T
+fun UIntArray.component3(): UInt
+fun ULongArray.component3(): ULong
+fun UByteArray.component3(): UByte
+fun UShortArray.component3(): UShort.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/components/MpesaTransactionHistoryDialog.kt:262:49 Not enough information to infer type argument for 'K'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/components/MpesaTransactionHistoryDialog.kt:263:24 Cannot infer type for this parameter. Please specify it explicitly.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/components/MpesaTransactionHistoryDialog.kt:263:24 Not enough information to infer type argument for 'C'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/components/MpesaTransactionHistoryDialog.kt:266:13 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/components/MpesaTransactionHistoryDialog.kt:268:23 Cannot infer type for this parameter. Please specify it explicitly.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/components/MpesaTransactionHistoryDialog.kt:268:23 Not enough information to infer type argument for 'C'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/components/MpesaTransactionHistoryDialog.kt:271:13 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/components/MpesaTransactionHistoryDialog.kt:273:22 Cannot infer type for this parameter. Please specify it explicitly.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/components/MpesaTransactionHistoryDialog.kt:273:22 Not enough information to infer type argument for 'C'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/components/MpesaTransactionHistoryDialog.kt:276:13 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/components/MpesaTransactionHistoryDialog.kt:278:17 Cannot infer type for this parameter. Please specify it explicitly.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/components/MpesaTransactionHistoryDialog.kt:278:17 Not enough information to infer type argument for 'C'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/components/MpesaTransactionHistoryDialog.kt:281:13 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/components/NavigationDrawer.kt:7:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/components/NavigationDrawer.kt:8:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/components/NavigationDrawer.kt:9:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/components/NavigationDrawer.kt:10:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/components/NavigationDrawer.kt:11:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/components/NavigationDrawer.kt:113:24 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/components/NavigationDrawer.kt:122:24 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/components/NavigationDrawer.kt:131:24 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/components/NavigationDrawer.kt:140:24 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/components/NavigationDrawer.kt:149:24 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/components/NavigationDrawer.kt:179:24 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/components/NavigationDrawer.kt:188:24 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/components/NavigationDrawer.kt:197:24 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/components/NavigationDrawer.kt:206:24 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/components/NavigationDrawer.kt:240:39 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/components/NavigationDrawer.kt:302:31 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/components/TransactionConfirmationDialog.kt:6:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/components/TransactionConfirmationDialog.kt:7:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/components/TransactionConfirmationDialog.kt:8:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/components/TransactionConfirmationDialog.kt:9:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/components/TransactionConfirmationDialog.kt:54:35 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/components/TransactionConfirmationDialog.kt:110:68 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/components/TransactionConfirmationDialog.kt:110:100 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/AboutScreen.kt:5:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/AboutScreen.kt:6:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/AboutScreen.kt:43:43 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/AboutScreen.kt:77:43 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/AboutScreen.kt:94:36 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/AboutScreen.kt:100:36 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/AboutScreen.kt:106:36 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/AboutScreen.kt:112:36 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/AboutScreen.kt:118:36 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/AboutScreen.kt:130:43 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/AboutScreen.kt:159:43 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/AboutScreen.kt:188:43 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/AboutScreen.kt:217:43 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/AccountDetailsScreen.kt:7:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/AccountDetailsScreen.kt:8:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/AccountDetailsScreen.kt:9:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/AccountDetailsScreen.kt:10:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/AccountDetailsScreen.kt:56:30 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/AccountDetailsScreen.kt:279:29 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/AccountDetailsScreen.kt:311:29 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/AccountStatementScreen.kt:10:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/AccountStatementScreen.kt:11:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/AccountStatementScreen.kt:12:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/AccountStatementScreen.kt:13:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/AccountStatementScreen.kt:52:30 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/AccountStatementScreen.kt:63:34 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/AccountStatementScreen.kt:71:30 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/AccountStatementScreen.kt:153:30 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/AddCardScreen.kt:10:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/AddCardScreen.kt:11:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/AddCardScreen.kt:12:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/AddCardScreen.kt:13:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/AddCardScreen.kt:37:8 Unresolved reference 'axionbank'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/AddCardScreen.kt:38:8 Unresolved reference 'axionbank'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/AddCardScreen.kt:80:30 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/AddCardScreen.kt:149:30 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/AddCardScreen.kt:328:43 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/AddCardScreen.kt:397:51 Unresolved reference 'Res'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/AutoPaySettingsScreen.kt:8:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/AutoPaySettingsScreen.kt:9:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/AutoPaySettingsScreen.kt:10:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/AutoPaySettingsScreen.kt:63:30 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/AutoPaySettingsScreen.kt:69:34 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/AutoPaySettingsScreen.kt:136:47 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/AutoPaySettingsScreen.kt:264:31 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/AutoPaySettingsScreen.kt:300:35 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/AutoPaySettingsScreen.kt:374:30 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/AutoPaySettingsScreen.kt:378:29 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/AutoPaySettingsScreen.kt:429:31 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/AutoPaySettingsScreen.kt:452:22 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/AutoPaySettingsScreen.kt:474:35 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/CardTransactionDialogs.kt:8:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/CardTransactionDialogs.kt:9:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/CardTransactionDialogs.kt:43:22 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/CardTransactionDialogs.kt:80:42 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/CardTransactionDialogs.kt:92:42 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/CardTransactionDialogs.kt:103:42 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/CardTransactionDialogs.kt:116:42 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/CardTransactionDialogs.kt:169:22 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/CardTransactionDialogs.kt:205:42 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/CardTransactionDialogs.kt:217:42 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/CardTransactionDialogs.kt:230:42 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/CardTransactionDialogs.kt:284:22 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/CardTransactionDialogs.kt:320:46 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/CardTransactionDialogs.kt:346:42 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/CardTransactionDialogs.kt:356:42 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/CardTransactionDialogs.kt:368:42 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/CardTransactionDialogs.kt:380:42 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/CardTransactionDialogs.kt:431:22 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/CardTransactionDialogs.kt:462:42 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/CardTransactionDialogs.kt:474:42 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/CardTransactionDialogs.kt:485:42 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/CardTransactionDialogs.kt:497:42 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/CardTransactionDialogs.kt:549:22 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/CardTransactionDialogs.kt:621:42 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/CardTransactionDialogs.kt:632:42 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/CardTransactionDialogs.kt:645:42 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/CardTransactionsScreen.kt:10:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/CardTransactionsScreen.kt:11:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/CardTransactionsScreen.kt:12:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/CardTransactionsScreen.kt:13:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/CardTransactionsScreen.kt:58:30 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/CardTransactionsScreen.kt:141:33 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/CardTransactionsScreen.kt:207:33 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/CardTransactionsScreen.kt:276:33 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/CardTransactionsScreen.kt:306:36 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/CardTransactionsScreen.kt:316:36 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/CardTransactionsScreen.kt:334:36 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/CardTransactionsScreen.kt:344:36 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/CardTransactionsScreen.kt:358:32 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/CardTransactionsScreen.kt:428:21 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/CardTransactionsScreen.kt:457:21 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/CurrencySettingsScreen.kt:7:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/CurrencySettingsScreen.kt:8:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/CurrencySettingsScreen.kt:9:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/CurrencySettingsScreen.kt:45:30 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/CurrencySettingsScreen.kt:70:47 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/CurrencySettingsScreen.kt:156:33 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/ForgotPasswordScreen.kt:7:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/ForgotPasswordScreen.kt:8:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/ForgotPasswordScreen.kt:9:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/ForgotPasswordScreen.kt:10:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/ForgotPasswordScreen.kt:22:8 Unresolved reference 'axionbank'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/ForgotPasswordScreen.kt:23:8 Unresolved reference 'axionbank'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/ForgotPasswordScreen.kt:81:43 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/ForgotPasswordScreen.kt:88:51 Unresolved reference 'Res'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/ForgotPasswordScreen.kt:257:76 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/ForgotPasswordScreen.kt:257:108 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/ForgotPasswordScreen.kt:281:83 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/ForgotPasswordScreen.kt:281:115 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/HelpScreen.kt:5:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/HelpScreen.kt:6:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/HelpScreen.kt:43:43 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/HelpScreen.kt:68:38 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/HelpScreen.kt:73:38 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/HelpScreen.kt:78:38 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/HelpScreen.kt:132:43 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/HomeScreen.kt:8:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/HomeScreen.kt:9:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/HomeScreen.kt:10:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/HomeScreen.kt:11:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/HomeScreen.kt:12:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/HomeScreen.kt:13:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/HomeScreen.kt:14:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/HomeScreen.kt:15:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/HomeScreen.kt:16:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/HomeScreen.kt:17:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/HomeScreen.kt:18:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/HomeScreen.kt:19:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/HomeScreen.kt:20:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/HomeScreen.kt:21:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/HomeScreen.kt:22:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/HomeScreen.kt:23:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/HomeScreen.kt:24:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/HomeScreen.kt:42:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/HomeScreen.kt:190:39 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/HomeScreen.kt:396:29 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/HomeScreen.kt:412:41 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/HomeScreen.kt:498:41 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/HomeScreen.kt:530:29 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/HomeScreen.kt:562:47 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/HomeScreen.kt:562:77 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/HomeScreen.kt:621:38 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/HomeScreen.kt:628:38 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/HomeScreen.kt:652:25 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/HomeScreen.kt:670:25 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/HomeScreen.kt:714:25 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/HomeScreen.kt:756:21 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/HomeScreen.kt:830:34 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/HomeScreen.kt:836:34 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/HomeScreen.kt:842:34 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/HomeScreen.kt:856:34 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/HomeScreen.kt:862:34 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/HomeScreen.kt:1034:17 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/KYCRequiredScreen.kt:7:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/KYCRequiredScreen.kt:8:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/KYCRequiredScreen.kt:94:43 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/KYCRequiredScreen.kt:126:25 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/KYCRequiredScreen.kt:186:36 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/KYCRequiredScreen.kt:190:36 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/KYCRequiredScreen.kt:194:36 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/KYCRequiredScreen.kt:218:33 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/KYCRequiredScreen.kt:252:33 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/KYCRequiredScreen.kt:287:29 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/KYCRequiredScreen.kt:324:25 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/KYCRequiredScreen.kt:551:33 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/KYCRequiredScreen.kt:630:25 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/KYCRequiredScreen.kt:712:25 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/KYCVerificationScreen.kt:10:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/KYCVerificationScreen.kt:11:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/KYCVerificationScreen.kt:12:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/KYCVerificationScreen.kt:13:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/KYCVerificationScreen.kt:14:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/KYCVerificationScreen.kt:15:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/KYCVerificationScreen.kt:16:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/KYCVerificationScreen.kt:17:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/KYCVerificationScreen.kt:18:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/KYCVerificationScreen.kt:19:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/KYCVerificationScreen.kt:105:30 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/KYCVerificationScreen.kt:115:22 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/KYCVerificationScreen.kt:319:17 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/KYCVerificationScreen.kt:376:62 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/KYCVerificationScreen.kt:377:49 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/KYCVerificationScreen.kt:378:48 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/KYCVerificationScreen.kt:379:41 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/KYCVerificationScreen.kt:598:25 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/KYCVerificationScreen.kt:694:25 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/KYCVerificationScreen.kt:729:25 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/KYCVerificationScreen.kt:770:21 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/KYCVerificationScreen.kt:815:13 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/KYCVerificationScreen.kt:822:13 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/KYCVerificationScreen.kt:829:13 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/KYCVerificationScreen.kt:836:13 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/LanguageSettingsScreen.kt:7:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/LanguageSettingsScreen.kt:8:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/LanguageSettingsScreen.kt:9:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/LanguageSettingsScreen.kt:59:30 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/LanguageSettingsScreen.kt:84:47 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/LanguageSettingsScreen.kt:149:33 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/LoginScreen.kt:7:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/LoginScreen.kt:8:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/LoginScreen.kt:9:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/LoginScreen.kt:10:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/LoginScreen.kt:22:8 Unresolved reference 'axionbank'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/LoginScreen.kt:23:8 Unresolved reference 'axionbank'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/LoginScreen.kt:140:47 Unresolved reference 'Res'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/LoginScreen.kt:217:68 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/LoginScreen.kt:217:100 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/LoginScreen.kt:343:30 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/MainAppScreen.kt:6:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/MainAppScreen.kt:7:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/MainAppScreen.kt:8:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/MainAppScreen.kt:9:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/MainAppScreen.kt:10:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/MainAppScreen.kt:11:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/MainAppScreen.kt:12:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/MainAppScreen.kt:198:51 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/MainAppScreen.kt:215:55 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/MainAppScreen.kt:252:67 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/MainAppScreen.kt:253:71 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/MainAppScreen.kt:254:68 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/MainAppScreen.kt:255:70 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/ManageCardsScreen.kt:10:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/ManageCardsScreen.kt:11:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/ManageCardsScreen.kt:12:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/ManageCardsScreen.kt:13:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/ManageCardsScreen.kt:14:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/ManageCardsScreen.kt:15:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/ManageCardsScreen.kt:16:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/ManageCardsScreen.kt:17:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/ManageCardsScreen.kt:57:30 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/ManageCardsScreen.kt:70:31 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/ManageCardsScreen.kt:115:41 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/ManageCardsScreen.kt:176:38 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/ManageCardsScreen.kt:293:29 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/ManageCardsScreen.kt:311:42 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/ManageCardsScreen.kt:323:37 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/ManageCardsScreen.kt:411:17 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/ManageCardsScreen.kt:436:22 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/PaymentMethodScreen.kt:10:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/PaymentMethodScreen.kt:11:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/PaymentMethodScreen.kt:12:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/PaymentMethodScreen.kt:13:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/PaymentMethodScreen.kt:14:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/PaymentMethodScreen.kt:15:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/PaymentMethodScreen.kt:25:8 Unresolved reference 'axionbank'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/PaymentMethodScreen.kt:77:41 Unresolved reference 'Res'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/PaymentMethodScreen.kt:87:41 Unresolved reference 'Res'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/PaymentMethodScreen.kt:122:30 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/PaymentMethodScreen.kt:127:30 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/PaymentMethodScreen.kt:167:33 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/PaymentMethodScreen.kt:235:26 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/PaymentMethodScreen.kt:358:56 Unresolved reference 'Res'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/PaymentMethodScreen.kt:359:57 Unresolved reference 'Res'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/PaymentMethodScreen.kt:360:62 Unresolved reference 'Res'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/PaymentMethodScreen.kt:361:61 Unresolved reference 'Res'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/PaymentMethodScreen.kt:406:30 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/PaymentMethodScreen.kt:410:29 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/PaymentMethodScreen.kt:464:22 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/ProfileInformationScreen.kt:6:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/ProfileInformationScreen.kt:7:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/ProfileInformationScreen.kt:8:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/ProfileInformationScreen.kt:71:30 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/ProfileInformationScreen.kt:85:29 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/RegisterScreen.kt:8:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/RegisterScreen.kt:9:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/RegisterScreen.kt:10:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/RegisterScreen.kt:22:8 Unresolved reference 'axionbank'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/RegisterScreen.kt:23:8 Unresolved reference 'axionbank'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/RegisterScreen.kt:79:51 Unresolved reference 'Res'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/RegisterScreen.kt:193:72 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/RegisterScreen.kt:193:104 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/RegisterScreen.kt:226:79 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/RegisterScreen.kt:226:111 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/SavingsScreen.kt:8:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/SavingsScreen.kt:9:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/SavingsScreen.kt:10:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/SavingsScreen.kt:11:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/SavingsScreen.kt:12:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/SavingsScreen.kt:13:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/SavingsScreen.kt:14:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/SavingsScreen.kt:15:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/SavingsScreen.kt:16:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/SavingsScreen.kt:115:30 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/SavingsScreen.kt:120:30 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/SavingsScreen.kt:310:25 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/SavingsScreen.kt:377:29 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/SavingsScreen.kt:431:21 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/SavingsScreen.kt:539:29 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/SavingsScreen.kt:640:26 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/SavingsScreen.kt:659:17 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/SavingsScreen.kt:736:25 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/SavingsScreen.kt:783:66 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/SavingsScreen.kt:783:96 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/SavingsScreen.kt:991:33 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/SecuritySettingsScreen.kt:6:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/SecuritySettingsScreen.kt:7:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/SecuritySettingsScreen.kt:8:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/SecuritySettingsScreen.kt:48:30 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/SecuritySettingsScreen.kt:88:51 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/SecuritySettingsScreen.kt:124:70 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/SecuritySettingsScreen.kt:124:100 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/SecuritySettingsScreen.kt:143:66 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/SecuritySettingsScreen.kt:143:96 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/SecuritySettingsScreen.kt:162:70 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/SecuritySettingsScreen.kt:162:100 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/SecuritySettingsScreen.kt:308:31 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/SettingsScreen.kt:7:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/SettingsScreen.kt:8:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/SettingsScreen.kt:9:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/SettingsScreen.kt:65:30 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/SettingsScreen.kt:97:32 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/SettingsScreen.kt:106:32 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/SettingsScreen.kt:115:32 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/SettingsScreen.kt:142:47 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/SettingsScreen.kt:194:47 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/SettingsScreen.kt:233:47 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/SettingsScreen.kt:269:47 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/SettingsScreen.kt:313:63 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/SettingsScreen.kt:313:90 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/SettingsScreen.kt:346:32 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/SettingsScreen.kt:355:32 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/SettingsScreen.kt:364:32 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/SettingsScreen.kt:396:47 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/SettingsScreen.kt:430:32 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/SettingsScreen.kt:457:47 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/SettingsScreen.kt:486:32 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/SettingsScreen.kt:495:32 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/SettingsScreen.kt:548:32 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/SettingsScreen.kt:557:32 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/SettingsScreen.kt:566:32 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/SettingsScreen.kt:575:32 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/SettingsScreen.kt:608:32 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/SettingsScreen.kt:617:32 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/SettingsScreen.kt:626:32 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/SettingsScreen.kt:635:32 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/SettingsScreen.kt:644:32 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/SettingsScreen.kt:653:32 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/SettingsScreen.kt:673:32 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/SettingsScreen.kt:682:32 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/SettingsScreen.kt:691:32 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/SettingsScreen.kt:700:32 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/SettingsScreen.kt:721:43 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/SettingsScreen.kt:740:43 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/SettingsScreen.kt:913:27 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/SettingsScreen.kt:931:31 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/SettingsScreen.kt:1022:31 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/SettingsScreen.kt:1037:20 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/SettingsScreen.kt:1047:20 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/SettingsScreen.kt:1057:20 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/SettingsScreen.kt:1067:20 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/StatementScreen.kt:7:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/StatementScreen.kt:8:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/StatementScreen.kt:9:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/StatementScreen.kt:10:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/StatementScreen.kt:11:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/StatementScreen.kt:12:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/StatementScreen.kt:13:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/StatementScreen.kt:62:30 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/StatementScreen.kt:69:30 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/StatementScreen.kt:412:43 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/StatementScreen.kt:443:43 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/StatementScreen.kt:622:31 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/TransactScreen.kt:10:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/TransactScreen.kt:11:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/TransactScreen.kt:22:8 Unresolved reference 'axionbank'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/TransactScreen.kt:222:45 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/TransactScreen.kt:243:45 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/TransactScreen.kt:275:46 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/TransactScreen.kt:352:84 Unresolved reference 'Res'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/TransactScreen.kt:353:85 Unresolved reference 'Res'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/TransactScreen.kt:354:90 Unresolved reference 'Res'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/TransactScreen.kt:355:89 Unresolved reference 'Res'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/TransactScreen.kt:362:51 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/TransactScreen.kt:380:38 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/TransactScreen.kt:396:38 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/TransactScreen.kt:468:26 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/TransactScreen.kt:610:41 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/TransactScreen.kt:627:41 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/TransactScreen.kt:1029:76 Unresolved reference 'Res'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/TransactScreen.kt:1030:77 Unresolved reference 'Res'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/TransactScreen.kt:1031:82 Unresolved reference 'Res'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/TransactScreen.kt:1032:81 Unresolved reference 'Res'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/TransactionDetailsScreen.kt:7:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/TransactionDetailsScreen.kt:8:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/TransactionDetailsScreen.kt:9:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/TransactionDetailsScreen.kt:10:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/TransactionDetailsScreen.kt:11:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/TransactionDetailsScreen.kt:12:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/TransactionDetailsScreen.kt:13:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/TransactionDetailsScreen.kt:14:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/TransactionDetailsScreen.kt:41:43 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/TransactionDetailsScreen.kt:49:43 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/TransactionDetailsScreen.kt:55:43 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/TransactionDetailsScreen.kt:131:53 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/TransactionDetailsScreen.kt:132:56 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/TransactionDetailsScreen.kt:133:61 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/TransactionDetailsScreen.kt:134:61 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/TransactionDetailsScreen.kt:135:61 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/TransactionDetailsScreen.kt:136:59 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/TransactionDetailsScreen.kt:137:59 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/TransactionDetailsScreen.kt:138:56 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/TransactionDetailsScreen.kt:235:24 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/TransactionDetailsScreen.kt:241:24 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/TransactionDetailsScreen.kt:247:24 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/TransactionDetailsScreen.kt:255:28 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/TransactionDetailsScreen.kt:263:28 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/TransactionDetailsScreen.kt:270:24 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/TransactionDetailsScreen.kt:276:24 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/TransactionDetailsScreen.kt:305:28 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/TransactionDetailsScreen.kt:313:28 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/TransactionDetailsScreen.kt:342:24 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/TransactionDetailsScreen.kt:348:24 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/TransactionDetailsScreen.kt:354:24 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/TransactionDetailsScreen.kt:385:32 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/TransactionDetailsScreen.kt:391:32 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/TransactionDetailsScreen.kt:397:32 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/TransactionDetailsScreen.kt:407:32 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/TransactionDetailsScreen.kt:413:32 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/TransactionDetailsScreen.kt:423:32 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/TransactionDetailsScreen.kt:429:32 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/TransactionDetailsScreen.kt:440:32 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/TransactionDetailsScreen.kt:446:32 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/TransactionDetailsScreen.kt:457:32 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/TransactionDetailsScreen.kt:463:32 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/TransactionDetailsScreen.kt:469:32 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/TransactionLimitsScreen.kt:6:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/TransactionLimitsScreen.kt:7:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/TransactionLimitsScreen.kt:36:30 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/WelcomeScreen.kt:10:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/WelcomeScreen.kt:11:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/WelcomeScreen.kt:12:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/WelcomeScreen.kt:13:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/WelcomeScreen.kt:14:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/WelcomeScreen.kt:15:34 Unresolved reference 'icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/WelcomeScreen.kt:27:8 Unresolved reference 'axionbank'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/WelcomeScreen.kt:28:8 Unresolved reference 'axionbank'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/WelcomeScreen.kt:49:39 Unresolved reference 'Res'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/WelcomeScreen.kt:123:51 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/WelcomeScreen.kt:141:51 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/WelcomeScreen.kt:159:51 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/WelcomeScreen.kt:177:51 Unresolved reference 'Icons'.
+e: file:///C:/Users/ADMIN/AxionBank/Axio%20Bank/composeApp/src/commonMain/kotlin/org/dals/project/ui/screens/WelcomeScreen.kt:221:47 Unresolved reference 'Icons'.
+
+> Task :composeApp:compileDebugKotlinAndroid FAILED
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':composeApp:compileDebugKotlinAndroid'.
+> A failure occurred while executing org.jetbrains.kotlin.compilerRunner.GradleCompilerRunnerWithWorkers$GradleKotlinCompilerWorkAction
+   > Compilation error. See log for more details
+
+* Try:
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+
+* Exception is:
+org.gradle.api.tasks.TaskExecutionException: Execution failed for task ':composeApp:compileDebugKotlinAndroid'.
+	at org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter.lambda$executeIfValid$1(ExecuteActionsTaskExecuter.java:130)
+	at org.gradle.internal.Try$Failure.ifSuccessfulOrElse(Try.java:293)
+	at org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter.executeIfValid(ExecuteActionsTaskExecuter.java:128)
+	at org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter.execute(ExecuteActionsTaskExecuter.java:116)
+	at org.gradle.api.internal.tasks.execution.ProblemsTaskPathTrackingTaskExecuter.execute(ProblemsTaskPathTrackingTaskExecuter.java:41)
+	at org.gradle.api.internal.tasks.execution.FinalizePropertiesTaskExecuter.execute(FinalizePropertiesTaskExecuter.java:46)
+	at org.gradle.api.internal.tasks.execution.ResolveTaskExecutionModeExecuter.execute(ResolveTaskExecutionModeExecuter.java:51)
+	at org.gradle.api.internal.tasks.execution.SkipTaskWithNoActionsExecuter.execute(SkipTaskWithNoActionsExecuter.java:57)
+	at org.gradle.api.internal.tasks.execution.SkipOnlyIfTaskExecuter.execute(SkipOnlyIfTaskExecuter.java:74)
+	at org.gradle.api.internal.tasks.execution.CatchExceptionTaskExecuter.execute(CatchExceptionTaskExecuter.java:36)
+	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter$1.executeTask(EventFiringTaskExecuter.java:77)
+	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter$1.call(EventFiringTaskExecuter.java:55)
+	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter$1.call(EventFiringTaskExecuter.java:52)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:210)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:205)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:67)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:60)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:167)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:60)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:54)
+	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter.execute(EventFiringTaskExecuter.java:52)
+	at org.gradle.execution.plan.LocalTaskNodeExecutor.execute(LocalTaskNodeExecutor.java:42)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$InvokeNodeExecutorsAction.execute(DefaultTaskExecutionGraph.java:331)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$InvokeNodeExecutorsAction.execute(DefaultTaskExecutionGraph.java:318)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$BuildOperationAwareExecutionAction.lambda$execute$0(DefaultTaskExecutionGraph.java:314)
+	at org.gradle.internal.operations.CurrentBuildOperationRef.with(CurrentBuildOperationRef.java:85)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$BuildOperationAwareExecutionAction.execute(DefaultTaskExecutionGraph.java:314)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$BuildOperationAwareExecutionAction.execute(DefaultTaskExecutionGraph.java:303)
+	at org.gradle.execution.plan.DefaultPlanExecutor$ExecutorWorker.execute(DefaultPlanExecutor.java:459)
+	at org.gradle.execution.plan.DefaultPlanExecutor$ExecutorWorker.run(DefaultPlanExecutor.java:376)
+	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:64)
+	at org.gradle.internal.concurrent.AbstractManagedExecutor$1.run(AbstractManagedExecutor.java:48)
+Caused by: org.gradle.workers.internal.DefaultWorkerExecutor$WorkExecutionException: A failure occurred while executing org.jetbrains.kotlin.compilerRunner.GradleCompilerRunnerWithWorkers$GradleKotlinCompilerWorkAction
+	at org.gradle.workers.internal.DefaultWorkerExecutor$WorkItemExecution.waitForCompletion(DefaultWorkerExecutor.java:287)
+	at org.gradle.internal.work.DefaultAsyncWorkTracker.lambda$waitForItemsAndGatherFailures$2(DefaultAsyncWorkTracker.java:130)
+	at org.gradle.internal.Factories$1.create(Factories.java:31)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.withoutLocks(DefaultWorkerLeaseService.java:335)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.withoutLocks(DefaultWorkerLeaseService.java:318)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.withoutLock(DefaultWorkerLeaseService.java:323)
+	at org.gradle.internal.work.DefaultAsyncWorkTracker.waitForItemsAndGatherFailures(DefaultAsyncWorkTracker.java:126)
+	at org.gradle.internal.work.DefaultAsyncWorkTracker.waitForItemsAndGatherFailures(DefaultAsyncWorkTracker.java:92)
+	at org.gradle.internal.work.DefaultAsyncWorkTracker.waitForAll(DefaultAsyncWorkTracker.java:78)
+	at org.gradle.internal.work.DefaultAsyncWorkTracker.waitForCompletion(DefaultAsyncWorkTracker.java:66)
+	at org.gradle.api.internal.tasks.execution.TaskExecution$3.run(TaskExecution.java:252)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$1.execute(DefaultBuildOperationRunner.java:30)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$1.execute(DefaultBuildOperationRunner.java:27)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:67)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:60)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:167)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:60)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.run(DefaultBuildOperationRunner.java:48)
+	at org.gradle.api.internal.tasks.execution.TaskExecution.executeAction(TaskExecution.java:229)
+	at org.gradle.api.internal.tasks.execution.TaskExecution.executeActions(TaskExecution.java:212)
+	at org.gradle.api.internal.tasks.execution.TaskExecution.executeWithPreviousOutputFiles(TaskExecution.java:195)
+	at org.gradle.api.internal.tasks.execution.TaskExecution.execute(TaskExecution.java:162)
+	at org.gradle.internal.execution.steps.ExecuteStep.executeInternal(ExecuteStep.java:105)
+	at org.gradle.internal.execution.steps.ExecuteStep.access$000(ExecuteStep.java:44)
+	at org.gradle.internal.execution.steps.ExecuteStep$1.call(ExecuteStep.java:59)
+	at org.gradle.internal.execution.steps.ExecuteStep$1.call(ExecuteStep.java:56)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:210)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:205)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:67)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:60)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:167)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:60)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:54)
+	at org.gradle.internal.execution.steps.ExecuteStep.execute(ExecuteStep.java:56)
+	at org.gradle.internal.execution.steps.ExecuteStep.execute(ExecuteStep.java:44)
+	at org.gradle.internal.execution.steps.CancelExecutionStep.execute(CancelExecutionStep.java:42)
+	at org.gradle.internal.execution.steps.TimeoutStep.executeWithoutTimeout(TimeoutStep.java:75)
+	at org.gradle.internal.execution.steps.TimeoutStep.execute(TimeoutStep.java:55)
+	at org.gradle.internal.execution.steps.PreCreateOutputParentsStep.execute(PreCreateOutputParentsStep.java:50)
+	at org.gradle.internal.execution.steps.PreCreateOutputParentsStep.execute(PreCreateOutputParentsStep.java:28)
+	at org.gradle.internal.execution.steps.RemovePreviousOutputsStep.execute(RemovePreviousOutputsStep.java:67)
+	at org.gradle.internal.execution.steps.RemovePreviousOutputsStep.execute(RemovePreviousOutputsStep.java:37)
+	at org.gradle.internal.execution.steps.BroadcastChangingOutputsStep.execute(BroadcastChangingOutputsStep.java:61)
+	at org.gradle.internal.execution.steps.BroadcastChangingOutputsStep.execute(BroadcastChangingOutputsStep.java:26)
+	at org.gradle.internal.execution.steps.CaptureOutputsAfterExecutionStep.execute(CaptureOutputsAfterExecutionStep.java:69)
+	at org.gradle.internal.execution.steps.CaptureOutputsAfterExecutionStep.execute(CaptureOutputsAfterExecutionStep.java:46)
+	at org.gradle.internal.execution.steps.ResolveInputChangesStep.execute(ResolveInputChangesStep.java:40)
+	at org.gradle.internal.execution.steps.ResolveInputChangesStep.execute(ResolveInputChangesStep.java:29)
+	at org.gradle.internal.execution.steps.BuildCacheStep.executeWithoutCache(BuildCacheStep.java:189)
+	at org.gradle.internal.execution.steps.BuildCacheStep.executeAndStoreInCache(BuildCacheStep.java:145)
+	at org.gradle.internal.execution.steps.BuildCacheStep.lambda$executeWithCache$4(BuildCacheStep.java:101)
+	at org.gradle.internal.execution.steps.BuildCacheStep.lambda$executeWithCache$5(BuildCacheStep.java:101)
+	at org.gradle.internal.Try$Success.map(Try.java:175)
+	at org.gradle.internal.execution.steps.BuildCacheStep.executeWithCache(BuildCacheStep.java:85)
+	at org.gradle.internal.execution.steps.BuildCacheStep.lambda$execute$0(BuildCacheStep.java:74)
+	at org.gradle.internal.Either$Left.fold(Either.java:115)
+	at org.gradle.internal.execution.caching.CachingState.fold(CachingState.java:62)
+	at org.gradle.internal.execution.steps.BuildCacheStep.execute(BuildCacheStep.java:73)
+	at org.gradle.internal.execution.steps.BuildCacheStep.execute(BuildCacheStep.java:48)
+	at org.gradle.internal.execution.steps.StoreExecutionStateStep.execute(StoreExecutionStateStep.java:46)
+	at org.gradle.internal.execution.steps.StoreExecutionStateStep.execute(StoreExecutionStateStep.java:35)
+	at org.gradle.internal.execution.steps.SkipUpToDateStep.executeBecause(SkipUpToDateStep.java:75)
+	at org.gradle.internal.execution.steps.SkipUpToDateStep.lambda$execute$2(SkipUpToDateStep.java:53)
+	at org.gradle.internal.execution.steps.SkipUpToDateStep.execute(SkipUpToDateStep.java:53)
+	at org.gradle.internal.execution.steps.SkipUpToDateStep.execute(SkipUpToDateStep.java:35)
+	at org.gradle.internal.execution.steps.legacy.MarkSnapshottingInputsFinishedStep.execute(MarkSnapshottingInputsFinishedStep.java:37)
+	at org.gradle.internal.execution.steps.legacy.MarkSnapshottingInputsFinishedStep.execute(MarkSnapshottingInputsFinishedStep.java:27)
+	at org.gradle.internal.execution.steps.ResolveIncrementalCachingStateStep.executeDelegate(ResolveIncrementalCachingStateStep.java:49)
+	at org.gradle.internal.execution.steps.ResolveIncrementalCachingStateStep.executeDelegate(ResolveIncrementalCachingStateStep.java:27)
+	at org.gradle.internal.execution.steps.AbstractResolveCachingStateStep.execute(AbstractResolveCachingStateStep.java:71)
+	at org.gradle.internal.execution.steps.AbstractResolveCachingStateStep.execute(AbstractResolveCachingStateStep.java:39)
+	at org.gradle.internal.execution.steps.ResolveChangesStep.execute(ResolveChangesStep.java:65)
+	at org.gradle.internal.execution.steps.ResolveChangesStep.execute(ResolveChangesStep.java:36)
+	at org.gradle.internal.execution.steps.ValidateStep.execute(ValidateStep.java:107)
+	at org.gradle.internal.execution.steps.ValidateStep.execute(ValidateStep.java:56)
+	at org.gradle.internal.execution.steps.AbstractCaptureStateBeforeExecutionStep.execute(AbstractCaptureStateBeforeExecutionStep.java:64)
+	at org.gradle.internal.execution.steps.AbstractCaptureStateBeforeExecutionStep.execute(AbstractCaptureStateBeforeExecutionStep.java:43)
+	at org.gradle.internal.execution.steps.AbstractSkipEmptyWorkStep.executeWithNonEmptySources(AbstractSkipEmptyWorkStep.java:125)
+	at org.gradle.internal.execution.steps.AbstractSkipEmptyWorkStep.execute(AbstractSkipEmptyWorkStep.java:61)
+	at org.gradle.internal.execution.steps.AbstractSkipEmptyWorkStep.execute(AbstractSkipEmptyWorkStep.java:36)
+	at org.gradle.internal.execution.steps.legacy.MarkSnapshottingInputsStartedStep.execute(MarkSnapshottingInputsStartedStep.java:38)
+	at org.gradle.internal.execution.steps.LoadPreviousExecutionStateStep.execute(LoadPreviousExecutionStateStep.java:36)
+	at org.gradle.internal.execution.steps.LoadPreviousExecutionStateStep.execute(LoadPreviousExecutionStateStep.java:23)
+	at org.gradle.internal.execution.steps.HandleStaleOutputsStep.execute(HandleStaleOutputsStep.java:75)
+	at org.gradle.internal.execution.steps.HandleStaleOutputsStep.execute(HandleStaleOutputsStep.java:41)
+	at org.gradle.internal.execution.steps.AssignMutableWorkspaceStep.lambda$execute$0(AssignMutableWorkspaceStep.java:35)
+	at org.gradle.api.internal.tasks.execution.TaskExecution$4.withWorkspace(TaskExecution.java:289)
+	at org.gradle.internal.execution.steps.AssignMutableWorkspaceStep.execute(AssignMutableWorkspaceStep.java:31)
+	at org.gradle.internal.execution.steps.AssignMutableWorkspaceStep.execute(AssignMutableWorkspaceStep.java:22)
+	at org.gradle.internal.execution.steps.ChoosePipelineStep.execute(ChoosePipelineStep.java:40)
+	at org.gradle.internal.execution.steps.ChoosePipelineStep.execute(ChoosePipelineStep.java:23)
+	at org.gradle.internal.execution.steps.ExecuteWorkBuildOperationFiringStep.lambda$execute$2(ExecuteWorkBuildOperationFiringStep.java:67)
+	at org.gradle.internal.execution.steps.ExecuteWorkBuildOperationFiringStep.execute(ExecuteWorkBuildOperationFiringStep.java:67)
+	at org.gradle.internal.execution.steps.ExecuteWorkBuildOperationFiringStep.execute(ExecuteWorkBuildOperationFiringStep.java:39)
+	at org.gradle.internal.execution.steps.IdentityCacheStep.execute(IdentityCacheStep.java:46)
+	at org.gradle.internal.execution.steps.IdentityCacheStep.execute(IdentityCacheStep.java:34)
+	at org.gradle.internal.execution.steps.IdentifyStep.execute(IdentifyStep.java:48)
+	at org.gradle.internal.execution.steps.IdentifyStep.execute(IdentifyStep.java:35)
+	at org.gradle.internal.execution.impl.DefaultExecutionEngine$1.execute(DefaultExecutionEngine.java:64)
+	at org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter.executeIfValid(ExecuteActionsTaskExecuter.java:127)
+	at org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter.execute(ExecuteActionsTaskExecuter.java:116)
+	at org.gradle.api.internal.tasks.execution.ProblemsTaskPathTrackingTaskExecuter.execute(ProblemsTaskPathTrackingTaskExecuter.java:41)
+	at org.gradle.api.internal.tasks.execution.FinalizePropertiesTaskExecuter.execute(FinalizePropertiesTaskExecuter.java:46)
+	at org.gradle.api.internal.tasks.execution.ResolveTaskExecutionModeExecuter.execute(ResolveTaskExecutionModeExecuter.java:51)
+	at org.gradle.api.internal.tasks.execution.SkipTaskWithNoActionsExecuter.execute(SkipTaskWithNoActionsExecuter.java:57)
+	at org.gradle.api.internal.tasks.execution.SkipOnlyIfTaskExecuter.execute(SkipOnlyIfTaskExecuter.java:74)
+	at org.gradle.api.internal.tasks.execution.CatchExceptionTaskExecuter.execute(CatchExceptionTaskExecuter.java:36)
+	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter$1.executeTask(EventFiringTaskExecuter.java:77)
+	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter$1.call(EventFiringTaskExecuter.java:55)
+	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter$1.call(EventFiringTaskExecuter.java:52)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:210)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:205)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:67)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:60)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:167)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:60)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:54)
+	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter.execute(EventFiringTaskExecuter.java:52)
+	at org.gradle.execution.plan.LocalTaskNodeExecutor.execute(LocalTaskNodeExecutor.java:42)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$InvokeNodeExecutorsAction.execute(DefaultTaskExecutionGraph.java:331)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$InvokeNodeExecutorsAction.execute(DefaultTaskExecutionGraph.java:318)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$BuildOperationAwareExecutionAction.lambda$execute$0(DefaultTaskExecutionGraph.java:314)
+	at org.gradle.internal.operations.CurrentBuildOperationRef.with(CurrentBuildOperationRef.java:85)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$BuildOperationAwareExecutionAction.execute(DefaultTaskExecutionGraph.java:314)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$BuildOperationAwareExecutionAction.execute(DefaultTaskExecutionGraph.java:303)
+	at org.gradle.execution.plan.DefaultPlanExecutor$ExecutorWorker.execute(DefaultPlanExecutor.java:459)
+	at org.gradle.execution.plan.DefaultPlanExecutor$ExecutorWorker.run(DefaultPlanExecutor.java:376)
+	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:64)
+	at org.gradle.internal.concurrent.AbstractManagedExecutor$1.run(AbstractManagedExecutor.java:48)
+Caused by: org.jetbrains.kotlin.gradle.tasks.CompilationErrorException: Compilation error. See log for more details
+	at org.jetbrains.kotlin.gradle.tasks.TasksUtilsKt.throwExceptionIfCompilationFailed(tasksUtils.kt:21)
+	at org.jetbrains.kotlin.compilerRunner.GradleKotlinCompilerWork.run(GradleKotlinCompilerWork.kt:119)
+	at org.jetbrains.kotlin.compilerRunner.GradleCompilerRunnerWithWorkers$GradleKotlinCompilerWorkAction.execute(GradleCompilerRunnerWithWorkers.kt:76)
+	at org.gradle.workers.internal.DefaultWorkerServer.execute(DefaultWorkerServer.java:63)
+	at org.gradle.workers.internal.NoIsolationWorkerFactory$1$1.create(NoIsolationWorkerFactory.java:66)
+	at org.gradle.workers.internal.NoIsolationWorkerFactory$1$1.create(NoIsolationWorkerFactory.java:62)
+	at org.gradle.internal.classloader.ClassLoaderUtils.executeInClassloader(ClassLoaderUtils.java:100)
+	at org.gradle.workers.internal.NoIsolationWorkerFactory$1.lambda$execute$0(NoIsolationWorkerFactory.java:62)
+	at org.gradle.workers.internal.AbstractWorker$1.call(AbstractWorker.java:44)
+	at org.gradle.workers.internal.AbstractWorker$1.call(AbstractWorker.java:41)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:210)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:205)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:67)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:60)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:167)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:60)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:54)
+	at org.gradle.workers.internal.AbstractWorker.executeWrappedInBuildOperation(AbstractWorker.java:41)
+	at org.gradle.workers.internal.NoIsolationWorkerFactory$1.execute(NoIsolationWorkerFactory.java:59)
+	at org.gradle.workers.internal.DefaultWorkerExecutor.lambda$submitWork$0(DefaultWorkerExecutor.java:174)
+	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.runExecution(DefaultConditionalExecutionQueue.java:194)
+	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.access$700(DefaultConditionalExecutionQueue.java:127)
+	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner$1.run(DefaultConditionalExecutionQueue.java:169)
+	at org.gradle.internal.Factories$1.create(Factories.java:31)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.withLocks(DefaultWorkerLeaseService.java:263)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.runAsWorkerThread(DefaultWorkerLeaseService.java:127)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.runAsWorkerThread(DefaultWorkerLeaseService.java:132)
+	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.runBatch(DefaultConditionalExecutionQueue.java:164)
+	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.run(DefaultConditionalExecutionQueue.java:133)
+	... 2 more
+
+
+BUILD FAILED in 9s
+58 actionable tasks: 1 executed, 57 up-to-date
+Configuration cache entry reused.

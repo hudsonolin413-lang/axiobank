@@ -1,0 +1,193 @@
+Starting a Gradle Daemon, 2 busy and 5 stopped Daemons could not be reused, use --status for details
+Calculating task graph as no cached configuration is available for tasks: :server:run
+Type-safe project accessors is an incubating feature.
+> Task :server:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :shared:jvmProcessResources NO-SOURCE
+> Task :shared:processJvmMainResources SKIPPED
+> Task :shared:kmpPartiallyResolvedDependenciesChecker
+> Task :shared:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :server:processResources UP-TO-DATE
+> Task :shared:compileKotlinJvm UP-TO-DATE
+> Task :shared:compileJvmMainJava NO-SOURCE
+> Task :shared:jvmMainClasses UP-TO-DATE
+> Task :shared:jvmJar UP-TO-DATE
+> Task :server:compileKotlin UP-TO-DATE
+> Task :server:compileJava NO-SOURCE
+> Task :server:classes UP-TO-DATE
+
+> Task :server:run
+2025-12-05 06:59:50.637 [main] INFO  io.ktor.server.Application - Autoreload is disabled because the development mode is off.
+=== DATABASE INITIALIZATION START ===
+JDBC URL: jdbc:postgresql://localhost:5433/AxionBank
+Username: postgres
+Driver: org.postgresql.Driver
+Database connection object created successfully!
+Starting transaction...
+2025-12-05 06:59:51.479 [main] DEBUG Exposed - SELECT version();
+SQL: SELECT version();
+PostgreSQL Version: PostgreSQL 18.1 on x86_64-windows, compiled by msvc-19.44.35219, 64-bit
+Creating tables...
+? All tables created/verified successfully!
+Database connection established successfully!
+2025-12-05 06:59:51.761 [main] DEBUG Exposed - SELECT branches.id, branches.branch_code, branches."name", branches.street, branches.city, branches."state", branches.zip_code, branches.country, branches.phone_number, branches.manager_user_id, branches.operating_hours, branches.status, branches.total_customers, branches.total_accounts, branches.total_deposits, branches.total_loans, branches.created_at, branches.updated_at FROM branches LIMIT 1
+SQL: SELECT branches.id, branches.branch_code, branches."name", branches.street, branches.city, branches."state", branches.zip_code, branches.country, branches.phone_number, branches.manager_user_id, branches.operating_hours, branches.status, branches.total_customers, branches.total_accounts, branches.total_deposits, branches.total_loans, branches.created_at, branches.updated_at FROM branches LIMIT 1
+? Branches already exist in the system.
+2025-12-05 06:59:51.764 [main] DEBUG Exposed - SELECT branches.id, branches.branch_code, branches."name", branches.street, branches.city, branches."state", branches.zip_code, branches.country, branches.phone_number, branches.manager_user_id, branches.operating_hours, branches.status, branches.total_customers, branches.total_accounts, branches.total_deposits, branches.total_loans, branches.created_at, branches.updated_at FROM branches
+SQL: SELECT branches.id, branches.branch_code, branches."name", branches.street, branches.city, branches."state", branches.zip_code, branches.country, branches.phone_number, branches.manager_user_id, branches.operating_hours, branches.status, branches.total_customers, branches.total_accounts, branches.total_deposits, branches.total_loans, branches.created_at, branches.updated_at FROM branches
+2025-12-05 06:59:51.795 [main] DEBUG Exposed - SELECT users.id, users.username, users.email, users.first_name, users.last_name, users.phone_number, users."role", users.status, users.branch_id, users.employee_id, users.password_hash, users.salt, users.created_at, users.last_login_at, users.updated_at FROM users WHERE users.username = 'admin'
+SQL: SELECT users.id, users.username, users.email, users.first_name, users.last_name, users.phone_number, users."role", users.status, users.branch_id, users.employee_id, users.password_hash, users.salt, users.created_at, users.last_login_at, users.updated_at FROM users WHERE users.username = 'admin'
+?? User admin already exists, updating password...
+2025-12-05 06:59:51.939 [main] DEBUG Exposed - UPDATE users SET password_hash='$2a$10$ytLXim6IExQNRm84nXWzKukHNWcazyckjRrrMnnB2F5P92iDTtTj6', salt='$2a$10$ytLXim6IExQNRm84nXWzKu', "role"='SYSTEM_ADMIN', status='ACTIVE', first_name='System', last_name='Administrator', phone_number='+1-555-0001', employee_id='EMP001', branch_id='915445bc-2e17-411b-966d-6f60b4896112' WHERE users.username = 'admin'
+SQL: UPDATE users SET password_hash='$2a$10$ytLXim6IExQNRm84nXWzKukHNWcazyckjRrrMnnB2F5P92iDTtTj6', salt='$2a$10$ytLXim6IExQNRm84nXWzKu', "role"='SYSTEM_ADMIN', status='ACTIVE', first_name='System', last_name='Administrator', phone_number='+1-555-0001', employee_id='EMP001', branch_id='915445bc-2e17-411b-966d-6f60b4896112' WHERE users.username = 'admin'
+? SYSTEM_ADMIN updated: admin / admin123
+2025-12-05 06:59:51.950 [main] DEBUG Exposed - SELECT employees.id, employees.user_id, employees.employee_number, employees.department, employees."position", employees.employment_status, employees.hire_date, employees.termination_date, employees.salary, employees.manager_id, employees.branch_id, employees.emergency_contact_name, employees.emergency_contact_phone, employees.emergency_contact_relation, employees.shift_type, employees.performance_rating, employees.last_review_date, employees.next_review_date, employees.access_level, employees.created_at, employees.updated_at FROM employees WHERE employees.user_id = 'e1ec946f-7f73-4a71-b344-7fa0c332ca3b'
+SQL: SELECT employees.id, employees.user_id, employees.employee_number, employees.department, employees."position", employees.employment_status, employees.hire_date, employees.termination_date, employees.salary, employees.manager_id, employees.branch_id, employees.emergency_contact_name, employees.emergency_contact_phone, employees.emergency_contact_relation, employees.shift_type, employees.performance_rating, employees.last_review_date, employees.next_review_date, employees.access_level, employees.created_at, employees.updated_at FROM employees WHERE employees.user_id = 'e1ec946f-7f73-4a71-b344-7fa0c332ca3b'
+2025-12-05 06:59:51.952 [main] DEBUG Exposed - SELECT users.id, users.username, users.email, users.first_name, users.last_name, users.phone_number, users."role", users.status, users.branch_id, users.employee_id, users.password_hash, users.salt, users.created_at, users.last_login_at, users.updated_at FROM users WHERE users.username = 'cso1'
+SQL: SELECT users.id, users.username, users.email, users.first_name, users.last_name, users.phone_number, users."role", users.status, users.branch_id, users.employee_id, users.password_hash, users.salt, users.created_at, users.last_login_at, users.updated_at FROM users WHERE users.username = 'cso1'
+?? User cso1 already exists, updating password...
+2025-12-05 06:59:52.057 [main] DEBUG Exposed - UPDATE users SET password_hash='$2a$10$dFBqLwABANGaC6WAjGBPAu.xuCrLcxPeMI2Ogo2vcnMHL3qmYSjQe', salt='$2a$10$dFBqLwABANGaC6WAjGBPAu', "role"='CUSTOMER_SERVICE_OFFICER', status='ACTIVE', first_name='Customer Service', last_name='Officer 1', phone_number='+1-555-0002', employee_id='CSO001', branch_id='915445bc-2e17-411b-966d-6f60b4896112' WHERE users.username = 'cso1'
+SQL: UPDATE users SET password_hash='$2a$10$dFBqLwABANGaC6WAjGBPAu.xuCrLcxPeMI2Ogo2vcnMHL3qmYSjQe', salt='$2a$10$dFBqLwABANGaC6WAjGBPAu', "role"='CUSTOMER_SERVICE_OFFICER', status='ACTIVE', first_name='Customer Service', last_name='Officer 1', phone_number='+1-555-0002', employee_id='CSO001', branch_id='915445bc-2e17-411b-966d-6f60b4896112' WHERE users.username = 'cso1'
+? CUSTOMER_SERVICE_OFFICER updated: cso1 / cso123
+2025-12-05 06:59:52.060 [main] DEBUG Exposed - SELECT employees.id, employees.user_id, employees.employee_number, employees.department, employees."position", employees.employment_status, employees.hire_date, employees.termination_date, employees.salary, employees.manager_id, employees.branch_id, employees.emergency_contact_name, employees.emergency_contact_phone, employees.emergency_contact_relation, employees.shift_type, employees.performance_rating, employees.last_review_date, employees.next_review_date, employees.access_level, employees.created_at, employees.updated_at FROM employees WHERE employees.user_id = '9515499e-832f-4479-89f3-ca5987767f0d'
+SQL: SELECT employees.id, employees.user_id, employees.employee_number, employees.department, employees."position", employees.employment_status, employees.hire_date, employees.termination_date, employees.salary, employees.manager_id, employees.branch_id, employees.emergency_contact_name, employees.emergency_contact_phone, employees.emergency_contact_relation, employees.shift_type, employees.performance_rating, employees.last_review_date, employees.next_review_date, employees.access_level, employees.created_at, employees.updated_at FROM employees WHERE employees.user_id = '9515499e-832f-4479-89f3-ca5987767f0d'
+2025-12-05 06:59:52.063 [main] DEBUG Exposed - SELECT users.id, users.username, users.email, users.first_name, users.last_name, users.phone_number, users."role", users.status, users.branch_id, users.employee_id, users.password_hash, users.salt, users.created_at, users.last_login_at, users.updated_at FROM users WHERE users.username = 'teller1'
+SQL: SELECT users.id, users.username, users.email, users.first_name, users.last_name, users.phone_number, users."role", users.status, users.branch_id, users.employee_id, users.password_hash, users.salt, users.created_at, users.last_login_at, users.updated_at FROM users WHERE users.username = 'teller1'
+?? User teller1 already exists, updating password...
+2025-12-05 06:59:52.161 [main] DEBUG Exposed - UPDATE users SET password_hash='$2a$10$w.PwHaxWuHWB84244QP8IelXYPhOllM7xD3f1fGOR/yz/lU1gI3x2', salt='$2a$10$w.PwHaxWuHWB84244QP8Ie', "role"='TELLER', status='ACTIVE', first_name='Bank', last_name='Teller 1', phone_number='+1-555-0003', employee_id='TEL001', branch_id='915445bc-2e17-411b-966d-6f60b4896112' WHERE users.username = 'teller1'
+SQL: UPDATE users SET password_hash='$2a$10$w.PwHaxWuHWB84244QP8IelXYPhOllM7xD3f1fGOR/yz/lU1gI3x2', salt='$2a$10$w.PwHaxWuHWB84244QP8Ie', "role"='TELLER', status='ACTIVE', first_name='Bank', last_name='Teller 1', phone_number='+1-555-0003', employee_id='TEL001', branch_id='915445bc-2e17-411b-966d-6f60b4896112' WHERE users.username = 'teller1'
+? TELLER updated: teller1 / teller123
+2025-12-05 06:59:52.163 [main] DEBUG Exposed - SELECT employees.id, employees.user_id, employees.employee_number, employees.department, employees."position", employees.employment_status, employees.hire_date, employees.termination_date, employees.salary, employees.manager_id, employees.branch_id, employees.emergency_contact_name, employees.emergency_contact_phone, employees.emergency_contact_relation, employees.shift_type, employees.performance_rating, employees.last_review_date, employees.next_review_date, employees.access_level, employees.created_at, employees.updated_at FROM employees WHERE employees.user_id = '0b2d996b-2d76-4f96-a11c-b0d74096b15f'
+SQL: SELECT employees.id, employees.user_id, employees.employee_number, employees.department, employees."position", employees.employment_status, employees.hire_date, employees.termination_date, employees.salary, employees.manager_id, employees.branch_id, employees.emergency_contact_name, employees.emergency_contact_phone, employees.emergency_contact_relation, employees.shift_type, employees.performance_rating, employees.last_review_date, employees.next_review_date, employees.access_level, employees.created_at, employees.updated_at FROM employees WHERE employees.user_id = '0b2d996b-2d76-4f96-a11c-b0d74096b15f'
+2025-12-05 06:59:52.166 [main] DEBUG Exposed - SELECT users.id, users.username, users.email, users.first_name, users.last_name, users.phone_number, users."role", users.status, users.branch_id, users.employee_id, users.password_hash, users.salt, users.created_at, users.last_login_at, users.updated_at FROM users WHERE users.username = 'manager1'
+SQL: SELECT users.id, users.username, users.email, users.first_name, users.last_name, users.phone_number, users."role", users.status, users.branch_id, users.employee_id, users.password_hash, users.salt, users.created_at, users.last_login_at, users.updated_at FROM users WHERE users.username = 'manager1'
+?? User manager1 already exists, updating password...
+2025-12-05 06:59:52.261 [main] DEBUG Exposed - UPDATE users SET password_hash='$2a$10$.xKj76rtyHqbF3a0C68huOBJew2aigZuU4jexEUB2eLpWP6EKKAPK', salt='$2a$10$.xKj76rtyHqbF3a0C68huO', "role"='BRANCH_MANAGER', status='ACTIVE', first_name='Branch', last_name='Manager', phone_number='+1-555-0004', employee_id='MGR001', branch_id='915445bc-2e17-411b-966d-6f60b4896112' WHERE users.username = 'manager1'
+SQL: UPDATE users SET password_hash='$2a$10$.xKj76rtyHqbF3a0C68huOBJew2aigZuU4jexEUB2eLpWP6EKKAPK', salt='$2a$10$.xKj76rtyHqbF3a0C68huO', "role"='BRANCH_MANAGER', status='ACTIVE', first_name='Branch', last_name='Manager', phone_number='+1-555-0004', employee_id='MGR001', branch_id='915445bc-2e17-411b-966d-6f60b4896112' WHERE users.username = 'manager1'
+? BRANCH_MANAGER updated: manager1 / manager123
+2025-12-05 06:59:52.263 [main] DEBUG Exposed - SELECT employees.id, employees.user_id, employees.employee_number, employees.department, employees."position", employees.employment_status, employees.hire_date, employees.termination_date, employees.salary, employees.manager_id, employees.branch_id, employees.emergency_contact_name, employees.emergency_contact_phone, employees.emergency_contact_relation, employees.shift_type, employees.performance_rating, employees.last_review_date, employees.next_review_date, employees.access_level, employees.created_at, employees.updated_at FROM employees WHERE employees.user_id = '0f62d5ea-a4ed-4de5-b5d3-0cb37ab3a0bc'
+SQL: SELECT employees.id, employees.user_id, employees.employee_number, employees.department, employees."position", employees.employment_status, employees.hire_date, employees.termination_date, employees.salary, employees.manager_id, employees.branch_id, employees.emergency_contact_name, employees.emergency_contact_phone, employees.emergency_contact_relation, employees.shift_type, employees.performance_rating, employees.last_review_date, employees.next_review_date, employees.access_level, employees.created_at, employees.updated_at FROM employees WHERE employees.user_id = '0f62d5ea-a4ed-4de5-b5d3-0cb37ab3a0bc'
+2025-12-05 06:59:52.265 [main] DEBUG Exposed - SELECT users.id, users.username, users.email, users.first_name, users.last_name, users.phone_number, users."role", users.status, users.branch_id, users.employee_id, users.password_hash, users.salt, users.created_at, users.last_login_at, users.updated_at FROM users WHERE users.username = 'loanofficer1'
+SQL: SELECT users.id, users.username, users.email, users.first_name, users.last_name, users.phone_number, users."role", users.status, users.branch_id, users.employee_id, users.password_hash, users.salt, users.created_at, users.last_login_at, users.updated_at FROM users WHERE users.username = 'loanofficer1'
+?? User loanofficer1 already exists, updating password...
+2025-12-05 06:59:52.354 [main] DEBUG Exposed - UPDATE users SET password_hash='$2a$10$1HiIT3xjRdSYEyDoSKoTXOA7V5RDAtp..XNMm4ly1IVuIsyGT/Pii', salt='$2a$10$1HiIT3xjRdSYEyDoSKoTXO', "role"='LOAN_OFFICER', status='ACTIVE', first_name='Loan', last_name='Officer', phone_number='+1-555-0005', employee_id='LO001', branch_id='915445bc-2e17-411b-966d-6f60b4896112' WHERE users.username = 'loanofficer1'
+SQL: UPDATE users SET password_hash='$2a$10$1HiIT3xjRdSYEyDoSKoTXOA7V5RDAtp..XNMm4ly1IVuIsyGT/Pii', salt='$2a$10$1HiIT3xjRdSYEyDoSKoTXO', "role"='LOAN_OFFICER', status='ACTIVE', first_name='Loan', last_name='Officer', phone_number='+1-555-0005', employee_id='LO001', branch_id='915445bc-2e17-411b-966d-6f60b4896112' WHERE users.username = 'loanofficer1'
+? LOAN_OFFICER updated: loanofficer1 / loan123
+2025-12-05 06:59:52.357 [main] DEBUG Exposed - SELECT employees.id, employees.user_id, employees.employee_number, employees.department, employees."position", employees.employment_status, employees.hire_date, employees.termination_date, employees.salary, employees.manager_id, employees.branch_id, employees.emergency_contact_name, employees.emergency_contact_phone, employees.emergency_contact_relation, employees.shift_type, employees.performance_rating, employees.last_review_date, employees.next_review_date, employees.access_level, employees.created_at, employees.updated_at FROM employees WHERE employees.user_id = 'b0025638-284b-4105-acf5-bd4276df44ac'
+SQL: SELECT employees.id, employees.user_id, employees.employee_number, employees.department, employees."position", employees.employment_status, employees.hire_date, employees.termination_date, employees.salary, employees.manager_id, employees.branch_id, employees.emergency_contact_name, employees.emergency_contact_phone, employees.emergency_contact_relation, employees.shift_type, employees.performance_rating, employees.last_review_date, employees.next_review_date, employees.access_level, employees.created_at, employees.updated_at FROM employees WHERE employees.user_id = 'b0025638-284b-4105-acf5-bd4276df44ac'
+2025-12-05 06:59:52.360 [main] DEBUG Exposed - UPDATE branches SET manager_user_id='0f62d5ea-a4ed-4de5-b5d3-0cb37ab3a0bc' WHERE branches.id = '915445bc-2e17-411b-966d-6f60b4896112'
+SQL: UPDATE branches SET manager_user_id='0f62d5ea-a4ed-4de5-b5d3-0cb37ab3a0bc' WHERE branches.id = '915445bc-2e17-411b-966d-6f60b4896112'
+? Essential system users processed successfully!
+
+=== SYSTEM USERS AVAILABLE ===
+Role: System Administrator
+  Username: admin
+  Password: admin123
+  Email: admin@axionbank.com
+
+Role: Customer Service Officer
+  Username: cso1
+  Password: cso123
+  Email: cso1@axionbank.com
+
+Role: Teller
+  Username: teller1
+  Password: teller123
+  Email: teller1@axionbank.com
+
+Role: Branch Manager
+  Username: manager1
+  Password: manager123
+  Email: manager1@axionbank.com
+
+Role: Loan Officer
+  Username: loanofficer1
+  Password: loan123
+  Email: loans@axionbank.com
+
+All users have access to the customer care system.
+Database is ready for production use!
+=============================
+Initializing Account Types...
+2025-12-05 06:59:52.367 [main] DEBUG Exposed - SELECT COUNT(*) FROM account_types
+SQL: SELECT COUNT(*) FROM account_types
+Account types already exist
+Initializing Master Wallet System...
+2025-12-05 06:59:52.368 [main] DEBUG Exposed - SELECT users.id, users.username, users.email, users.first_name, users.last_name, users.phone_number, users."role", users.status, users.branch_id, users.employee_id, users.password_hash, users.salt, users.created_at, users.last_login_at, users.updated_at FROM users WHERE users.username = 'admin'
+SQL: SELECT users.id, users.username, users.email, users.first_name, users.last_name, users.phone_number, users."role", users.status, users.branch_id, users.employee_id, users.password_hash, users.salt, users.created_at, users.last_login_at, users.updated_at FROM users WHERE users.username = 'admin'
+2025-12-05 06:59:52.377 [main] DEBUG Exposed - SELECT COUNT(*) FROM master_wallets
+SQL: SELECT COUNT(*) FROM master_wallets
+? Master wallets already exist: 5 wallets found
+? Master Wallet System initialized successfully!
+2025-12-05 06:59:52.383 [main] DEBUG Exposed - SELECT COUNT(*) FROM customers
+SQL: SELECT COUNT(*) FROM customers
+2025-12-05 06:59:52.384 [main] DEBUG Exposed - SELECT COUNT(*) FROM account_types
+SQL: SELECT COUNT(*) FROM account_types
+
+=== CUSTOMER CARE DATA STATUS ===
+Customers in database: 24
+Account types available: 7
+? Customer care data is ready!
+? Customer care can open accounts for customers!
+=====================================
+=== DATABASE INITIALIZATION COMPLETE ===
+=== CONFIGURING ROUTING ===
+=== CONFIGURING ROUTING ===
+=== ABOUT TO REGISTER TELLER ROUTES ===
+=== REGISTERING TELLER ROUTES ===
+Teller routes registered at: /teller (will be /api/v1/teller when called from /api/v1)
+=== TELLER ROUTES REGISTERED SUCCESSFULLY ===
+2025-12-05 06:59:53.065 [main] INFO  io.ktor.server.Application - Application started in 2.994 seconds.
+WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
+WARNING: sun.misc.Unsafe::allocateMemory has been called by io.netty.util.internal.PlatformDependent0$2 (file:/C:/Users/ADMIN/.gradle/caches/modules-2/files-2.1/io.netty/netty-common/4.2.6.Final/5746874869298a07b468dd50b5991f457e773620/netty-common-4.2.6.Final.jar)
+WARNING: Please consider reporting this to the maintainers of class io.netty.util.internal.PlatformDependent0$2
+WARNING: sun.misc.Unsafe::allocateMemory will be removed in a future release
+Exception in thread "main" java.net.BindException: Address already in use: bind
+	at java.base/sun.nio.ch.Net.bind0(Native Method)
+	at java.base/sun.nio.ch.Net.bind(Net.java:511)
+	at java.base/sun.nio.ch.ServerSocketChannelImpl.netBind(ServerSocketChannelImpl.java:335)
+	at java.base/sun.nio.ch.ServerSocketChannelImpl.bind(ServerSocketChannelImpl.java:297)
+	at io.netty.channel.socket.nio.NioServerSocketChannel.doBind(NioServerSocketChannel.java:148)
+	at io.netty.channel.AbstractChannel$AbstractUnsafe.bind(AbstractChannel.java:434)
+	at io.netty.channel.DefaultChannelPipeline$HeadContext.bind(DefaultChannelPipeline.java:1353)
+	at io.netty.channel.AbstractChannelHandlerContext.invokeBind(AbstractChannelHandlerContext.java:492)
+	at io.netty.channel.AbstractChannelHandlerContext.bind(AbstractChannelHandlerContext.java:471)
+	at io.netty.channel.DefaultChannelPipeline.bind(DefaultChannelPipeline.java:994)
+	at io.netty.channel.Channel.bind(Channel.java:302)
+	at io.netty.bootstrap.AbstractBootstrap$2.run(AbstractBootstrap.java:380)
+	at io.netty.util.concurrent.AbstractEventExecutor.runTask(AbstractEventExecutor.java:148)
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute(AbstractEventExecutor.java:141)
+	at io.netty.util.concurrent.SingleThreadEventExecutor.runAllTasks(SingleThreadEventExecutor.java:535)
+	at io.netty.channel.SingleThreadIoEventLoop.run(SingleThreadIoEventLoop.java:201)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$5.run(SingleThreadEventExecutor.java:1193)
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.base/java.lang.Thread.run(Thread.java:1447)
+	Suppressed: java.util.concurrent.CompletionException: Rethrowing promise failure cause
+		at io.netty.util.concurrent.DefaultPromise.rethrowIfFailed(DefaultPromise.java:685)
+		at io.netty.util.concurrent.DefaultPromise.sync(DefaultPromise.java:419)
+		at io.netty.channel.DefaultChannelPromise.sync(DefaultChannelPromise.java:119)
+		at io.netty.channel.DefaultChannelPromise.sync(DefaultChannelPromise.java:30)
+		at io.ktor.server.netty.NettyApplicationEngine.start(NettyApplicationEngine.kt:254)
+		at io.ktor.server.netty.NettyApplicationEngine.start(NettyApplicationEngine.kt:38)
+		at io.ktor.server.engine.EmbeddedServer.start(EmbeddedServerJvm.kt:335)
+		at org.dals.project.ApplicationKt.main(Application.kt:30)
+		at org.dals.project.ApplicationKt.main(Application.kt)
+? Shutting down M-Pesa reversal scheduler...
+
+> Task :server:run FAILED
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':server:run'.
+> Process 'command 'C:\Program Files\Java\jdk-24\bin\java.exe'' finished with non-zero exit value 1
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+
+BUILD FAILED in 40s
+6 actionable tasks: 2 executed, 4 up-to-date
+Configuration cache entry stored.

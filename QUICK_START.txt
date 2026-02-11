@@ -1,0 +1,45 @@
+========================================
+   AXION BANK WEBSITE - QUICK START
+========================================
+
+TO START THE WEBSITE:
+
+1. Double-click this file:
+   START_WEBSITE.bat
+
+2. Wait for "Application started" message
+
+3. Open your browser and go to:
+   http://localhost:8081
+
+That's it! 🎉
+
+========================================
+
+WHAT YOU GET:
+✓ Professional bank website
+✓ Home page with features
+✓ Services showcase
+✓ Security information
+✓ Responsive design
+✓ Full banking API
+
+========================================
+
+LOCATION OF FILES:
+- Website: server/src/main/resources/static/
+- index.html - Home page
+- styles.css - Styling
+- script.js - JavaScript
+
+========================================
+
+TO STOP THE SERVER:
+Press Ctrl+C in the server window
+
+========================================
+
+NEED HELP?
+Read: README_WEBSITE.md
+
+========================================

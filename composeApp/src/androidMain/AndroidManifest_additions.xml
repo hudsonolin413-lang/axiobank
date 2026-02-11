@@ -1,0 +1,32 @@
+<!--
+    Add these to your AndroidManifest.xml for KYC camera/gallery functionality:
+
+    1. Add permissions before <application> tag:
+-->
+<uses-permission android:name="android.permission.CAMERA" />
+<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+    android:maxSdkVersion="32" />
+<uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+<uses-feature android:name="android.hardware.camera" android:required="false" />
+
+<!--
+    2. Add FileProvider inside <application> tag:
+-->
+<provider
+    android:name="androidx.core.content.FileProvider"
+    android:authorities="${applicationId}.fileprovider"
+    android:exported="false"
+    android:grantUriPermissions="true">
+    <meta-data
+        android:name="android.support.FILE_PROVIDER_PATHS"
+        android:resource="@xml/file_paths" />
+</provider>
+
+<!--
+    3. Create res/xml/file_paths.xml with this content:
+-->
+<?xml version="1.0" encoding="utf-8"?>
+<paths xmlns:android="http://schemas.android.com/apk/res/android">
+    <cache-path name="camera_images" path="/" />
+    <external-path name="external_files" path="." />
+</paths>
