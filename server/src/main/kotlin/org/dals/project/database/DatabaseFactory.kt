@@ -21,9 +21,14 @@ object DatabaseFactory {
 
         try {
             database = if (databaseUrl != null) {
-                // Railway/Production: Use DATABASE_URL
+                // Railway/Production: Convert postgresql:// to jdbc:postgresql://
+                val jdbcUrl = if (databaseUrl.startsWith("postgresql://")) {
+                    "jdbc:$databaseUrl"
+                } else {
+                    databaseUrl
+                }
                 Database.connect(
-                    url = databaseUrl,
+                    url = jdbcUrl,
                     driver = driverClassName
                 )
             } else {
