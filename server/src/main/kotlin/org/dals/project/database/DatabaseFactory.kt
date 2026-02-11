@@ -14,8 +14,6 @@ object DatabaseFactory {
         private set
 
     fun init() {
-        val driverClassName = "org.postgresql.Driver"
-
         // Use DATABASE_URL from environment (Railway) or fall back to local config
         val databaseUrl = System.getenv("DATABASE_URL")
 
@@ -40,7 +38,7 @@ object DatabaseFactory {
                 val password = "Andama@95"
                 Database.connect(
                     url = jdbcURL,
-                    driver = driverClassName,
+                    driver = "org.postgresql.Driver",
                     user = username,
                     password = password
                 )
