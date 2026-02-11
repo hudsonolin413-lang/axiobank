@@ -21,16 +21,18 @@ object DatabaseFactory {
 
         try {
             database = if (databaseUrl != null) {
-                // Railway/Production: Convert postgresql:// to jdbc:postgresql://
-                val jdbcUrl = if (databaseUrl.startsWith("postgresql://")) {
-                    "jdbc:$databaseUrl"
-                } else {
-                    databaseUrl
+                // Railway/Production: Parse DATABASE_URL and use HikariCP
+                val config = HikariConfig().apply {
+                    jdbcUrl = if (databaseUrl.startsWith("postgresql://")) {
+                        databaseUrl.replaceFirst("postgresql://", "jdbc:postgresql://")
+                    } else {
+                        databaseUrl
+                    }
+                    driverClassName = "org.postgresql.Driver"
+                    maximumPoolSize = 10
                 }
-                Database.connect(
-                    url = jdbcUrl,
-                    driver = driverClassName
-                )
+                val dataSource = HikariDataSource(config)
+                Database.connect(dataSource)
             } else {
                 // Local development: Use localhost
                 val jdbcURL = "jdbc:postgresql://localhost:5433/AxionBank"
