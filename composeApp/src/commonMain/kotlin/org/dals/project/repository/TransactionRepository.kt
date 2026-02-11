@@ -9,6 +9,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.dals.project.model.*
 import org.dals.project.utils.DateTimeUtils
+import org.dals.project.API_BASE_URL
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
@@ -80,7 +81,7 @@ data class GenerateStatementRequest(
 class TransactionRepository(
     private val authRepository: AuthRepository
 ) {
-    private val baseUrl = "http://localhost:8081/api/v1"
+    private val baseUrl = API_BASE_URL
 
     private val httpClient = HttpClient {
         install(ContentNegotiation) {

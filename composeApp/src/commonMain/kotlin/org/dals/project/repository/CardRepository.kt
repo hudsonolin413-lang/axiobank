@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import org.dals.project.model.*
+import org.dals.project.API_BASE_URL
 
 @Serializable
 data class CardResponse(
@@ -37,7 +38,7 @@ data class CardTransactionResult(
 class CardRepository(
     private val authRepository: AuthRepository
 ) {
-    private val baseUrl = "http://localhost:8081/api/v1"
+    private val baseUrl = API_BASE_URL
 
     private val httpClient = HttpClient {
         install(ContentNegotiation) {

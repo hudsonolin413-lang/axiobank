@@ -16,6 +16,7 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import org.dals.project.model.*
+import org.dals.project.API_BASE_URL
 
 @Serializable
 data class ServerNotification(
@@ -55,7 +56,7 @@ class NotificationRepository(
         }
     }
 
-    private val baseUrl = "http://localhost:8081/api/v1"
+    private val baseUrl = API_BASE_URL
 
     private val _notifications = MutableStateFlow<List<Notification>>(emptyList())
     val notifications: StateFlow<List<Notification>> = _notifications.asStateFlow()

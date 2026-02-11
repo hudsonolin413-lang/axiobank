@@ -1,6 +1,7 @@
 package org.dals.project.repository
 
 import org.dals.project.model.*
+import org.dals.project.API_BASE_URL
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -127,7 +128,7 @@ data class LoanApplicationResponse(
 class LoanRepository(
     private val authRepository: AuthRepository
 ) {
-    private val baseUrl = "http://localhost:8081/api/v1"
+    private val baseUrl = API_BASE_URL
 
     private val httpClient = HttpClient {
         install(ContentNegotiation) {

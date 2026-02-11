@@ -43,7 +43,7 @@ data class InvestmentApiResponse(
     val status: String
 )
 
-class InvestmentApiClient(private val baseUrl: String = "http://localhost:8080") {
+class InvestmentApiClient(private val baseUrl: String = "https://axiobank-production.up.railway.app") {
 
     private val client = HttpClient {
         install(ContentNegotiation) {
