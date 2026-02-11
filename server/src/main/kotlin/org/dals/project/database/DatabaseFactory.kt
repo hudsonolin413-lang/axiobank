@@ -19,24 +19,33 @@ object DatabaseFactory {
 
         try {
             database = if (databaseUrl != null) {
-                // Railway/Production: Use individual environment variables
-                val host = System.getenv("PGHOST") ?: "localhost"
-                val port = System.getenv("PGPORT") ?: "5432"
-                val dbName = System.getenv("PGDATABASE") ?: "railway"
-                val user = System.getenv("PGUSER") ?: "postgres"
-                val password = System.getenv("PGPASSWORD") ?: ""
+                // Railway/Production: Use DATABASE_URL directly
+                println("🔌 Connecting to Railway database...")
 
                 val config = HikariConfig().apply {
-                    jdbcUrl = "jdbc:postgresql://$host:$port/$dbName"
-                    username = user
-                    this.password = password
+                    // Convert postgres:// to jdbc:postgresql://
+                    jdbcUrl = if (databaseUrl.startsWith("postgres://")) {
+                        databaseUrl.replace("postgres://", "jdbc:postgresql://")
+                    } else {
+                        databaseUrl
+                    }
+
+                    // Add connection timeout and SSL settings for Railway
+                    addDataSourceProperty("connectTimeout", "30")
+                    addDataSourceProperty("socketTimeout", "30")
+
                     driverClassName = "org.postgresql.Driver"
                     maximumPoolSize = 10
+                    connectionTimeout = 30000
+                    validationTimeout = 5000
                 }
+
+                println("📍 Database URL: ${config.jdbcUrl.replace(Regex(":[^:@]+@"), ":***@")}")
                 val dataSource = HikariDataSource(config)
                 Database.connect(dataSource)
             } else {
                 // Local development: Use localhost
+                println("🏠 Connecting to local database...")
                 val jdbcURL = "jdbc:postgresql://localhost:5433/AxionBank"
                 val username = "postgres"
                 val password = "Andama@95"
