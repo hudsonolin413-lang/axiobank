@@ -23,11 +23,11 @@ object DatabaseFactory {
                 println("🔌 Connecting to Railway database...")
 
                 val config = HikariConfig().apply {
-                    // Convert postgres:// to jdbc:postgresql://
-                    jdbcUrl = if (databaseUrl.startsWith("postgres://")) {
-                        databaseUrl.replace("postgres://", "jdbc:postgresql://")
-                    } else {
-                        databaseUrl
+                    // Convert postgres:// or postgresql:// to jdbc:postgresql://
+                    jdbcUrl = when {
+                        databaseUrl.startsWith("postgres://") -> databaseUrl.replace("postgres://", "jdbc:postgresql://")
+                        databaseUrl.startsWith("postgresql://") -> databaseUrl.replace("postgresql://", "jdbc:postgresql://")
+                        else -> databaseUrl
                     }
 
                     // Add connection timeout and SSL settings for Railway
