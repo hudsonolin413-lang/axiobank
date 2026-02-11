@@ -15,17 +15,29 @@ object DatabaseFactory {
 
     fun init() {
         val driverClassName = "org.postgresql.Driver"
-        val jdbcURL = "jdbc:postgresql://localhost:5433/AxionBank"
-        val username = "postgres"
-        val password = "Andama@95"
+
+        // Use DATABASE_URL from environment (Railway) or fall back to local config
+        val databaseUrl = System.getenv("DATABASE_URL")
 
         try {
-            database = Database.connect(
-                url = jdbcURL,
-                driver = driverClassName,
-                user = username,
-                password = password
-            )
+            database = if (databaseUrl != null) {
+                // Railway/Production: Use DATABASE_URL
+                Database.connect(
+                    url = databaseUrl,
+                    driver = driverClassName
+                )
+            } else {
+                // Local development: Use localhost
+                val jdbcURL = "jdbc:postgresql://localhost:5433/AxionBank"
+                val username = "postgres"
+                val password = "Andama@95"
+                Database.connect(
+                    url = jdbcURL,
+                    driver = driverClassName,
+                    user = username,
+                    password = password
+                )
+            }
 
             transaction<Unit>(database) {
                 // Create all tables automatically
