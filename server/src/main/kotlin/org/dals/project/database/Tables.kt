@@ -1295,3 +1295,20 @@ object MpesaAuditTrail : Table("mpesa_audit_trail") {
 
     override val primaryKey = PrimaryKey(id)
 }
+
+// Advertisements Table
+object Advertisements : UUIDTable("advertisements") {
+    val title = varchar("title", 255)
+    val description = text("description").nullable()
+    val imageUrl = varchar("image_url", 500)
+    val linkUrl = varchar("link_url", 500).nullable()
+    val displayOrder = integer("display_order").default(0)
+    val isActive = bool("is_active").default(true)
+    val startDate = timestamp("start_date").defaultExpression(CurrentTimestamp())
+    val endDate = timestamp("end_date").nullable()
+    val createdBy = uuid("created_by").references(Users.id)
+    val createdAt = timestamp("created_at").defaultExpression(CurrentTimestamp())
+    val updatedAt = timestamp("updated_at").defaultExpression(CurrentTimestamp())
+
+    override val primaryKey = PrimaryKey(id)
+}

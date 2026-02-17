@@ -1,6 +1,7 @@
 package org.dals.project.ui.screens
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -38,7 +39,7 @@ import org.dals.project.utils.SettingsManager
 import org.dals.project.utils.CurrencyUtils
 import org.dals.project.services.MpesaService
 import kotlinx.coroutines.launch
-import org.dals.project.utils.NetworkConnectivityManager
+// Removed NetworkConnectivityManager - no longer needed
 import androidx.compose.material.icons.filled.Refresh
 import org.dals.project.ui.components.TransactionCardSkeleton
 import org.dals.project.ui.components.BalanceCardSkeleton
@@ -71,8 +72,7 @@ fun HomeScreen(
     val mpesaService = remember { MpesaService() }
 
     // Network connectivity state
-    val networkManager = remember { NetworkConnectivityManager.getInstance() }
-    val isConnected by networkManager.isConnected.collectAsStateWithLifecycle()
+    // Network connectivity check removed - always assume connected
     var isRefreshing by remember { mutableStateOf(false) }
 
     // Auto-refresh when app starts
@@ -87,26 +87,6 @@ fun HomeScreen(
             transactionViewModel.refreshAllData()
             kotlinx.coroutines.delay(500) // Small delay for UX
             isRefreshing = false
-        }
-    }
-
-    // Connection status bar
-    if (!isConnected) {
-        Surface(
-            modifier = Modifier.fillMaxWidth(),
-            color = MaterialTheme.colorScheme.errorContainer
-        ) {
-            Row(
-                modifier = Modifier.padding(8.dp),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "⚠️ No internet connection",
-                    color = MaterialTheme.colorScheme.onErrorContainer,
-                    style = MaterialTheme.typography.bodySmall
-                )
-            }
         }
     }
 
@@ -140,7 +120,7 @@ fun HomeScreen(
             }
         }
 
-        // Main Wallet Card - now positioned after welcome message
+        // Main Wallet Card - now positioned after welcome message (COMPACT VERSION)
         item {
             if (transactionUiState.isLoading && transactionUiState.walletBalance == null) {
                 BalanceCardSkeleton()
@@ -155,19 +135,15 @@ fun HomeScreen(
                     lastUpdated = System.currentTimeMillis().toString()
                 )
 
-                MainWalletCard(
+                CompactWalletCard(
                     balance = displayBalance,
-                    transactions = transactionUiState.transactions,
                     currentCurrency = appSettings.currency,
-                    currentUser = authUiState.currentUser,
-                    onAccountDetailsClick = onNavigateToAccountDetails,
-                    onDepositClick = { showDepositDialog = true },
-                    onViewStatementClick = onNavigateToStatement
+                    onAccountDetailsClick = onNavigateToAccountDetails
                 )
             }
         }
 
-        // Quick Actions Section
+        // Quick Actions Section (COMPACT VERSION)
         item {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -176,7 +152,7 @@ fun HomeScreen(
             ) {
                 Text(
                     text = "Quick Actions",
-                    style = MaterialTheme.typography.titleLarge,
+                    style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onBackground
                 )
@@ -189,16 +165,20 @@ fun HomeScreen(
                     Icon(
                         imageVector = Icons.Default.Refresh,
                         contentDescription = "Refresh",
-                        tint = if (isConnected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error
+                        tint = MaterialTheme.colorScheme.primary
                     )
                 }
             }
-            Spacer(modifier = Modifier.height(8.dp))
-            QuickActionsCard(
+            CompactQuickActionsCard(
                 onNavigateToTransact = onNavigateToTransact,
                 onNavigateToCards = onNavigateToCards,
                 onNavigateToBankAccounts = onNavigateToBankAccounts
             )
+        }
+
+        // Advertisement Carousel
+        item {
+            AdvertisementCarousel()
         }
 
         // Recent Transactions Section
@@ -1214,4 +1194,209 @@ fun MpesaDepositDialog(
             }
         }
     )
+}
+
+@Composable
+private fun CompactWalletCard(
+    balance: WalletBalance,
+    currentCurrency: String,
+    onAccountDetailsClick: () -> Unit
+) {
+    var isBalanceVisible by remember { mutableStateOf(true) }
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface
+        )
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Total Balance",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                IconButton(onClick = { isBalanceVisible = !isBalanceVisible }) {
+                    Icon(
+                        imageVector = if (isBalanceVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                        contentDescription = if (isBalanceVisible) "Hide balance" else "Show balance",
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
+            }
+
+            Text(
+                text = if (isBalanceVisible) {
+                    CurrencyUtils.formatAmount(
+                        CurrencyUtils.convertFromUSD(balance.totalBalance, currentCurrency),
+                        currentCurrency
+                    )
+                } else "••••••",
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Button(
+                onClick = onAccountDetailsClick,
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer
+                )
+            ) {
+                Text("View Details", color = MaterialTheme.colorScheme.onPrimaryContainer)
+            }
+        }
+    }
+}
+
+@Composable
+private fun CompactQuickActionsCard(
+    onNavigateToTransact: () -> Unit,
+    onNavigateToCards: () -> Unit,
+    onNavigateToBankAccounts: () -> Unit
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(12.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            CompactQuickActionButton(
+                text = "Send",
+                iconVector = Icons.Filled.Send,
+                onClick = onNavigateToTransact,
+                modifier = Modifier.weight(1f)
+            )
+            CompactQuickActionButton(
+                text = "Cards",
+                iconVector = Icons.Filled.CreditCard,
+                onClick = onNavigateToCards,
+                modifier = Modifier.weight(1f)
+            )
+            CompactQuickActionButton(
+                text = "Accounts",
+                iconVector = Icons.Filled.AccountBalance,
+                onClick = onNavigateToBankAccounts,
+                modifier = Modifier.weight(1f)
+            )
+        }
+    }
+}
+
+@Composable
+private fun CompactQuickActionButton(
+    text: String,
+    iconVector: androidx.compose.ui.graphics.vector.ImageVector,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Surface(
+        modifier = modifier
+            .clickable { onClick() }
+            .padding(2.dp),
+        color = MaterialTheme.colorScheme.surfaceContainer,
+        shape = RoundedCornerShape(8.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(12.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Icon(
+                imageVector = iconVector,
+                contentDescription = text,
+                modifier = Modifier.size(24.dp),
+                tint = MaterialTheme.colorScheme.primary
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = text,
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+        }
+    }
+}
+
+@Composable
+private fun AdvertisementCarousel() {
+    // TODO: Fetch ads from server
+    var currentAdIndex by remember { mutableStateOf(0) }
+    val sampleAds = remember {
+        listOf(
+            "Sample Ad 1",
+            "Sample Ad 2",
+            "Sample Ad 3"
+        )
+    }
+
+    LaunchedEffect(Unit) {
+        while (true) {
+            kotlinx.coroutines.delay(5000) // Auto-scroll every 5 seconds
+            currentAdIndex = (currentAdIndex + 1) % sampleAds.size
+        }
+    }
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(150.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.primaryContainer
+        )
+    ) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = sampleAds[currentAdIndex],
+                style = MaterialTheme.typography.headlineSmall,
+                color = MaterialTheme.colorScheme.onPrimaryContainer
+            )
+
+            // Indicator dots
+            Row(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(8.dp),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                sampleAds.forEachIndexed { index, _ ->
+                    Box(
+                        modifier = Modifier
+                            .size(8.dp)
+                            .padding(horizontal = 2.dp)
+                            .clip(RoundedCornerShape(4.dp))
+                            .background(
+                                if (index == currentAdIndex)
+                                    MaterialTheme.colorScheme.primary
+                                else
+                                    MaterialTheme.colorScheme.surfaceVariant
+                            )
+                    )
+                }
+            }
+        }
+    }
 }

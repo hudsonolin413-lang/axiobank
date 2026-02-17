@@ -1211,3 +1211,42 @@ data class PendingKycDocumentDto(
     val filePath: String,
     val uploadDate: String
 )
+
+// Advertisement Models
+@Serializable
+data class AdvertisementDto(
+    val id: String,
+    val title: String,
+    val description: String? = null,
+    val imageUrl: String,
+    val linkUrl: String? = null,
+    val displayOrder: Int = 0,
+    val isActive: Boolean = true,
+    val startDate: String,
+    val endDate: String? = null,
+    val createdBy: String,
+    val createdAt: String,
+    val updatedAt: String
+)
+
+@Serializable
+data class CreateAdvertisementRequest(
+    val title: String,
+    val description: String? = null,
+    val imageUrl: String,
+    val linkUrl: String? = null,
+    val displayOrder: Int = 0,
+    val startDate: String? = null,
+    val endDate: String? = null
+)
+
+@Serializable
+data class UpdateAdvertisementRequest(
+    val title: String? = null,
+    val description: String? = null,
+    val imageUrl: String? = null,
+    val linkUrl: String? = null,
+    val displayOrder: Int? = null,
+    val isActive: Boolean? = null,
+    val endDate: String? = null
+)

@@ -6215,6 +6215,164 @@ fun Application.configureRouting() {
                     }
                 }
 
+                // Advertisement Management
+                route("/advertisements") {
+                    // Get all advertisements
+                    get {
+                        try {
+                            val includeInactive = call.request.queryParameters["includeInactive"]?.toBoolean() ?: false
+
+                            val ads = transaction {
+                                val query = if (includeInactive) {
+                                    Advertisements.selectAll()
+                                } else {
+                                    Advertisements.select { Advertisements.isActive eq true }
+                                }
+
+                                query.orderBy(Advertisements.displayOrder to SortOrder.ASC)
+                                    .map { row ->
+                                        AdvertisementDto(
+                                            id = row[Advertisements.id].toString(),
+                                            title = row[Advertisements.title],
+                                            description = row[Advertisements.description],
+                                            imageUrl = row[Advertisements.imageUrl],
+                                            linkUrl = row[Advertisements.linkUrl],
+                                            displayOrder = row[Advertisements.displayOrder],
+                                            isActive = row[Advertisements.isActive],
+                                            startDate = row[Advertisements.startDate].toString(),
+                                            endDate = row[Advertisements.endDate]?.toString(),
+                                            createdBy = row[Advertisements.createdBy].toString(),
+                                            createdAt = row[Advertisements.createdAt].toString(),
+                                            updatedAt = row[Advertisements.updatedAt].toString()
+                                        )
+                                    }
+                            }
+
+                            call.respond(HttpStatusCode.OK, ApiResponse(
+                                success = true,
+                                message = "Advertisements retrieved successfully",
+                                data = ads
+                            ))
+                        } catch (e: Exception) {
+                            call.respond(HttpStatusCode.InternalServerError, ApiResponse<String>(
+                                success = false,
+                                message = "Failed to retrieve advertisements: ${e.message}",
+                                error = e.message
+                            ))
+                        }
+                    }
+
+                    // Create new advertisement
+                    post {
+                        try {
+                            val request = call.receive<CreateAdvertisementRequest>()
+                            val sessionId = call.request.headers["Authorization"]?.removePrefix("Bearer ")
+
+                            val userId = sessionId?.let {
+                                transaction {
+                                    UserSessions.select {
+                                        (UserSessions.id eq UUID.fromString(it)) and (UserSessions.isActive eq true)
+                                    }.singleOrNull()?.get(UserSessions.userId)
+                                }
+                            }
+
+                            if (userId == null) {
+                                call.respond(HttpStatusCode.Unauthorized, ApiResponse<String>(
+                                    success = false,
+                                    message = "Unauthorized",
+                                    error = "UNAUTHORIZED"
+                                ))
+                                return@post
+                            }
+
+                            val adId = transaction {
+                                Advertisements.insert {
+                                    it[title] = request.title
+                                    it[description] = request.description
+                                    it[imageUrl] = request.imageUrl
+                                    it[linkUrl] = request.linkUrl
+                                    it[displayOrder] = request.displayOrder
+                                    it[isActive] = true
+                                    it[startDate] = request.startDate?.let { date ->
+                                        java.time.Instant.parse(date)
+                                    } ?: java.time.Instant.now()
+                                    it[endDate] = request.endDate?.let { date ->
+                                        java.time.Instant.parse(date)
+                                    }
+                                    it[createdBy] = userId
+                                }[Advertisements.id]
+                            }
+
+                            call.respond(HttpStatusCode.Created, ApiResponse(
+                                success = true,
+                                message = "Advertisement created successfully",
+                                data = mapOf("id" to adId.toString())
+                            ))
+                        } catch (e: Exception) {
+                            call.respond(HttpStatusCode.BadRequest, ApiResponse<String>(
+                                success = false,
+                                message = "Failed to create advertisement: ${e.message}",
+                                error = e.message
+                            ))
+                        }
+                    }
+
+                    // Update advertisement
+                    put("/{id}") {
+                        try {
+                            val adId = call.parameters["id"] ?: throw IllegalArgumentException("Advertisement ID required")
+                            val request = call.receive<UpdateAdvertisementRequest>()
+
+                            transaction {
+                                Advertisements.update({ Advertisements.id eq UUID.fromString(adId) }) { update ->
+                                    request.title?.let { update[title] = it }
+                                    request.description?.let { update[description] = it }
+                                    request.imageUrl?.let { update[imageUrl] = it }
+                                    request.linkUrl?.let { update[linkUrl] = it }
+                                    request.displayOrder?.let { update[displayOrder] = it }
+                                    request.isActive?.let { update[isActive] = it }
+                                    request.endDate?.let { update[endDate] = java.time.Instant.parse(it) }
+                                    update[updatedAt] = java.time.Instant.now()
+                                }
+                            }
+
+                            call.respond(HttpStatusCode.OK, ApiResponse(
+                                success = true,
+                                message = "Advertisement updated successfully",
+                                data = mapOf("id" to adId)
+                            ))
+                        } catch (e: Exception) {
+                            call.respond(HttpStatusCode.BadRequest, ApiResponse<String>(
+                                success = false,
+                                message = "Failed to update advertisement: ${e.message}",
+                                error = e.message
+                            ))
+                        }
+                    }
+
+                    // Delete advertisement
+                    delete("/{id}") {
+                        try {
+                            val adId = call.parameters["id"] ?: throw IllegalArgumentException("Advertisement ID required")
+
+                            transaction {
+                                Advertisements.deleteWhere { Advertisements.id eq UUID.fromString(adId) }
+                            }
+
+                            call.respond(HttpStatusCode.OK, ApiResponse(
+                                success = true,
+                                message = "Advertisement deleted successfully",
+                                data = mapOf("id" to adId)
+                            ))
+                        } catch (e: Exception) {
+                            call.respond(HttpStatusCode.BadRequest, ApiResponse<String>(
+                                success = false,
+                                message = "Failed to delete advertisement: ${e.message}",
+                                error = e.message
+                            ))
+                        }
+                    }
+                }
 
                 // Roles and Permissions management
                 route("/roles") {

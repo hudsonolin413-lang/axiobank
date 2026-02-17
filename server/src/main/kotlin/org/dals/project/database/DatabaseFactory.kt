@@ -114,7 +114,9 @@ object DatabaseFactory {
                         MpesaAuditTrail,
                         // Transaction Fee Management Tables
                         TransactionFeeStructure,
-                        TransactionFeeRecords
+                        TransactionFeeRecords,
+                        // Advertisement Management
+                        Advertisements
                     )
                 } catch (e: Exception) {
                     e.printStackTrace()
