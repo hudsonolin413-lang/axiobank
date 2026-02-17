@@ -6359,7 +6359,7 @@ fun Application.configureRouting() {
                             val adId = call.parameters["id"] ?: throw IllegalArgumentException("Advertisement ID required")
 
                             transaction {
-                                Advertisements.deleteWhere { id eq UUID.fromString(adId) }
+                                Advertisements.deleteWhere { Advertisements.id eq UUID.fromString(adId) }
                             }
 
                             call.respond(HttpStatusCode.OK, ApiResponse(
