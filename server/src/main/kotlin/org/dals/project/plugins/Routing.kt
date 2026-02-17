@@ -2924,7 +2924,6 @@ fun Application.configureRouting() {
                             val updateCount = transaction {
                                 val count = Customers.update({ Customers.id eq UUID.fromString(customerId) }) {
                                     it[kycStatus] = newStatus
-                                    it[kycVerifiedAt] = LocalDateTime.now()
                                 }
                                 println("   🔄 Database UPDATE executed - Rows affected: $count")
                                 count
