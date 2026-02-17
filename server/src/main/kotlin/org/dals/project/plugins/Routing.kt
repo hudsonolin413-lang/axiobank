@@ -2913,22 +2913,45 @@ fun Application.configureRouting() {
                             val customerId = request["customerId"] ?: throw IllegalArgumentException("Customer ID required")
                             val newStatus = request["status"] ?: throw IllegalArgumentException("Status required")
 
-                            println("📝 Updating KYC status for customer: $customerId to $newStatus")
+                            println("========================================")
+                            println("📝 KYC STATUS UPDATE REQUEST RECEIVED")
+                            println("   Customer ID: $customerId")
+                            println("   New Status: $newStatus")
+                            println("   Timestamp: ${LocalDateTime.now()}")
+                            println("========================================")
 
-                            transaction {
-                                Customers.update({ Customers.id eq UUID.fromString(customerId) }) {
+                            // Update database with explicit transaction
+                            val updateCount = transaction {
+                                val count = Customers.update({ Customers.id eq UUID.fromString(customerId) }) {
                                     it[kycStatus] = newStatus
+                                    it[kycVerifiedAt] = LocalDateTime.now()
                                 }
+                                println("   🔄 Database UPDATE executed - Rows affected: $count")
+                                count
                             }
 
-                            println("   ✅ KYC status updated successfully")
+                            // Verify the update
+                            val verifiedStatus = transaction {
+                                Customers.select { Customers.id eq UUID.fromString(customerId) }
+                                    .singleOrNull()?.get(Customers.kycStatus)
+                            }
+
+                            println("   ✅ KYC status updated successfully!")
+                            println("   📊 Rows affected: $updateCount")
+                            println("   🔍 Verified status in DB: $verifiedStatus")
+                            println("========================================")
 
                             call.respond(
                                 HttpStatusCode.OK,
                                 ApiResponse(
                                     success = true,
-                                    message = "KYC status updated successfully",
-                                    data = mapOf("customerId" to customerId, "status" to newStatus)
+                                    message = "User verified successfully",
+                                    data = mapOf(
+                                        "customerId" to customerId,
+                                        "status" to newStatus,
+                                        "verifiedStatus" to verifiedStatus,
+                                        "rowsAffected" to updateCount
+                                    )
                                 )
                             )
                         } catch (e: IllegalArgumentException) {
