@@ -34,6 +34,9 @@ import org.dals.project.models.MpesaWithdrawalRequest
 import org.dals.project.models.DrawerDto
 import org.dals.project.models.AssignDrawerRequest
 import org.dals.project.models.DrawerAssignmentDto
+import org.dals.project.models.AdvertisementDto
+import org.dals.project.models.CreateAdvertisementRequest
+import org.dals.project.models.UpdateAdvertisementRequest
 import org.dals.project.services.CreateWalletRequest
 import org.dals.project.services.CreateWalletTransactionRequest
 import org.dals.project.services.CreateWalletAllocationRequest
@@ -6356,7 +6359,7 @@ fun Application.configureRouting() {
                             val adId = call.parameters["id"] ?: throw IllegalArgumentException("Advertisement ID required")
 
                             transaction {
-                                Advertisements.deleteWhere { Advertisements.id eq UUID.fromString(adId) }
+                                Advertisements.deleteWhere { id eq UUID.fromString(adId) }
                             }
 
                             call.respond(HttpStatusCode.OK, ApiResponse(

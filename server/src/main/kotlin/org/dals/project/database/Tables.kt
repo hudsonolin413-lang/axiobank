@@ -1309,6 +1309,4 @@ object Advertisements : UUIDTable("advertisements") {
     val createdBy = uuid("created_by").references(Users.id)
     val createdAt = timestamp("created_at").defaultExpression(CurrentTimestamp())
     val updatedAt = timestamp("updated_at").defaultExpression(CurrentTimestamp())
-
-    override val primaryKey = PrimaryKey(id)
 }
