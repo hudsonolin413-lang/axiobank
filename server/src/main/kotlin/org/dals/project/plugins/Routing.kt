@@ -2977,6 +2977,11 @@ fun Application.configureRouting() {
                         }
                     }
 
+                    // Test endpoint to verify deployment
+                    get("/test-deployment") {
+                        call.respondText("KYC endpoint deployed - version c5e6e12", ContentType.Text.Plain, HttpStatusCode.OK)
+                    }
+
                     // Profile endpoint (requires valid token, for demo just returns profile by username param)
                     get("/profile/{username}") {
                         try {
