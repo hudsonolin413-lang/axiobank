@@ -1300,7 +1300,7 @@ object MpesaAuditTrail : Table("mpesa_audit_trail") {
 object Advertisements : UUIDTable("advertisements") {
     val title = varchar("title", 255)
     val description = text("description").nullable()
-    val imageUrl = varchar("image_url", 500)
+    val imageUrl = text("image_url") // Changed to text() to support base64 encoded images
     val linkUrl = varchar("link_url", 500).nullable()
     val displayOrder = integer("display_order").default(0)
     val isActive = bool("is_active").default(true)

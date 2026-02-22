@@ -30,9 +30,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.foundation.Image
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.dals.project.model.*
+import org.dals.project.model.Advertisement
 import org.dals.project.viewmodel.AuthViewModel
 import org.dals.project.viewmodel.TransactionViewModel
 import org.dals.project.utils.SettingsManager
@@ -43,6 +47,8 @@ import kotlinx.coroutines.launch
 import androidx.compose.material.icons.filled.Refresh
 import org.dals.project.ui.components.TransactionCardSkeleton
 import org.dals.project.ui.components.BalanceCardSkeleton
+import org.dals.project.repository.AdvertisementRepository
+import org.dals.project.utils.decodeBase64ToImageBitmap
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -59,6 +65,11 @@ fun HomeScreen(
 ) {
     val authUiState by authViewModel.uiState.collectAsStateWithLifecycle()
     val transactionUiState by transactionViewModel.uiState.collectAsStateWithLifecycle()
+
+    // Advertisement repository
+    val advertisementRepository = remember { AdvertisementRepository() }
+    val advertisements by advertisementRepository.advertisements.collectAsStateWithLifecycle()
+    val isLoadingAds by advertisementRepository.isLoading.collectAsStateWithLifecycle()
 
     // Get current currency from settings
     val settingsRepository = SettingsManager.settingsRepository
@@ -78,6 +89,7 @@ fun HomeScreen(
     // Auto-refresh when app starts
     LaunchedEffect(Unit) {
         transactionViewModel.refreshAllData()
+        advertisementRepository.fetchAdvertisements()
     }
 
     // Manual refresh function
@@ -85,6 +97,7 @@ fun HomeScreen(
         isRefreshing = true
         coroutineScope.launch {
             transactionViewModel.refreshAllData()
+            advertisementRepository.fetchAdvertisements()
             kotlinx.coroutines.delay(500) // Small delay for UX
             isRefreshing = false
         }
@@ -178,7 +191,10 @@ fun HomeScreen(
 
         // Advertisement Carousel
         item {
-            AdvertisementCarousel()
+            AdvertisementCarousel(
+                advertisements = advertisements,
+                isLoading = isLoadingAds
+            )
         }
 
         // Recent Transactions Section
@@ -1338,28 +1354,26 @@ private fun CompactQuickActionButton(
 }
 
 @Composable
-private fun AdvertisementCarousel() {
-    // TODO: Fetch ads from server
+private fun AdvertisementCarousel(
+    advertisements: List<Advertisement>,
+    isLoading: Boolean
+) {
     var currentAdIndex by remember { mutableStateOf(0) }
-    val sampleAds = remember {
-        listOf(
-            "Sample Ad 1",
-            "Sample Ad 2",
-            "Sample Ad 3"
-        )
-    }
 
-    LaunchedEffect(Unit) {
-        while (true) {
-            kotlinx.coroutines.delay(5000) // Auto-scroll every 5 seconds
-            currentAdIndex = (currentAdIndex + 1) % sampleAds.size
+    // Auto-scroll through ads
+    LaunchedEffect(advertisements.size) {
+        if (advertisements.isNotEmpty()) {
+            while (true) {
+                kotlinx.coroutines.delay(5000) // Auto-scroll every 5 seconds
+                currentAdIndex = (currentAdIndex + 1) % advertisements.size
+            }
         }
     }
 
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .height(150.dp),
+            .height(250.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer
@@ -1369,32 +1383,112 @@ private fun AdvertisementCarousel() {
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
-            Text(
-                text = sampleAds[currentAdIndex],
-                style = MaterialTheme.typography.headlineSmall,
-                color = MaterialTheme.colorScheme.onPrimaryContainer
-            )
+            when {
+                isLoading -> {
+                    CircularProgressIndicator(
+                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                    )
+                }
+                advertisements.isEmpty() -> {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Icon(
+                            Icons.Default.Rocket,
+                            contentDescription = null,
+                            modifier = Modifier.size(48.dp),
+                            tint = MaterialTheme.colorScheme.onPrimaryContainer
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = "No promotions available",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onPrimaryContainer
+                        )
+                    }
+                }
+                else -> {
+                    val currentAd = advertisements[currentAdIndex]
 
-            // Indicator dots
-            Row(
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .padding(8.dp),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                sampleAds.forEachIndexed { index, _ ->
+                    // Convert base64 image to ImageBitmap using platform-specific decoder
+                    val imageBitmap = remember(currentAd.imageUrl) {
+                        if (currentAd.imageUrl.startsWith("data:image/")) {
+                            decodeBase64ToImageBitmap(currentAd.imageUrl)
+                        } else {
+                            null
+                        }
+                    }
+
                     Box(
                         modifier = Modifier
-                            .size(8.dp)
-                            .padding(horizontal = 2.dp)
-                            .clip(RoundedCornerShape(4.dp))
-                            .background(
-                                if (index == currentAdIndex)
-                                    MaterialTheme.colorScheme.primary
-                                else
-                                    MaterialTheme.colorScheme.surfaceVariant
+                            .fillMaxSize()
+                            .background(Color.White)
+                            .clickable {
+                                currentAd.linkUrl?.let { url ->
+                                    println("Ad clicked: $url")
+                                }
+                            }
+                    ) {
+                        // Background image
+                        if (imageBitmap != null) {
+                            Image(
+                                bitmap = imageBitmap,
+                                contentDescription = currentAd.title,
+                                modifier = Modifier.fillMaxSize(),
+                                contentScale = ContentScale.Fit
                             )
-                    )
+                        }
+
+                        // Text content overlay
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(24.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Text(
+                                text = currentAd.title,
+                                style = MaterialTheme.typography.headlineSmall,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.Black,
+                                textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                            )
+                            currentAd.description?.let { desc ->
+                                Spacer(modifier = Modifier.height(8.dp))
+                                Text(
+                                    text = desc,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = Color.Black,
+                                    textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                                )
+                            }
+                        }
+                    }
+
+                    // Indicator dots
+                    Row(
+                        modifier = Modifier
+                            .align(Alignment.BottomCenter)
+                            .padding(bottom = 50.dp),
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        advertisements.forEachIndexed { index, _ ->
+                            Box(
+                                modifier = Modifier
+                                    .size(8.dp)
+                                    .padding(horizontal = 2.dp)
+                                    .clip(RoundedCornerShape(4.dp))
+                                    .background(
+                                        if (index == currentAdIndex)
+                                            MaterialTheme.colorScheme.primary
+                                        else
+                                            MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f)
+                                    )
+                            )
+                        }
+                    }
                 }
             }
         }

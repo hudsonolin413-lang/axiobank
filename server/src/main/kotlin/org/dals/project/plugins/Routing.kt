@@ -59,6 +59,7 @@ import org.dals.project.database.KycDocumentType
 import org.dals.project.database.KycDocumentStatus
 import org.dals.project.database.DocumentPriority
 import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.dals.project.database.MasterWalletTransactionType
 import org.jetbrains.exposed.sql.transactions.transaction
