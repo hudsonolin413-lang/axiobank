@@ -1010,6 +1010,8 @@ enum class TransactionType {
     MOBILE_MONEY_DEPOSIT,
     MOBILE_MONEY_WITHDRAWAL,
     REVERSAL
+//    QR_PAYMENT,  // TODO: Re-implement
+//    CARD_PAYMENT  // TODO: Re-implement
 }
 
 enum class TransactionStatus {
@@ -1145,6 +1147,14 @@ enum class OperationStatus {
 
 enum class Priority {
     LOW, MEDIUM, HIGH, CRITICAL
+}
+
+enum class TwoFactorMethod {
+    SMS, EMAIL, BOTH
+}
+
+enum class TwoFactorPurpose {
+    LOGIN, TRANSACTION, PASSWORD_RESET, CARD_ACTIVATION, WITHDRAWAL, LOAN_APPROVAL, SETTINGS_CHANGE
 }
 
 // ==================== BRANCH OPERATIONS TABLES ====================
@@ -1307,6 +1317,308 @@ object Advertisements : UUIDTable("advertisements") {
     val startDate = timestamp("start_date").defaultExpression(CurrentTimestamp())
     val endDate = timestamp("end_date").nullable()
     val createdBy = uuid("created_by").references(Users.id)
+    val createdAt = timestamp("created_at").defaultExpression(CurrentTimestamp())
+    val updatedAt = timestamp("updated_at").defaultExpression(CurrentTimestamp())
+}
+
+// ==================== CRYPTO WALLET TABLES ====================
+
+object CryptoAssets : UUIDTable("crypto_assets") {
+    val symbol = varchar("symbol", 10).uniqueIndex()
+    val name = varchar("name", 100)
+    val currentPriceUsd = decimal("current_price_usd", 18, 8)
+    val change24h = decimal("change_24h", 10, 4).default(java.math.BigDecimal.ZERO)
+    val marketCap = decimal("market_cap", 20, 2).nullable()
+    val volume24h = decimal("volume_24h", 20, 2).nullable()
+    val colorHex = varchar("color_hex", 10).default("0xFF627EEA")
+    val iconUrl = text("icon_url").nullable()
+    val isActive = bool("is_active").default(true)
+    val lastUpdated = timestamp("last_updated").defaultExpression(CurrentTimestamp())
+    val createdAt = timestamp("created_at").defaultExpression(CurrentTimestamp())
+}
+
+object CryptoWallets : UUIDTable("crypto_wallets") {
+    val customerId = uuid("customer_id").references(Customers.id, onDelete = ReferenceOption.CASCADE)
+    val assetId = uuid("asset_id").references(CryptoAssets.id)
+    val balance = decimal("balance", 18, 8).default(java.math.BigDecimal.ZERO)
+    val walletAddress = varchar("wallet_address", 255).nullable()
+    val isActive = bool("is_active").default(true)
+    val createdAt = timestamp("created_at").defaultExpression(CurrentTimestamp())
+    val updatedAt = timestamp("updated_at").defaultExpression(CurrentTimestamp())
+    
+    init {
+        uniqueIndex(customerId, assetId)
+    }
+}
+
+object CryptoTransactions : UUIDTable("crypto_transactions") {
+    val customerId = uuid("customer_id").references(Customers.id)
+    val walletId = uuid("wallet_id").references(CryptoWallets.id)
+    val assetId = uuid("asset_id").references(CryptoAssets.id)
+    val type = varchar("type", 20) // BUY, SELL, SEND, RECEIVE
+    val amount = decimal("amount", 18, 8)
+    val priceUsd = decimal("price_usd", 18, 8)
+    val totalUsd = decimal("total_usd", 18, 2)
+    val fee = decimal("fee", 18, 8).default(java.math.BigDecimal.ZERO)
+    val toAddress = varchar("to_address", 255).nullable()
+    val fromAddress = varchar("from_address", 255).nullable()
+    val txHash = varchar("tx_hash", 255).nullable()
+    val status = varchar("status", 20).default("COMPLETED")
+    val createdAt = timestamp("created_at").defaultExpression(CurrentTimestamp())
+}
+
+// ==================== BUDGET MANAGEMENT TABLES ====================
+
+object Budgets : UUIDTable("budgets") {
+    val customerId = uuid("customer_id").references(Customers.id, onDelete = ReferenceOption.CASCADE)
+    val category = varchar("category", 50)
+    val monthlyLimit = decimal("monthly_limit", 15, 2)
+    val currentSpent = decimal("current_spent", 15, 2).default(java.math.BigDecimal.ZERO)
+    val alertThreshold = integer("alert_threshold").default(80) // percentage
+    val colorHex = varchar("color_hex", 10).default("0xFF4CAF50")
+    val iconName = varchar("icon_name", 50).default("Category")
+    val isActive = bool("is_active").default(true)
+    val month = integer("month") // 1-12
+    val year = integer("year")
+    val createdAt = timestamp("created_at").defaultExpression(CurrentTimestamp())
+    val updatedAt = timestamp("updated_at").defaultExpression(CurrentTimestamp())
+}
+
+// ==================== SUB-ACCOUNTS / POCKETS ====================
+
+object SubAccounts : UUIDTable("sub_accounts") {
+    val customerId = uuid("customer_id").references(Customers.id, onDelete = ReferenceOption.CASCADE)
+    val parentAccountId = uuid("parent_account_id").references(Accounts.id)
+    val name = varchar("name", 100)
+    val description = text("description").nullable()
+    val targetAmount = decimal("target_amount", 15, 2).nullable()
+    val currentBalance = decimal("current_balance", 15, 2).default(java.math.BigDecimal.ZERO)
+    val iconName = varchar("icon_name", 50).default("Savings")
+    val colorHex = varchar("color_hex", 10).default("0xFF2196F3")
+    val targetDate = date("target_date").nullable()
+    val isLocked = bool("is_locked").default(false)
+    val autoTransferAmount = decimal("auto_transfer_amount", 15, 2).nullable()
+    val autoTransferFrequency = varchar("auto_transfer_frequency", 20).nullable() // DAILY, WEEKLY, MONTHLY
+    val isActive = bool("is_active").default(true)
+    val createdAt = timestamp("created_at").defaultExpression(CurrentTimestamp())
+    val updatedAt = timestamp("updated_at").defaultExpression(CurrentTimestamp())
+}
+
+// ==================== BENEFICIARIES ====================
+
+object Beneficiaries : UUIDTable("beneficiaries") {
+    val customerId = uuid("customer_id").references(Customers.id, onDelete = ReferenceOption.CASCADE)
+    val name = varchar("name", 255)
+    val nickname = varchar("nickname", 100).nullable()
+    val accountNumber = varchar("account_number", 50).nullable()
+    val bankName = varchar("bank_name", 255).nullable()
+    val bankCode = varchar("bank_code", 20).nullable()
+    val phoneNumber = varchar("phone_number", 20).nullable()
+    val email = varchar("email", 255).nullable()
+    val type = varchar("type", 20).default("BANK") // BANK, MOBILE, INTERNAL
+    val isFavorite = bool("is_favorite").default(false)
+    val lastUsed = timestamp("last_used").nullable()
+    val transferCount = integer("transfer_count").default(0)
+    val isVerified = bool("is_verified").default(false)
+    val isActive = bool("is_active").default(true)
+    val createdAt = timestamp("created_at").defaultExpression(CurrentTimestamp())
+    val updatedAt = timestamp("updated_at").defaultExpression(CurrentTimestamp())
+}
+
+// ==================== DEVICE MANAGEMENT ====================
+
+object UserDevices : UUIDTable("user_devices") {
+    val customerId = uuid("customer_id").references(Customers.id, onDelete = ReferenceOption.CASCADE)
+    val deviceId = varchar("device_id", 255)
+    val deviceName = varchar("device_name", 255)
+    val deviceType = varchar("device_type", 50) // MOBILE, TABLET, DESKTOP, WEB
+    val osName = varchar("os_name", 50).nullable()
+    val osVersion = varchar("os_version", 50).nullable()
+    val appVersion = varchar("app_version", 20).nullable()
+    val pushToken = text("push_token").nullable()
+    val lastLoginAt = timestamp("last_login_at").defaultExpression(CurrentTimestamp())
+    val lastIpAddress = varchar("last_ip_address", 45).nullable()
+    val location = varchar("location", 255).nullable()
+    val isTrusted = bool("is_trusted").default(false)
+    val isCurrentDevice = bool("is_current_device").default(false)
+    val biometricEnabled = bool("biometric_enabled").default(false)
+    val isActive = bool("is_active").default(true)
+    val createdAt = timestamp("created_at").defaultExpression(CurrentTimestamp())
+    val updatedAt = timestamp("updated_at").defaultExpression(CurrentTimestamp())
+    
+    init {
+        uniqueIndex(customerId, deviceId)
+    }
+}
+
+// ==================== ATM LOCATIONS ====================
+
+object ATMLocations : UUIDTable("atm_locations") {
+    val branchId = uuid("branch_id").references(Branches.id).nullable()
+    val name = varchar("name", 255)
+    val address = text("address")
+    val city = varchar("city", 100)
+    val state = varchar("state", 50).nullable()
+    val country = varchar("country", 50).default("Kenya")
+    val latitude = decimal("latitude", 10, 7)
+    val longitude = decimal("longitude", 10, 7)
+    val isOperational = bool("is_operational").default(true)
+    val has24HourAccess = bool("has_24_hour_access").default(true)
+    val hasDeposit = bool("has_deposit").default(false)
+    val hasWithdrawal = bool("has_withdrawal").default(true)
+    val hasCashRecycling = bool("has_cash_recycling").default(false)
+    val maxWithdrawal = decimal("max_withdrawal", 15, 2).default(java.math.BigDecimal("50000"))
+    val supportedCurrencies = varchar("supported_currencies", 100).default("KES,USD")
+    val lastMaintenanceDate = date("last_maintenance_date").nullable()
+    val nextMaintenanceDate = date("next_maintenance_date").nullable()
+    val createdAt = timestamp("created_at").defaultExpression(CurrentTimestamp())
+    val updatedAt = timestamp("updated_at").defaultExpression(CurrentTimestamp())
+}
+
+// ==================== INTERNATIONAL TRANSFERS ====================
+
+object InternationalTransfers : UUIDTable("international_transfers") {
+    val customerId = uuid("customer_id").references(Customers.id)
+    val fromAccountId = uuid("from_account_id").references(Accounts.id)
+    val recipientName = varchar("recipient_name", 255)
+    val recipientBank = varchar("recipient_bank", 255)
+    val recipientAccountNumber = varchar("recipient_account_number", 50)
+    val recipientSwiftCode = varchar("recipient_swift_code", 20)
+    val recipientCountry = varchar("recipient_country", 100)
+    val recipientAddress = text("recipient_address").nullable()
+    val sendAmount = decimal("send_amount", 15, 2)
+    val sendCurrency = varchar("send_currency", 3)
+    val receiveAmount = decimal("receive_amount", 15, 2)
+    val receiveCurrency = varchar("receive_currency", 3)
+    val exchangeRate = decimal("exchange_rate", 15, 6)
+    val fee = decimal("fee", 15, 2)
+    val purpose = varchar("purpose", 255)
+    val reference = varchar("reference", 100)
+    val status = varchar("status", 20).default("PENDING")
+    val estimatedDelivery = timestamp("estimated_delivery").nullable()
+    val completedAt = timestamp("completed_at").nullable()
+    val createdAt = timestamp("created_at").defaultExpression(CurrentTimestamp())
+    val updatedAt = timestamp("updated_at").defaultExpression(CurrentTimestamp())
+}
+
+// ==================== OVERDRAFT PROTECTION ====================
+
+object OverdraftSettings : UUIDTable("overdraft_settings") {
+    val customerId = uuid("customer_id").references(Customers.id, onDelete = ReferenceOption.CASCADE)
+    val accountId = uuid("account_id").references(Accounts.id)
+    val isEnabled = bool("is_enabled").default(false)
+    val overdraftLimit = decimal("overdraft_limit", 15, 2).default(java.math.BigDecimal.ZERO)
+    val usedAmount = decimal("used_amount", 15, 2).default(java.math.BigDecimal.ZERO)
+    val interestRate = decimal("interest_rate", 5, 2).default(java.math.BigDecimal("15.00"))
+    val linkedSavingsAccountId = uuid("linked_savings_account_id").references(Accounts.id).nullable()
+    val autoRepayEnabled = bool("auto_repay_enabled").default(true)
+    val lastUsedAt = timestamp("last_used_at").nullable()
+    val createdAt = timestamp("created_at").defaultExpression(CurrentTimestamp())
+    val updatedAt = timestamp("updated_at").defaultExpression(CurrentTimestamp())
+    
+    init {
+        uniqueIndex(customerId, accountId)
+    }
+}
+
+// ==================== TAX REPORTS ====================
+
+object TaxReports : UUIDTable("tax_reports") {
+    val customerId = uuid("customer_id").references(Customers.id, onDelete = ReferenceOption.CASCADE)
+    val year = integer("year")
+    val reportType = varchar("report_type", 50) // ANNUAL, QUARTERLY, INTEREST_EARNED, CAPITAL_GAINS
+    val totalIncome = decimal("total_income", 15, 2).default(java.math.BigDecimal.ZERO)
+    val totalExpenses = decimal("total_expenses", 15, 2).default(java.math.BigDecimal.ZERO)
+    val interestEarned = decimal("interest_earned", 15, 2).default(java.math.BigDecimal.ZERO)
+    val interestPaid = decimal("interest_paid", 15, 2).default(java.math.BigDecimal.ZERO)
+    val capitalGains = decimal("capital_gains", 15, 2).default(java.math.BigDecimal.ZERO)
+    val dividends = decimal("dividends", 15, 2).default(java.math.BigDecimal.ZERO)
+    val taxWithheld = decimal("tax_withheld", 15, 2).default(java.math.BigDecimal.ZERO)
+    val documentUrl = text("document_url").nullable()
+    val status = varchar("status", 20).default("GENERATED")
+    val generatedAt = timestamp("generated_at").defaultExpression(CurrentTimestamp())
+    val createdAt = timestamp("created_at").defaultExpression(CurrentTimestamp())
+}
+
+// ==================== DIGITAL SIGNATURES ====================
+
+object DigitalSignatures : UUIDTable("digital_signatures") {
+    val customerId = uuid("customer_id").references(Customers.id, onDelete = ReferenceOption.CASCADE)
+    val documentId = varchar("document_id", 100)
+    val documentType = varchar("document_type", 50)
+    val documentName = varchar("document_name", 255)
+    val signatureData = text("signature_data") // Base64 encoded signature image
+    val signedAt = timestamp("signed_at").defaultExpression(CurrentTimestamp())
+    val ipAddress = varchar("ip_address", 45).nullable()
+    val deviceInfo = text("device_info").nullable()
+    val isValid = bool("is_valid").default(true)
+    val verificationHash = varchar("verification_hash", 255)
+    val createdAt = timestamp("created_at").defaultExpression(CurrentTimestamp())
+}
+
+// ==================== SPLIT BILLS ====================
+
+object SplitBills : UUIDTable("split_bills") {
+    val creatorId = uuid("creator_id").references(Customers.id)
+    val description = varchar("description", 255)
+    val totalAmount = decimal("total_amount", 15, 2)
+    val currency = varchar("currency", 3).default("USD")
+    val splitEqually = bool("split_equally").default(true)
+    val status = varchar("status", 20).default("PENDING") // PENDING, PARTIAL, COMPLETED, CANCELLED
+    val dueDate = timestamp("due_date").nullable()
+    val createdAt = timestamp("created_at").defaultExpression(CurrentTimestamp())
+    val updatedAt = timestamp("updated_at").defaultExpression(CurrentTimestamp())
+}
+
+object SplitBillParticipants : UUIDTable("split_bill_participants") {
+    val splitBillId = uuid("split_bill_id").references(SplitBills.id, onDelete = ReferenceOption.CASCADE)
+    val customerId = uuid("customer_id").references(Customers.id).nullable()
+    val name = varchar("name", 255)
+    val email = varchar("email", 255).nullable()
+    val phoneNumber = varchar("phone_number", 20).nullable()
+    val amount = decimal("amount", 15, 2)
+    val isPaid = bool("is_paid").default(false)
+    val paidAt = timestamp("paid_at").nullable()
+    val reminderSent = bool("reminder_sent").default(false)
+    val createdAt = timestamp("created_at").defaultExpression(CurrentTimestamp())
+}
+
+// ==================== REFERRALS ====================
+
+object Referrals : UUIDTable("referrals") {
+    val referrerId = uuid("referrer_id").references(Customers.id)
+    val referredId = uuid("referred_id").references(Customers.id).nullable()
+    val referralCode = varchar("referral_code", 20).uniqueIndex()
+    val referredEmail = varchar("referred_email", 255).nullable()
+    val referredPhone = varchar("referred_phone", 20).nullable()
+    val status = varchar("status", 20).default("PENDING") // PENDING, REGISTERED, COMPLETED, EXPIRED
+    val rewardAmount = decimal("reward_amount", 15, 2).default(java.math.BigDecimal.ZERO)
+    val rewardPaid = bool("reward_paid").default(false)
+    val rewardPaidAt = timestamp("reward_paid_at").nullable()
+    val expiresAt = timestamp("expires_at").nullable()
+    val createdAt = timestamp("created_at").defaultExpression(CurrentTimestamp())
+    val updatedAt = timestamp("updated_at").defaultExpression(CurrentTimestamp())
+}
+
+// ==================== AUTO-PAY / SCHEDULED PAYMENTS ====================
+
+object ScheduledPayments : UUIDTable("scheduled_payments") {
+    val customerId = uuid("customer_id").references(Customers.id, onDelete = ReferenceOption.CASCADE)
+    val accountId = uuid("account_id").references(Accounts.id)
+    val beneficiaryId = uuid("beneficiary_id").references(Beneficiaries.id).nullable()
+    val paymentType = varchar("payment_type", 50) // BILL, TRANSFER, LOAN_PAYMENT
+    val recipientName = varchar("recipient_name", 255)
+    val recipientAccount = varchar("recipient_account", 100)
+    val amount = decimal("amount", 15, 2)
+    val currency = varchar("currency", 3).default("USD")
+    val frequency = varchar("frequency", 20) // ONCE, DAILY, WEEKLY, BIWEEKLY, MONTHLY, QUARTERLY, YEARLY
+    val nextExecutionDate = date("next_execution_date")
+    val lastExecutionDate = date("last_execution_date").nullable()
+    val endDate = date("end_date").nullable()
+    val executionCount = integer("execution_count").default(0)
+    val maxExecutions = integer("max_executions").nullable()
+    val description = text("description").nullable()
+    val isActive = bool("is_active").default(true)
     val createdAt = timestamp("created_at").defaultExpression(CurrentTimestamp())
     val updatedAt = timestamp("updated_at").defaultExpression(CurrentTimestamp())
 }
