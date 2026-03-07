@@ -1,13 +1,14 @@
 package org.dals.project.services
 
-import org.dals.project.database.*
+import org.dals.project.database.Customers
+import org.dals.project.database.DatabaseFactory
+import org.dals.project.database.Referrals
 import org.dals.project.models.ApiResponse
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import java.time.Instant
 import java.util.*
 import kotlinx.serialization.Serializable
-import org.jetbrains.exposed.sql.SortOrder
 
 @Serializable
 data class ReferralDto(
@@ -40,7 +41,7 @@ class ReferralService {
     suspend fun getReferralsByReferrer(referrerId: UUID): List<ReferralDto> {
         return DatabaseFactory.dbQuery {
             Referrals.select { Referrals.referrerId eq referrerId }
-                .orderBy(Referrals.createdAt, SortOrder.DESC)
+                .orderBy(Referrals.createdAt to SortOrder.DESC)
                 .map { row ->
                     ReferralDto(
                         id = row[Referrals.id].value.toString(),
