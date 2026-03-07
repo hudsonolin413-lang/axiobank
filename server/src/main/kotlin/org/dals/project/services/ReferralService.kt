@@ -7,6 +7,7 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import java.time.Instant
 import java.util.*
 import kotlinx.serialization.Serializable
+import org.jetbrains.exposed.sql.SortOrder
 
 @Serializable
 data class ReferralDto(
