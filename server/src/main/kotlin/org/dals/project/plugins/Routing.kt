@@ -6216,7 +6216,8 @@ fun Application.configureRouting() {
             masterWalletDashboardRoutes()
 
             // Tax report routes
-            taxReportRoutes()
+            // TODO: Implement taxReportRoutes
+            // taxReportRoutes()
 
             // ==================== LEGACY ADMIN ROUTES (Keep for compatibility) ====================
             route("/admin") {
