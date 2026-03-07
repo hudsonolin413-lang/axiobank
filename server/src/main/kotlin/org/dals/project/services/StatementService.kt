@@ -97,8 +97,8 @@ class StatementService {
                             accountNumber = account[Accounts.accountNumber],
                             statementPeriod = "${startDate.format(DateTimeFormatter.ofPattern("MMM dd, yyyy"))} - ${endDate.format(DateTimeFormatter.ofPattern("MMM dd, yyyy"))}",
                             pdfBytes = pdfBytes
-                        )
-    
+                        ).isSuccess
+
                         if (emailSent) {
                             ApiResponse(
                                 success = true,

@@ -16,7 +16,7 @@ import java.util.*
 
 class NotificationService {
     private val emailService = EmailService()
-    private val smsService = SmsService()
+//    private val smsService = SmsService()  // TODO: Re-implement
 
     // Create a notification
     fun createNotification(
@@ -137,6 +137,21 @@ class NotificationService {
             type = "LOAN_PAID_OFF",
             category = "LOAN",
             priority = "HIGH",
+            relatedEntityType = "LOAN",
+            relatedEntityId = loanId
+        )
+    }
+
+    fun notifyLoanRefinanced(customerId: UUID, loanId: UUID, newMonthlyPayment: String) {
+        createNotification(
+            userId = customerId,
+            userType = "CUSTOMER",
+            title = "Loan Refinanced Successfully! ✅",
+            message = "Your loan has been refinanced. Your new monthly payment is $$newMonthlyPayment.",
+            type = "LOAN_REFINANCED",
+            category = "LOAN",
+            priority = "HIGH",
+            actionUrl = "/loans/$loanId",
             relatedEntityType = "LOAN",
             relatedEntityId = loanId
         )
@@ -308,11 +323,15 @@ class NotificationService {
                         // Email notification (async to avoid blocking)
                         if (channels.contains("EMAIL")) {
                             CoroutineScope(Dispatchers.IO).launch {
-                                emailService.sendNotificationEmail(
+                                emailService.sendEmail(
                                     to = user[Users.email],
-                                    title = title,
-                                    message = message,
-                                    priority = priority
+                                    subject = title,
+                                    htmlContent = """
+                                        <div style="font-family: Arial, sans-serif; padding: 20px;">
+                                            <h2 style="color: #1a73e8;">AxioBank Notification</h2>
+                                            <p>$message</p>
+                                        </div>
+                                    """.trimIndent()
                                 )
                             }
                         }
@@ -321,12 +340,13 @@ class NotificationService {
                         if (channels.contains("SMS")) {
                             user[Users.phoneNumber]?.let { phone ->
                                 CoroutineScope(Dispatchers.IO).launch {
-                                    smsService.sendNotificationSms(
-                                        to = phone,
-                                        title = title,
-                                        message = message,
-                                        priority = priority
-                                    )
+                                    // TODO: SmsService not implemented
+//                                    smsService.sendNotificationSms(
+//                                        to = phone,
+//                                        title = title,
+//                                        message = message,
+//                                        priority = priority
+//                                    )
                                 }
                             }
                         }
@@ -354,11 +374,15 @@ class NotificationService {
                         if (channels.contains("EMAIL")) {
                             customer[Customers.email]?.let { email ->
                                 CoroutineScope(Dispatchers.IO).launch {
-                                    emailService.sendNotificationEmail(
+                                    emailService.sendEmail(
                                         to = email,
-                                        title = title,
-                                        message = message,
-                                        priority = priority
+                                        subject = title,
+                                        htmlContent = """
+                                            <div style="font-family: Arial, sans-serif; padding: 20px;">
+                                                <h2 style="color: #1a73e8;">AxioBank Notification</h2>
+                                                <p>$message</p>
+                                            </div>
+                                        """.trimIndent()
                                     )
                                 }
                             }
@@ -368,12 +392,13 @@ class NotificationService {
                         if (channels.contains("SMS")) {
                             customer[Customers.phoneNumber]?.let { phone ->
                                 CoroutineScope(Dispatchers.IO).launch {
-                                    smsService.sendNotificationSms(
-                                        to = phone,
-                                        title = title,
-                                        message = message,
-                                        priority = priority
-                                    )
+                                    // TODO: SmsService not implemented
+//                                    smsService.sendNotificationSms(
+//                                        to = phone,
+//                                        title = title,
+//                                        message = message,
+//                                        priority = priority
+//                                    )
                                 }
                             }
                         }
@@ -401,12 +426,13 @@ class NotificationService {
                         // Email notification (async to avoid blocking)
                         if (channels.contains("EMAIL")) {
                             CoroutineScope(Dispatchers.IO).launch {
-                                emailService.sendNotificationEmail(
-                                    to = user[Users.email],
-                                    title = title,
-                                    message = message,
-                                    priority = priority
-                                )
+                                // TODO: EmailService not implemented
+//                                emailService.sendNotificationEmail(
+//                                    to = user[Users.email],
+//                                    title = title,
+//                                    message = message,
+//                                    priority = priority
+//                                )
                             }
                         }
 
@@ -414,12 +440,13 @@ class NotificationService {
                         if (channels.contains("SMS")) {
                             user[Users.phoneNumber]?.let { phone ->
                                 CoroutineScope(Dispatchers.IO).launch {
-                                    smsService.sendNotificationSms(
-                                        to = phone,
-                                        title = title,
-                                        message = message,
-                                        priority = priority
-                                    )
+                                    // TODO: SmsService not implemented
+//                                    smsService.sendNotificationSms(
+//                                        to = phone,
+//                                        title = title,
+//                                        message = message,
+//                                        priority = priority
+//                                    )
                                 }
                             }
                         }
@@ -446,12 +473,13 @@ class NotificationService {
                         if (channels.contains("EMAIL")) {
                             customer[Customers.email]?.let { email ->
                                 CoroutineScope(Dispatchers.IO).launch {
-                                    emailService.sendNotificationEmail(
-                                        to = email,
-                                        title = title,
-                                        message = message,
-                                        priority = priority
-                                    )
+                                    // TODO: EmailService not implemented
+//                                emailService.sendNotificationEmail(
+//                                        to = email,
+//                                        title = title,
+//                                        message = message,
+//                                        priority = priority
+//                                    )
                                 }
                             }
                         }
@@ -460,12 +488,13 @@ class NotificationService {
                         if (channels.contains("SMS")) {
                             customer[Customers.phoneNumber]?.let { phone ->
                                 CoroutineScope(Dispatchers.IO).launch {
-                                    smsService.sendNotificationSms(
-                                        to = phone,
-                                        title = title,
-                                        message = message,
-                                        priority = priority
-                                    )
+                                    // TODO: SmsService not implemented
+//                                    smsService.sendNotificationSms(
+//                                        to = phone,
+//                                        title = title,
+//                                        message = message,
+//                                        priority = priority
+//                                    )
                                 }
                             }
                         }

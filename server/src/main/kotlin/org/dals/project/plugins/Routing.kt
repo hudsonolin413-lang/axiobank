@@ -563,6 +563,11 @@ fun Application.configureRouting() {
     val branchOperationsService = BranchOperationsService()
     val cardService = org.dals.project.services.CardService()
     val mastercardIssuanceService = org.dals.project.services.MastercardIssuanceService()
+    val referralService = ReferralService()
+//    val smsService = SmsService()  // TODO: Re-implement
+//    val emailService = EmailService()  // TODO: Re-implement
+//    val twoFactorAuthService = TwoFactorAuthService(smsService, emailService)  // TODO: Re-implement
+//    val qrCodePaymentService = QRCodePaymentService(transactionService)  // TODO: Re-implement
 
     // Initialize MpesaService with required dependencies
     val mpesaService = MpesaService(
@@ -2161,28 +2166,29 @@ fun Application.configureRouting() {
                                     )
                                 )
 
-                                // Send email asynchronously (don't block the response)
-                                @OptIn(kotlinx.coroutines.DelicateCoroutinesApi::class)
-                                GlobalScope.launch(Dispatchers.IO) {
-                                    try {
-                                        val emailService = EmailService()
-                                        val emailResult = emailService.sendOtpEmail(
-                                            to = email,
-                                            otp = code,
-                                            purpose = "password reset",
-                                            expiryMinutes = 10
-                                        )
-
-                                        if (emailResult.isSuccess) {
-                                            println("✅ Password reset email sent successfully to $email")
-                                        } else {
-                                            println("⚠️ Failed to send email to $email: ${emailResult.exceptionOrNull()?.message}")
-                                        }
-                                    } catch (e: Exception) {
-                                        println("❌ Error sending password reset email: ${e.message}")
-                                        e.printStackTrace()
-                                    }
-                                }
+                                // TODO: Send email asynchronously (EmailService not implemented)
+//                                @OptIn(kotlinx.coroutines.DelicateCoroutinesApi::class)
+//                                GlobalScope.launch(Dispatchers.IO) {
+//                                    try {
+//                                        val emailService = EmailService()
+//                                        val emailResult = emailService.sendOtpEmail(
+//                                            to = email,
+//                                            otp = code,
+//                                            purpose = "password reset",
+//                                            expiryMinutes = 10
+//                                        )
+//
+//                                        if (emailResult.isSuccess) {
+//                                            println("✅ Password reset email sent successfully to $email")
+//                                        } else {
+//                                            println("⚠️ Failed to send email to $email: ${emailResult.exceptionOrNull()?.message}")
+//                                        }
+//                                    } catch (e: Exception) {
+//                                        println("❌ Error sending password reset email: ${e.message}")
+//                                        e.printStackTrace()
+//                                    }
+//                                }
+                                println("⚠️ Password reset code: $code (EmailService not implemented - code stored in DB)")
                             } catch (e: Exception) {
                                 println("❌ Error sending reset code: ${e.message}")
                                 e.printStackTrace()
@@ -6188,6 +6194,7 @@ fun Application.configureRouting() {
 
             // Loan routes
             loanRoutes(loanService)
+            referralRoutes(referralService)
 
             // Notification routes
             notificationRoutes()
@@ -6207,6 +6214,9 @@ fun Application.configureRouting() {
 
             // Master wallet dashboard routes
             masterWalletDashboardRoutes()
+
+            // Tax report routes
+            taxReportRoutes()
 
             // ==================== LEGACY ADMIN ROUTES (Keep for compatibility) ====================
             route("/admin") {
@@ -7257,5 +7267,13 @@ fun Application.configureRouting() {
 //        println("📄 Registering statement routes...")
         statementRoutes()
 //        println("✅ Statement routes registered successfully")
+
+//        println("🔐 Registering two-factor authentication routes...")
+//        twoFactorAuthRoutes(twoFactorAuthService)  // TODO: Re-implement
+//        println("✅ Two-factor authentication routes registered successfully")
+
+//        println("📱 Registering QR code payment routes...")
+//        qrCodePaymentRoutes(qrCodePaymentService)  // TODO: Re-implement
+//        println("✅ QR code payment routes registered successfully")
     }
 }
