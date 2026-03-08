@@ -112,10 +112,12 @@ object AccountStatementUtils {
                         TransactionType.WITHDRAWAL -> "WITHDRAW"
                         TransactionType.DEPOSIT -> "DEPOSIT"
                         TransactionType.RENT_PAYMENT -> "RENT PAY"
+                        TransactionType.QR_PAYMENT -> "QR PAY"
+                        TransactionType.QR_RECEIPT -> "QR RECEIVED"
                     }
 
                     val amountStr = when (transaction.type) {
-                        TransactionType.RECEIVE, TransactionType.DEPOSIT -> {
+                        TransactionType.RECEIVE, TransactionType.DEPOSIT, TransactionType.QR_RECEIPT -> {
                             totalCredits += transaction.amount
                             "+${CurrencyUtils.formatAmount(transaction.amount, transaction.currency)}"
                         }

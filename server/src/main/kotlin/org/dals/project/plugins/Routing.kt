@@ -6219,6 +6219,9 @@ fun Application.configureRouting() {
             // TODO: Implement taxReportRoutes
             // taxReportRoutes()
 
+            // QR Payment routes
+            qrPaymentRoutes()
+
             // ==================== LEGACY ADMIN ROUTES (Keep for compatibility) ====================
             route("/admin") {
 

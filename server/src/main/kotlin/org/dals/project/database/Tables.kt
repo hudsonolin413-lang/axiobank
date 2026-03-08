@@ -1009,8 +1009,9 @@ enum class TransactionType {
     MPESA_B2C_PAYMENT,
     MOBILE_MONEY_DEPOSIT,
     MOBILE_MONEY_WITHDRAWAL,
-    REVERSAL
-//    QR_PAYMENT,  // TODO: Re-implement
+    REVERSAL,
+    QR_PAYMENT,
+    QR_RECEIPT
 //    CARD_PAYMENT  // TODO: Re-implement
 }
 

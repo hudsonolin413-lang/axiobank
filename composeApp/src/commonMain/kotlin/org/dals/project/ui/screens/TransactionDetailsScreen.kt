@@ -136,6 +136,8 @@ private fun TransactionSummaryCard(
                             TransactionType.INVESTMENT -> Icons.AutoMirrored.Outlined.TrendingUp
                             TransactionType.WITHDRAWAL -> Icons.Outlined.AccountBalanceWallet
                             TransactionType.DEPOSIT -> Icons.Outlined.Savings
+                            TransactionType.QR_PAYMENT -> Icons.Outlined.QrCodeScanner
+                            TransactionType.QR_RECEIPT -> Icons.Outlined.QrCode2
                         },
                         contentDescription = null,
                         modifier = Modifier.size(40.dp),
@@ -152,10 +154,10 @@ private fun TransactionSummaryCard(
                 text = when (transaction.type) {
                     TransactionType.SEND, TransactionType.BILL_PAYMENT,
                     TransactionType.WITHDRAWAL, TransactionType.INVESTMENT,
-                    TransactionType.RENT_PAYMENT, TransactionType.LOAN_PAYMENT ->
+                    TransactionType.RENT_PAYMENT, TransactionType.LOAN_PAYMENT, TransactionType.QR_PAYMENT ->
                         "-${CurrencyUtils.formatAmount(convertedAmount, currentCurrency)}"
 
-                    TransactionType.RECEIVE, TransactionType.DEPOSIT ->
+                    TransactionType.RECEIVE, TransactionType.DEPOSIT, TransactionType.QR_RECEIPT ->
                         "+${CurrencyUtils.formatAmount(convertedAmount, currentCurrency)}"
                 },
                 style = MaterialTheme.typography.displaySmall,
@@ -163,10 +165,10 @@ private fun TransactionSummaryCard(
                 color = when (transaction.type) {
                     TransactionType.SEND, TransactionType.BILL_PAYMENT,
                     TransactionType.WITHDRAWAL, TransactionType.INVESTMENT,
-                    TransactionType.RENT_PAYMENT, TransactionType.LOAN_PAYMENT ->
+                    TransactionType.RENT_PAYMENT, TransactionType.LOAN_PAYMENT, TransactionType.QR_PAYMENT ->
                         MaterialTheme.colorScheme.error
 
-                    TransactionType.RECEIVE, TransactionType.DEPOSIT ->
+                    TransactionType.RECEIVE, TransactionType.DEPOSIT, TransactionType.QR_RECEIPT ->
                         MaterialTheme.colorScheme.tertiary
                 }
             )

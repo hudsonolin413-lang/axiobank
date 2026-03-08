@@ -8,6 +8,7 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material.icons.outlined.AccountBalance
 import androidx.compose.material.icons.outlined.SwapHoriz
 import androidx.compose.material3.*
@@ -16,6 +17,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import org.dals.project.ui.components.PieChart3D
+import org.dals.project.ui.components.PieChartData
+import org.dals.project.ui.screens.*
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.launch
 import androidx.compose.ui.input.pointer.PointerEventPass
@@ -43,7 +47,15 @@ enum class DrawerScreen {
     MAIN_APP, DASHBOARD, TRANSACTIONS, LOANS, SAVINGS, NOTIFICATIONS, SETTINGS, HELP, ABOUT,
     ACCOUNT_DETAILS, STATEMENT, KYC_VERIFICATION, PROFILE_INFORMATION, SECURITY_SETTINGS, PAYMENT_METHODS,
     LANGUAGE_SETTINGS, CURRENCY_SETTINGS, TRANSACTION_LIMITS, AUTOPAY_SETTINGS, LOCATION_SETTINGS,
-    DATETIME_SETTINGS, TRANSACTION_DETAILS, MANAGE_CARDS, ADD_CARD, CARD_TRANSACTIONS
+    DATETIME_SETTINGS, TRANSACTION_DETAILS, MANAGE_CARDS, ADD_CARD, CARD_TRANSACTIONS,
+    // New screens
+    TWO_FACTOR_AUTH, VIRTUAL_CARDS, SPENDING_ANALYTICS, TRANSACTION_DISPUTES, LOAN_CALCULATOR,
+    BUDGET_MANAGEMENT, REFERRAL, SPLIT_BILL, ATM_LOCATOR, BENEFICIARY_MANAGEMENT, DEVICE_MANAGEMENT,
+    QR_PAYMENT,
+    // Additional new screens
+    BULK_TRANSFER, SUB_ACCOUNTS, CRYPTO_WALLET, OVERDRAFT_PROTECTION, TAX_REPORTS,
+    CASH_FLOW_FORECAST, INTERNATIONAL_TRANSFER, DIGITAL_SIGNATURE, NFC_PAYMENT, OFFLINE_MODE,
+    LOAN_REFINANCING, MORE_SERVICES
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -54,6 +66,9 @@ fun MainAppScreen(
     transactionViewModel: TransactionViewModel,
     notificationViewModel: NotificationViewModel,
     cardViewModel: org.dals.project.viewmodel.CardViewModel,
+    referralViewModel: org.dals.project.viewmodel.ReferralViewModel,
+    offlineViewModel: org.dals.project.viewmodel.OfflineViewModel,
+    settingsRepository: org.dals.project.repository.SettingsRepository,
     inactivityManager: org.dals.project.utils.InactivityManager? = null,
     onNavigateToKYCRequired: () -> Unit = {}
 ) {
@@ -170,6 +185,34 @@ fun MainAppScreen(
                             currentDrawerScreen = DrawerScreen.KYC_VERIFICATION
                             scope.launch { drawerState.close() }
                         },
+                        onNavigateToSpendingAnalytics = {
+                            currentDrawerScreen = DrawerScreen.SPENDING_ANALYTICS
+                            scope.launch { drawerState.close() }
+                        },
+                        onNavigateToBudgetManagement = {
+                            currentDrawerScreen = DrawerScreen.BUDGET_MANAGEMENT
+                            scope.launch { drawerState.close() }
+                        },
+                        onNavigateToReferral = {
+                            currentDrawerScreen = DrawerScreen.REFERRAL
+                            scope.launch { drawerState.close() }
+                        },
+                        onNavigateToSplitBill = {
+                            currentDrawerScreen = DrawerScreen.SPLIT_BILL
+                            scope.launch { drawerState.close() }
+                        },
+                        onNavigateToATMLocator = {
+                            currentDrawerScreen = DrawerScreen.ATM_LOCATOR
+                            scope.launch { drawerState.close() }
+                        },
+                        onNavigateToBeneficiaries = {
+                            currentDrawerScreen = DrawerScreen.BENEFICIARY_MANAGEMENT
+                            scope.launch { drawerState.close() }
+                        },
+                        onNavigateToLoanCalculator = {
+                            currentDrawerScreen = DrawerScreen.LOAN_CALCULATOR
+                            scope.launch { drawerState.close() }
+                        },
                         onLogout = { 
                             authViewModel.logout()
                             // No need to manually navigate, NavGraph handles AuthState.LOGGED_OUT
@@ -201,14 +244,25 @@ fun MainAppScreen(
                             }
                         },
                         actions = {
+                            // QR Code Scanner Icon
+                            IconButton(
+                                onClick = {
+                                    currentDrawerScreen = DrawerScreen.QR_PAYMENT
+                                }
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Filled.QrCodeScanner,
+                                    contentDescription = "QR Payment"
+                                )
+                            }
+                            
                             // Notification Icon with badge
                             Box {
                                 IconButton(
                                     onClick = {
+                                        // Navigate directly to Notifications screen
                                         currentDrawerScreen = DrawerScreen.NOTIFICATIONS
-                                        scope.launch {
-                                            drawerState.open()
-                                        }
+                                        scope.launch { drawerState.close() }
                                     }
                                 ) {
                                     Icon(
@@ -324,7 +378,9 @@ fun MainAppScreen(
                                             currentDrawerScreen = DrawerScreen.TRANSACTION_DETAILS
                                         },
                                         onNavigateToCards = { currentDrawerScreen = DrawerScreen.MANAGE_CARDS },
-                                        onNavigateToBankAccounts = { currentDrawerScreen = DrawerScreen.ACCOUNT_DETAILS }
+                                        onNavigateToBankAccounts = { currentDrawerScreen = DrawerScreen.ACCOUNT_DETAILS },
+                                        onNavigateToMoreServices = { currentDrawerScreen = DrawerScreen.MORE_SERVICES },
+                                        onNavigateToCrypto = { currentDrawerScreen = DrawerScreen.CRYPTO_WALLET }
                                     )
                                 }
 
@@ -377,7 +433,9 @@ fun MainAppScreen(
                                     currentDrawerScreen = DrawerScreen.TRANSACTION_DETAILS
                                 },
                                 onNavigateToCards = { currentDrawerScreen = DrawerScreen.MANAGE_CARDS },
-                                onNavigateToBankAccounts = { currentDrawerScreen = DrawerScreen.ACCOUNT_DETAILS }
+                                onNavigateToBankAccounts = { currentDrawerScreen = DrawerScreen.ACCOUNT_DETAILS },
+                                onNavigateToMoreServices = { currentDrawerScreen = DrawerScreen.MORE_SERVICES },
+                                onNavigateToCrypto = { currentDrawerScreen = DrawerScreen.CRYPTO_WALLET }
                             )
                         }
 
@@ -493,7 +551,9 @@ fun MainAppScreen(
                         DrawerScreen.SECURITY_SETTINGS -> {
                             SecuritySettingsScreen(
                                 authViewModel = authViewModel,
-                                onNavigateBack = { currentDrawerScreen = DrawerScreen.SETTINGS }
+                                onNavigateBack = { currentDrawerScreen = DrawerScreen.SETTINGS },
+                                onNavigateToTwoFactorAuth = { currentDrawerScreen = DrawerScreen.TWO_FACTOR_AUTH },
+                                onNavigateToDeviceManagement = { currentDrawerScreen = DrawerScreen.DEVICE_MANAGEMENT }
                             )
                         }
 
@@ -587,6 +647,197 @@ fun MainAppScreen(
                                 currentDrawerScreen = DrawerScreen.MAIN_APP
                             }
                         }
+
+                        // New screens
+                        DrawerScreen.TWO_FACTOR_AUTH -> {
+                            TwoFactorAuthScreen(
+                                onNavigateBack = { currentDrawerScreen = DrawerScreen.SECURITY_SETTINGS },
+                                onSetupComplete = { currentDrawerScreen = DrawerScreen.SECURITY_SETTINGS }
+                            )
+                        }
+
+                        DrawerScreen.VIRTUAL_CARDS -> {
+                            VirtualCardsScreen(
+                                cardViewModel = cardViewModel,
+                                onNavigateBack = { currentDrawerScreen = DrawerScreen.MANAGE_CARDS }
+                            )
+                        }
+
+                        DrawerScreen.SPENDING_ANALYTICS -> {
+                            SpendingAnalyticsScreen(
+                                transactionViewModel = transactionViewModel,
+                                onNavigateBack = { currentDrawerScreen = DrawerScreen.MAIN_APP }
+                            )
+                        }
+
+                        DrawerScreen.TRANSACTION_DISPUTES -> {
+                            TransactionDisputeScreen(
+                                transactionViewModel = transactionViewModel,
+                                onNavigateBack = { currentDrawerScreen = DrawerScreen.MAIN_APP }
+                            )
+                        }
+
+                        DrawerScreen.LOAN_CALCULATOR -> {
+                            LoanCalculatorScreen(
+                                onNavigateBack = { currentDrawerScreen = DrawerScreen.MAIN_APP },
+                                onApplyForLoan = { _, _, _ -> 
+                                    selectedTab = BottomNavItem.LOANS
+                                    currentDrawerScreen = DrawerScreen.MAIN_APP
+                                }
+                            )
+                        }
+
+                        DrawerScreen.BUDGET_MANAGEMENT -> {
+                            BudgetManagementScreen(
+                                transactionViewModel = transactionViewModel,
+                                onNavigateBack = { currentDrawerScreen = DrawerScreen.MAIN_APP }
+                            )
+                        }
+
+                        DrawerScreen.REFERRAL -> {
+                            ReferralScreen(
+                                authViewModel = authViewModel,
+                                referralViewModel = referralViewModel,
+                                onNavigateBack = { currentDrawerScreen = DrawerScreen.MAIN_APP }
+                            )
+                        }
+
+                        DrawerScreen.SPLIT_BILL -> {
+                            SplitBillScreen(
+                                onNavigateBack = { currentDrawerScreen = DrawerScreen.MAIN_APP }
+                            )
+                        }
+
+                        DrawerScreen.ATM_LOCATOR -> {
+                            ATMLocatorScreen(
+                                onNavigateBack = { currentDrawerScreen = DrawerScreen.MAIN_APP }
+                            )
+                        }
+
+                        DrawerScreen.BENEFICIARY_MANAGEMENT -> {
+                            authUiState.currentUser?.let { user ->
+                                org.dals.project.ui.screens.BeneficiaryManagementScreen(
+                                    customerId = user.id,
+                                    onNavigateBack = { currentDrawerScreen = DrawerScreen.MAIN_APP }
+                                )
+                            }
+                        }
+
+                        DrawerScreen.DEVICE_MANAGEMENT -> {
+                            DeviceManagementScreen(
+                                onNavigateBack = { currentDrawerScreen = DrawerScreen.SECURITY_SETTINGS }
+                            )
+                        }
+
+                        DrawerScreen.QR_PAYMENT -> {
+                            authUiState.currentUser?.let { user ->
+                                org.dals.project.ui.screens.QRPaymentScreen(
+                                    customerId = user.id,
+                                    onNavigateBack = { currentDrawerScreen = DrawerScreen.MAIN_APP }
+                                )
+                            }
+                        }
+
+                        // Additional new screens
+                        DrawerScreen.BULK_TRANSFER -> {
+                            BulkTransferScreen(
+                                onNavigateBack = { currentDrawerScreen = DrawerScreen.MAIN_APP }
+                            )
+                        }
+
+                        DrawerScreen.SUB_ACCOUNTS -> {
+                            authUiState.currentUser?.let { user ->
+                                org.dals.project.ui.screens.SubAccountsScreen(
+                                    customerId = user.id,
+                                    parentAccountId = user.id, // Using user ID as parent account ID
+                                    onNavigateBack = { currentDrawerScreen = DrawerScreen.MAIN_APP }
+                                )
+                            }
+                        }
+
+                        DrawerScreen.CRYPTO_WALLET -> {
+                            CryptoWalletScreen(
+                                onNavigateBack = { currentDrawerScreen = DrawerScreen.MAIN_APP }
+                            )
+                        }
+
+                        DrawerScreen.OVERDRAFT_PROTECTION -> {
+                            OverdraftProtectionScreen(
+                                onNavigateBack = { currentDrawerScreen = DrawerScreen.MAIN_APP }
+                            )
+                        }
+
+                        DrawerScreen.TAX_REPORTS -> {
+                            authUiState.currentUser?.let { user ->
+                                org.dals.project.ui.screens.TaxReportsScreen(
+                                    userId = user.id,
+                                    onNavigateBack = { currentDrawerScreen = DrawerScreen.MAIN_APP }
+                                )
+                            }
+                        }
+
+                        DrawerScreen.CASH_FLOW_FORECAST -> {
+                            CashFlowForecastScreen(
+                                onNavigateBack = { currentDrawerScreen = DrawerScreen.MAIN_APP }
+                            )
+                        }
+
+                        DrawerScreen.INTERNATIONAL_TRANSFER -> {
+                            InternationalTransferScreen(
+                                onNavigateBack = { currentDrawerScreen = DrawerScreen.MAIN_APP }
+                            )
+                        }
+
+                        DrawerScreen.DIGITAL_SIGNATURE -> {
+                            DigitalSignatureScreen(
+                                onNavigateBack = { currentDrawerScreen = DrawerScreen.MAIN_APP }
+                            )
+                        }
+
+                        DrawerScreen.NFC_PAYMENT -> {
+                            NfcPaymentScreen(
+                                onNavigateBack = { currentDrawerScreen = DrawerScreen.MAIN_APP }
+                            )
+                        }
+
+                        DrawerScreen.OFFLINE_MODE -> {
+                            OfflineModeScreen(
+                                onNavigateBack = { currentDrawerScreen = DrawerScreen.SETTINGS }
+                            )
+                        }
+
+                        DrawerScreen.LOAN_REFINANCING -> {
+                            LoanRefinancingScreen(
+                                onNavigateBack = { currentDrawerScreen = DrawerScreen.MAIN_APP }
+                            )
+                        }
+
+                        DrawerScreen.MORE_SERVICES -> {
+                            MoreServicesScreen(
+                                onNavigateBack = { currentDrawerScreen = DrawerScreen.MAIN_APP },
+                                onNavigateToBulkTransfer = { currentDrawerScreen = DrawerScreen.BULK_TRANSFER },
+                                onNavigateToSubAccounts = { currentDrawerScreen = DrawerScreen.SUB_ACCOUNTS },
+                                onNavigateToCryptoWallet = { currentDrawerScreen = DrawerScreen.CRYPTO_WALLET },
+                                onNavigateToOverdraftProtection = { currentDrawerScreen = DrawerScreen.OVERDRAFT_PROTECTION },
+                                onNavigateToTaxReports = { currentDrawerScreen = DrawerScreen.TAX_REPORTS },
+                                onNavigateToCashFlowForecast = { currentDrawerScreen = DrawerScreen.CASH_FLOW_FORECAST },
+                                onNavigateToInternationalTransfer = { currentDrawerScreen = DrawerScreen.INTERNATIONAL_TRANSFER },
+                                onNavigateToDigitalSignature = { currentDrawerScreen = DrawerScreen.DIGITAL_SIGNATURE },
+                                onNavigateToNfcPayment = { currentDrawerScreen = DrawerScreen.NFC_PAYMENT },
+                                onNavigateToOfflineMode = { currentDrawerScreen = DrawerScreen.OFFLINE_MODE },
+                                onNavigateToLoanRefinancing = { currentDrawerScreen = DrawerScreen.LOAN_REFINANCING },
+                                onNavigateToSpendingAnalytics = { currentDrawerScreen = DrawerScreen.SPENDING_ANALYTICS },
+                                onNavigateToBudgetManagement = { currentDrawerScreen = DrawerScreen.BUDGET_MANAGEMENT },
+                                onNavigateToVirtualCards = { currentDrawerScreen = DrawerScreen.VIRTUAL_CARDS },
+                                onNavigateToQRPayment = { currentDrawerScreen = DrawerScreen.QR_PAYMENT },
+                                onNavigateToATMLocator = { currentDrawerScreen = DrawerScreen.ATM_LOCATOR },
+                                onNavigateToBeneficiaryManagement = { currentDrawerScreen = DrawerScreen.BENEFICIARY_MANAGEMENT },
+                                onNavigateToSplitBill = { currentDrawerScreen = DrawerScreen.SPLIT_BILL },
+                                onNavigateToReferral = { currentDrawerScreen = DrawerScreen.REFERRAL },
+                                onNavigateToLoanCalculator = { currentDrawerScreen = DrawerScreen.LOAN_CALCULATOR }
+                            )
+                        }
+
                     }
                 }
             }
