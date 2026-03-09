@@ -1471,31 +1471,7 @@ private fun AdvertisementCarousel(
                             )
                         }
 
-                        // Text content overlay
-                        Column(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(24.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Text(
-                                text = currentAd.title,
-                                style = MaterialTheme.typography.headlineSmall,
-                                fontWeight = FontWeight.Bold,
-                                color = Color.Black,
-                                textAlign = androidx.compose.ui.text.style.TextAlign.Center
-                            )
-                            currentAd.description?.let { desc ->
-                                Spacer(modifier = Modifier.height(8.dp))
-                                Text(
-                                    text = desc,
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = Color.Black,
-                                    textAlign = androidx.compose.ui.text.style.TextAlign.Center
-                                )
-                            }
-                        }
+                        // Text content overlay removed - showing only image
                     }
 
                     // Indicator dots
