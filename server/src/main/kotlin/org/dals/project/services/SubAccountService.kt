@@ -180,7 +180,7 @@ class SubAccountService {
 
     suspend fun createSubAccount(request: CreateSubAccountRequest): SubAccountResponse = DatabaseFactory.dbQuery {
         // Get the customer's primary account if parentAccountId is actually a customerId
-        val actualParentAccountId = try {
+        val actualParentAccountId: UUID = try {
             val parentId = UUID.fromString(request.parentAccountId)
             // Check if this ID exists in accounts table
             val accountExists = Accounts.select { Accounts.id eq parentId }.count() > 0
@@ -188,11 +188,12 @@ class SubAccountService {
                 parentId
             } else {
                 // It's likely a customer ID, so get their primary account
-                Accounts.select { Accounts.customerId eq parentId }
+                val accountEntityId = Accounts.select { Accounts.customerId eq parentId }
                     .orderBy(Accounts.createdAt to SortOrder.ASC)
                     .firstOrNull()
                     ?.get(Accounts.id)
                     ?: throw Exception("No account found for customer")
+                accountEntityId.value
             }
         } catch (e: Exception) {
             throw Exception("Invalid parent account ID: ${e.message}")
