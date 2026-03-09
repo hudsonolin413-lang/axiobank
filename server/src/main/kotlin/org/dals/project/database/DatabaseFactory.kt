@@ -59,7 +59,7 @@ object DatabaseFactory {
             }
 
             transaction<Unit>(database) {
-                // Create all tables automatically
+                // Create all tables automatically (including beneficiaries table)
                 try {
                     SchemaUtils.create(
                         Branches,
@@ -116,7 +116,62 @@ object DatabaseFactory {
                         TransactionFeeStructure,
                         TransactionFeeRecords,
                         // Advertisement Management
-                        Advertisements
+                        Advertisements,
+                        // Crypto Wallet Tables
+                        CryptoAssets,
+                        CryptoWallets,
+                        CryptoTransactions,
+                        // Budget Management
+                        Budgets,
+                        // Sub-Accounts / Pockets
+                        SubAccounts,
+                        // Beneficiaries
+                        Beneficiaries,
+                        // Device Management
+                        UserDevices,
+                        // ATM Locations
+                        ATMLocations,
+                        // International Transfers
+                        InternationalTransfers,
+                        // Overdraft Protection
+                        OverdraftSettings,
+                        // Tax Reports
+                        TaxReports,
+                        // Digital Signatures
+                        DigitalSignatures,
+                        // Split Bills
+                        SplitBills,
+                        SplitBillParticipants,
+                        // Referrals
+                        Referrals,
+                        // Scheduled Payments
+                        ScheduledPayments,
+                        // Bulk Transfers
+                        BulkTransfers,
+                        BulkTransferRecipients,
+                        // NFC Payments
+                        NfcPayments,
+                        // Overdraft Protection
+                        OverdraftProtection,
+                        OverdraftTransactions,
+                        // Cash Flow Forecasts
+                        CashFlowForecasts,
+                        // Loan Refinancing
+                        LoanRefinancing,
+                        // Budget Management
+                        Budgets,
+                        BudgetTransactions,
+                        // Virtual Cards
+                        VirtualCards,
+                        // ATM Locations
+                        ATMLocations,
+                        // International Transfers
+                        InternationalTransfers,
+                        ExchangeRates,
+                        // Crypto Wallets
+                        CryptoWallets,
+                        CryptoTransactions,
+                        CryptoAssets
                     )
                 } catch (e: Exception) {
                     e.printStackTrace()
