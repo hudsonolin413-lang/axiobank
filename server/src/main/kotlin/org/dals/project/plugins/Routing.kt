@@ -6216,11 +6216,46 @@ fun Application.configureRouting() {
             masterWalletDashboardRoutes()
 
             // Tax report routes
-            // TODO: Implement taxReportRoutes
-            // taxReportRoutes()
+            taxReportRoutes()
+
+            // Beneficiary routes
+            beneficiaryRoutes()
 
             // QR Payment routes
             qrPaymentRoutes()
+
+            // Bulk Transfer routes
+            bulkTransferRoutes()
+
+            // Digital Signature routes
+            digitalSignatureRoutes()
+
+            // NFC Payment routes
+            nfcPaymentRoutes()
+
+            // Overdraft Protection routes
+            overdraftProtectionRoutes()
+
+            // Cash Flow Forecast routes
+            cashFlowForecastRoutes()
+
+            // Loan Refinancing routes
+            loanRefinancingRoutes()
+
+            // Budget Management routes
+            budgetManagementRoutes()
+
+            // Virtual Card routes
+            virtualCardRoutes()
+
+            // ATM Locator routes
+            atmLocatorRoutes()
+
+            // International Transfer routes
+            internationalTransferRoutes()
+
+            // Crypto Wallet routes - DISABLED: schema mismatch
+            // cryptoWalletRoutes()
 
             // ==================== LEGACY ADMIN ROUTES (Keep for compatibility) ====================
             route("/admin") {
