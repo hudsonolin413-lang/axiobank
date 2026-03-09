@@ -78,9 +78,10 @@ data class TransferResponse(
 class SubAccountService {
 
     private fun generateSubAccountNumber(): String {
-        // Generate sub-account number: SA + 10 random digits
-        val randomDigits = (1..10).map { kotlin.random.Random.nextInt(0, 10) }.joinToString("")
-        return "SA$randomDigits"
+        // Generate sub-account number: 10-11 digits starting with 0
+        val length = kotlin.random.Random.nextInt(10, 12) // Random length between 10-11
+        val remainingDigits = (2..length).map { kotlin.random.Random.nextInt(0, 10) }.joinToString("")
+        return "0$remainingDigits"
     }
 
     suspend fun getAllSubAccounts(customerId: UUID): List<SubAccountResponse> = DatabaseFactory.dbQuery {
