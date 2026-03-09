@@ -298,6 +298,8 @@ class SubAccountService {
         val currentSubBalance = subAccount[SubAccounts.currentBalance]
         val newSubBalance = currentSubBalance + amount
 
+        var newParentBalance = java.math.BigDecimal.ZERO
+
         // If it's a direct deposit (e.g., M-Pesa), skip parent account balance check
         if (!request.isDirectDeposit) {
             // Get parent account
@@ -312,7 +314,7 @@ class SubAccountService {
             }
 
             // Calculate new parent balance
-            val newParentBalance = parentBalance - amount
+            newParentBalance = parentBalance - amount
 
             // Deduct from parent account
             Accounts.update({ Accounts.id eq parentAccountId }) {
@@ -332,6 +334,10 @@ class SubAccountService {
                     toAccountId = null
                 )
             )
+        } else {
+            // For direct deposits, get current parent balance for response
+            val parentAccount = Accounts.select { Accounts.id eq parentAccountId }.firstOrNull()
+            newParentBalance = parentAccount?.get(Accounts.balance) ?: java.math.BigDecimal.ZERO
         }
 
         // Add to sub-account (for both direct deposits and internal transfers)
@@ -344,7 +350,7 @@ class SubAccountService {
 
         TransferResponse(
             success = true,
-            message = "Transfer successful",
+            message = if (request.isDirectDeposit) "Funds added successfully" else "Transfer successful",
             subAccount = updatedSubAccount,
             newParentBalance = newParentBalance.toString()
         )
