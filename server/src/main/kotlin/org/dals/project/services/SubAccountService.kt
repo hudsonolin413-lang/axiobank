@@ -41,7 +41,8 @@ data class UpdateSubAccountRequest(
 data class TransferToSubAccountRequest(
     val subAccountId: String,
     val amount: String,
-    val description: String? = null
+    val description: String? = null,
+    val isDirectDeposit: Boolean = false // True for M-Pesa/external deposits, false for internal transfers
 )
 
 @Serializable
@@ -294,47 +295,50 @@ class SubAccountService {
         }
 
         val parentAccountId = subAccount[SubAccounts.parentAccountId]
-
-        // Get parent account
-        val parentAccount = Accounts.select { Accounts.id eq parentAccountId }.firstOrNull()
-            ?: throw IllegalArgumentException("Parent account not found")
-
-        val parentBalance = parentAccount[Accounts.balance]
-
-        // Check if parent has sufficient balance
-        if (parentBalance < amount) {
-            throw IllegalStateException("Insufficient balance in parent account")
-        }
-
-        // Calculate new balances
-        val newParentBalance = parentBalance - amount
         val currentSubBalance = subAccount[SubAccounts.currentBalance]
         val newSubBalance = currentSubBalance + amount
 
-        // Deduct from parent account
-        Accounts.update({ Accounts.id eq parentAccountId }) {
-            it[balance] = newParentBalance
-            it[availableBalance] = newParentBalance
+        // If it's a direct deposit (e.g., M-Pesa), skip parent account balance check
+        if (!request.isDirectDeposit) {
+            // Get parent account
+            val parentAccount = Accounts.select { Accounts.id eq parentAccountId }.firstOrNull()
+                ?: throw IllegalArgumentException("Parent account not found")
+
+            val parentBalance = parentAccount[Accounts.balance]
+
+            // Check if parent has sufficient balance
+            if (parentBalance < amount) {
+                throw IllegalStateException("Insufficient balance in parent account")
+            }
+
+            // Calculate new parent balance
+            val newParentBalance = parentBalance - amount
+
+            // Deduct from parent account
+            Accounts.update({ Accounts.id eq parentAccountId }) {
+                it[balance] = newParentBalance
+                it[availableBalance] = newParentBalance
+            }
+
+            // Create transaction record for internal transfer
+            val transactionService = TransactionService()
+            transactionService.createTransaction(
+                CreateTransactionRequest(
+                    accountId = parentAccountId.toString(),
+                    type = "SUB_ACCOUNT_TRANSFER",
+                    amount = amount.toString(),
+                    description = request.description ?: "Transfer to ${subAccount[SubAccounts.name]}",
+                    fromAccountId = parentAccountId.toString(),
+                    toAccountId = null
+                )
+            )
         }
 
-        // Add to sub-account
+        // Add to sub-account (for both direct deposits and internal transfers)
         SubAccounts.update({ SubAccounts.id eq subAccountId }) {
-            it[SubAccounts.currentBalance] =newSubBalance
+            it[SubAccounts.currentBalance] = newSubBalance
             it[SubAccounts.updatedAt] = CurrentTimestamp()
         }
-
-        // Create transaction record (optional - if you want to track these)
-        val transactionService = TransactionService()
-        transactionService.createTransaction(
-            CreateTransactionRequest(
-                accountId = parentAccountId.toString(),
-                type = "SUB_ACCOUNT_TRANSFER",
-                amount = amount.toString(),
-                description = request.description ?: "Transfer to ${subAccount[SubAccounts.name]}",
-                fromAccountId = parentAccountId.toString(),
-                toAccountId = null
-            )
-        )
 
         val updatedSubAccount = getSubAccountById(subAccountId)!!
 

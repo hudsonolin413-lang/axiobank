@@ -59,7 +59,8 @@ data class UpdateSubAccountRequest(
 data class TransferToSubAccountRequest(
     val subAccountId: String,
     val amount: String,
-    val description: String? = null
+    val description: String? = null,
+    val isDirectDeposit: Boolean = false
 )
 
 @Serializable
