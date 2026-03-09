@@ -1,5 +1,6 @@
 package org.dals.project.services
 
+import kotlinx.serialization.Serializable
 import org.dals.project.database.*
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
@@ -9,6 +10,7 @@ import java.time.Instant
 import java.time.LocalDateTime
 import java.util.*
 
+@Serializable
 data class InitiateNfcPaymentRequest(
     val customerId: String,
     val fromAccountId: String,
@@ -20,6 +22,7 @@ data class InitiateNfcPaymentRequest(
     val nfcTagId: String?
 )
 
+@Serializable
 data class NfcPaymentResponse(
     val id: String,
     val customerId: String,
@@ -40,6 +43,7 @@ data class NfcPaymentResponse(
     val createdAt: String
 )
 
+@Serializable
 data class NfcPaymentHistoryDto(
     val payments: List<NfcPaymentResponse>,
     val totalCount: Int,
