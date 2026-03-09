@@ -6216,7 +6216,7 @@ fun Application.configureRouting() {
             masterWalletDashboardRoutes()
 
             // Tax report routes
-            // taxReportRoutes()  // TEMPORARILY DISABLED - route file not in Railway repo
+            taxReportRoutes()
 
             // Beneficiary routes
             beneficiaryRoutes()
