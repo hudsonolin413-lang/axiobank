@@ -793,6 +793,7 @@ private fun TransferDialog(
 ) {
     var amount by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
+    var selectedSource by remember { mutableStateOf(0) } // 0 = Main Account, 1 = External (M-Pesa)
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -804,6 +805,26 @@ private fun TransferDialog(
                     style = MaterialTheme.typography.bodyLarge,
                     fontWeight = FontWeight.Bold
                 )
+
+                Text("Fund Source:", style = MaterialTheme.typography.labelMedium)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    FilterChip(
+                        selected = selectedSource == 0,
+                        onClick = { selectedSource = 0 },
+                        label = { Text("Main Account") },
+                        modifier = Modifier.weight(1f)
+                    )
+                    FilterChip(
+                        selected = selectedSource == 1,
+                        onClick = { selectedSource = 1 },
+                        label = { Text("M-Pesa/External") },
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+
                 OutlinedTextField(
                     value = amount,
                     onValueChange = { amount = it },
@@ -828,14 +849,14 @@ private fun TransferDialog(
                             subAccountId = subAccount.id,
                             amount = amount,
                             description = description.ifBlank { null },
-                            isDirectDeposit = true // Direct deposit (e.g., M-Pesa)
+                            isDirectDeposit = selectedSource == 1 // 1 = External deposit, 0 = Internal transfer
                         ),
                         onSuccess = onDismiss
                     )
                 },
                 enabled = amount.isNotBlank() && amount.toDoubleOrNull() != null && amount.toDouble() > 0
             ) {
-                Text("Add Funds")
+                Text(if (selectedSource == 0) "Transfer" else "Add Funds")
             }
         },
         dismissButton = {
