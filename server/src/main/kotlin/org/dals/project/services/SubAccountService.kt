@@ -179,9 +179,28 @@ class SubAccountService {
     }
 
     suspend fun createSubAccount(request: CreateSubAccountRequest): SubAccountResponse = DatabaseFactory.dbQuery {
+        // Get the customer's primary account if parentAccountId is actually a customerId
+        val actualParentAccountId = try {
+            val parentId = UUID.fromString(request.parentAccountId)
+            // Check if this ID exists in accounts table
+            val accountExists = Accounts.select { Accounts.id eq parentId }.count() > 0
+            if (accountExists) {
+                parentId
+            } else {
+                // It's likely a customer ID, so get their primary account
+                Accounts.select { Accounts.customerId eq parentId }
+                    .orderBy(Accounts.createdAt to SortOrder.ASC)
+                    .firstOrNull()
+                    ?.get(Accounts.id)
+                    ?: throw Exception("No account found for customer")
+            }
+        } catch (e: Exception) {
+            throw Exception("Invalid parent account ID: ${e.message}")
+        }
+
         val subAccountId = SubAccounts.insertAndGetId {
             it[customerId] = UUID.fromString(request.customerId)
-            it[parentAccountId] = UUID.fromString(request.parentAccountId)
+            it[parentAccountId] = actualParentAccountId
             it[name] = request.name
             it[description] = request.description
             it[targetAmount] = request.targetAmount?.toBigDecimalOrNull()
