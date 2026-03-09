@@ -6233,6 +6233,9 @@ fun Application.configureRouting() {
             // NFC Payment routes
             nfcPaymentRoutes()
 
+            // Sub-Account routes
+            subAccountRoutes()
+
             // Overdraft Protection routes
             // overdraftProtectionRoutes()  // TEMPORARILY DISABLED - route file not in Railway repo
 
