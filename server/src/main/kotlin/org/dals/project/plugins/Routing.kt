@@ -6216,7 +6216,7 @@ fun Application.configureRouting() {
             masterWalletDashboardRoutes()
 
             // Tax report routes
-            taxReportRoutes()
+            // taxReportRoutes()  // TEMPORARILY DISABLED - route file not in Railway repo
 
             // Beneficiary routes
             beneficiaryRoutes()
@@ -6225,34 +6225,34 @@ fun Application.configureRouting() {
             qrPaymentRoutes()
 
             // Bulk Transfer routes
-            bulkTransferRoutes()
+            // bulkTransferRoutes()  // TEMPORARILY DISABLED - route file not in Railway repo
 
             // Digital Signature routes
-            digitalSignatureRoutes()
+            // digitalSignatureRoutes()  // TEMPORARILY DISABLED - route file not in Railway repo
 
             // NFC Payment routes
-            nfcPaymentRoutes()
+            // nfcPaymentRoutes()  // TEMPORARILY DISABLED - route file not in Railway repo
 
             // Overdraft Protection routes
-            overdraftProtectionRoutes()
+            // overdraftProtectionRoutes()  // TEMPORARILY DISABLED - route file not in Railway repo
 
             // Cash Flow Forecast routes
-            cashFlowForecastRoutes()
+            // cashFlowForecastRoutes()  // TEMPORARILY DISABLED - route file not in Railway repo
 
             // Loan Refinancing routes
-            loanRefinancingRoutes()
+            // loanRefinancingRoutes()  // TEMPORARILY DISABLED - route file not in Railway repo
 
             // Budget Management routes
-            budgetManagementRoutes()
+            // budgetManagementRoutes()  // TEMPORARILY DISABLED - route file not in Railway repo
 
             // Virtual Card routes
-            virtualCardRoutes()
+            // virtualCardRoutes()  // TEMPORARILY DISABLED - route file not in Railway repo
 
             // ATM Locator routes
-            atmLocatorRoutes()
+            // atmLocatorRoutes()  // TEMPORARILY DISABLED - route file not in Railway repo
 
             // International Transfer routes
-            internationalTransferRoutes()
+            // internationalTransferRoutes()  // TEMPORARILY DISABLED - route file not in Railway repo
 
             // Crypto Wallet routes - DISABLED: schema mismatch
             // cryptoWalletRoutes()

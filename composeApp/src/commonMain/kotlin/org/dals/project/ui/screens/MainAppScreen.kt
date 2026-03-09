@@ -31,9 +31,18 @@ import org.dals.project.ui.components.AppNavigationDrawer
 import org.dals.project.ui.components.GradientBackground
 import org.dals.project.utils.SettingsManager
 import org.dals.project.viewmodel.AuthViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import org.dals.project.viewmodel.LoanViewModel
 import org.dals.project.viewmodel.NotificationViewModel
 import org.dals.project.viewmodel.TransactionViewModel
+import org.dals.project.viewmodel.NfcPaymentViewModel
+import org.dals.project.repository.*
+import org.dals.project.viewmodel.*
+import org.dals.project.API_BASE_URL
+import io.ktor.client.*
+import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.serialization.kotlinx.json.*
+import kotlinx.serialization.json.Json
 import kotlin.time.Duration.Companion.seconds
 
 enum class BottomNavItem(val title: String) {
@@ -74,6 +83,46 @@ fun MainAppScreen(
 ) {
     val authUiState by authViewModel.uiState.collectAsStateWithLifecycle()
     val notificationUiState by notificationViewModel.uiState.collectAsStateWithLifecycle()
+
+    val httpClient = remember {
+        HttpClient {
+            install(ContentNegotiation) {
+                json(Json {
+                    prettyPrint = true
+                    isLenient = true
+                    ignoreUnknownKeys = true
+                })
+            }
+        }
+    }
+
+    val overdraftProtectionViewModel: OverdraftProtectionViewModel = viewModel {
+        OverdraftProtectionViewModel(OverdraftProtectionRepository(httpClient, API_BASE_URL))
+    }
+    val cashFlowForecastViewModel: CashFlowForecastViewModel = viewModel {
+        CashFlowForecastViewModel(CashFlowForecastRepository(httpClient, API_BASE_URL))
+    }
+    val cashFlowViewModel: CashFlowViewModel = viewModel {
+        CashFlowViewModel(CashFlowRepository(transactionViewModel.repository), transactionViewModel.repository)
+    }
+    val loanRefinancingViewModel: LoanRefinancingViewModel = viewModel {
+        LoanRefinancingViewModel(LoanRefinancingRepository(httpClient, API_BASE_URL))
+    }
+    val internationalTransferViewModel: InternationalTransferViewModel = viewModel {
+        InternationalTransferViewModel(InternationalTransferRepository(httpClient, API_BASE_URL))
+    }
+    val cryptoWalletViewModel: CryptoWalletViewModel = viewModel {
+        CryptoWalletViewModel(CryptoWalletRepository(httpClient, API_BASE_URL))
+    }
+    val atmLocatorViewModel: AtmLocatorViewModel = viewModel {
+        AtmLocatorViewModel(AtmLocatorRepository(httpClient, API_BASE_URL))
+    }
+    val budgetManagementViewModel: BudgetManagementViewModel = viewModel {
+        BudgetManagementViewModel(BudgetManagementRepository(httpClient, API_BASE_URL))
+    }
+    val virtualCardViewModel: VirtualCardViewModel = viewModel {
+        VirtualCardViewModel(VirtualCardRepository(httpClient, API_BASE_URL))
+    }
 
     var selectedTab by remember { mutableStateOf(BottomNavItem.HOME) }
     var currentDrawerScreen by remember { mutableStateOf(DrawerScreen.MAIN_APP) }
@@ -657,10 +706,12 @@ fun MainAppScreen(
                         }
 
                         DrawerScreen.VIRTUAL_CARDS -> {
-                            VirtualCardsScreen(
-                                cardViewModel = cardViewModel,
-                                onNavigateBack = { currentDrawerScreen = DrawerScreen.MANAGE_CARDS }
-                            )
+                            authUiState.currentUser?.let { user ->
+                                VirtualCardsScreen(
+                                    cardViewModel = cardViewModel,
+                                    onNavigateBack = { currentDrawerScreen = DrawerScreen.MANAGE_CARDS }
+                                )
+                            }
                         }
 
                         DrawerScreen.SPENDING_ANALYTICS -> {
@@ -703,13 +754,15 @@ fun MainAppScreen(
                         }
 
                         DrawerScreen.SPLIT_BILL -> {
-                            SplitBillScreen(
+                            org.dals.project.ui.screens.SplitBillScreenNew(
+                                authViewModel = authViewModel,
                                 onNavigateBack = { currentDrawerScreen = DrawerScreen.MAIN_APP }
                             )
                         }
 
                         DrawerScreen.ATM_LOCATOR -> {
-                            ATMLocatorScreen(
+                            org.dals.project.ui.screens.ATMLocatorScreen(
+                                viewModel = atmLocatorViewModel,
                                 onNavigateBack = { currentDrawerScreen = DrawerScreen.MAIN_APP }
                             )
                         }
@@ -740,9 +793,13 @@ fun MainAppScreen(
 
                         // Additional new screens
                         DrawerScreen.BULK_TRANSFER -> {
-                            BulkTransferScreen(
-                                onNavigateBack = { currentDrawerScreen = DrawerScreen.MAIN_APP }
-                            )
+                            authUiState.currentUser?.let { user ->
+                                BulkTransferScreen(
+                                    customerId = user.id,
+                                    accountId = user.id, // Using user ID as account ID
+                                    onNavigateBack = { currentDrawerScreen = DrawerScreen.MAIN_APP }
+                                )
+                            }
                         }
 
                         DrawerScreen.SUB_ACCOUNTS -> {
@@ -756,15 +813,25 @@ fun MainAppScreen(
                         }
 
                         DrawerScreen.CRYPTO_WALLET -> {
-                            CryptoWalletScreen(
-                                onNavigateBack = { currentDrawerScreen = DrawerScreen.MAIN_APP }
-                            )
+                            authUiState.currentUser?.let { user ->
+                                org.dals.project.ui.screens.CryptoWalletScreen(
+                                    customerId = user.id,
+                                    accountId = user.id,
+                                    viewModel = cryptoWalletViewModel,
+                                    onNavigateBack = { currentDrawerScreen = DrawerScreen.MAIN_APP }
+                                )
+                            }
                         }
 
                         DrawerScreen.OVERDRAFT_PROTECTION -> {
-                            OverdraftProtectionScreen(
-                                onNavigateBack = { currentDrawerScreen = DrawerScreen.MAIN_APP }
-                            )
+                            authUiState.currentUser?.let { user ->
+                                org.dals.project.ui.screens.OverdraftProtectionScreen(
+                                    customerId = user.id,
+                                    accountId = user.id,
+                                    viewModel = overdraftProtectionViewModel,
+                                    onNavigateBack = { currentDrawerScreen = DrawerScreen.MAIN_APP }
+                                )
+                            }
                         }
 
                         DrawerScreen.TAX_REPORTS -> {
@@ -777,27 +844,44 @@ fun MainAppScreen(
                         }
 
                         DrawerScreen.CASH_FLOW_FORECAST -> {
-                            CashFlowForecastScreen(
-                                onNavigateBack = { currentDrawerScreen = DrawerScreen.MAIN_APP }
+                            CashFlowManagementScreen(
+                                viewModel = cashFlowViewModel,
+                                onBack = { currentDrawerScreen = DrawerScreen.MAIN_APP }
                             )
                         }
 
                         DrawerScreen.INTERNATIONAL_TRANSFER -> {
-                            InternationalTransferScreen(
-                                onNavigateBack = { currentDrawerScreen = DrawerScreen.MAIN_APP }
-                            )
+                            authUiState.currentUser?.let { user ->
+                                org.dals.project.ui.screens.InternationalTransferScreen(
+                                    customerId = user.id,
+                                    accountId = user.id,
+                                    viewModel = internationalTransferViewModel,
+                                    onNavigateBack = { currentDrawerScreen = DrawerScreen.MAIN_APP }
+                                )
+                            }
                         }
 
                         DrawerScreen.DIGITAL_SIGNATURE -> {
-                            DigitalSignatureScreen(
-                                onNavigateBack = { currentDrawerScreen = DrawerScreen.MAIN_APP }
-                            )
+                            authUiState.currentUser?.let { user ->
+                                DigitalSignatureScreen(
+                                    customerId = user.id,
+                                    onNavigateBack = { currentDrawerScreen = DrawerScreen.MAIN_APP }
+                                )
+                            }
                         }
 
                         DrawerScreen.NFC_PAYMENT -> {
-                            NfcPaymentScreen(
-                                onNavigateBack = { currentDrawerScreen = DrawerScreen.MAIN_APP }
-                            )
+                            authUiState.currentUser?.let { user ->
+                                val nfcPaymentViewModel: NfcPaymentViewModel = viewModel {
+                                    NfcPaymentViewModel(NfcPaymentRepository(httpClient, API_BASE_URL))
+                                }
+                                NfcPaymentScreen(
+                                    customerId = user.id,
+                                    accountId = user.id,
+                                    onNavigateBack = { currentDrawerScreen = DrawerScreen.MAIN_APP },
+                                    viewModel = nfcPaymentViewModel
+                                )
+                            }
                         }
 
                         DrawerScreen.OFFLINE_MODE -> {
@@ -807,13 +891,18 @@ fun MainAppScreen(
                         }
 
                         DrawerScreen.LOAN_REFINANCING -> {
-                            LoanRefinancingScreen(
-                                onNavigateBack = { currentDrawerScreen = DrawerScreen.MAIN_APP }
-                            )
+                            authUiState.currentUser?.let { user ->
+                                org.dals.project.ui.screens.LoanRefinancingScreen(
+                                    customerId = user.id,
+                                    viewModel = loanRefinancingViewModel,
+                                    onNavigateBack = { currentDrawerScreen = DrawerScreen.MAIN_APP }
+                                )
+                            }
                         }
 
                         DrawerScreen.MORE_SERVICES -> {
                             MoreServicesScreen(
+                                authViewModel = authViewModel,
                                 onNavigateBack = { currentDrawerScreen = DrawerScreen.MAIN_APP },
                                 onNavigateToBulkTransfer = { currentDrawerScreen = DrawerScreen.BULK_TRANSFER },
                                 onNavigateToSubAccounts = { currentDrawerScreen = DrawerScreen.SUB_ACCOUNTS },
