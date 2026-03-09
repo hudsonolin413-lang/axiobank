@@ -963,6 +963,187 @@ object TransactionFeeRecords : UUIDTable("transaction_fee_records") {
     val createdAt = timestamp("created_at").defaultExpression(CurrentTimestamp())
 }
 
+// Bulk Transfers Table - Tracks bulk/batch transfers to multiple recipients
+object BulkTransfers : UUIDTable("bulk_transfers") {
+    val customerId = uuid("customer_id").references(Customers.id)
+    val fromAccountId = uuid("from_account_id").references(Accounts.id)
+    val batchName = varchar("batch_name", 255)
+    val totalRecipients = integer("total_recipients")
+    val totalAmount = decimal("total_amount", 15, 2)
+    val completedTransfers = integer("completed_transfers").default(0)
+    val failedTransfers = integer("failed_transfers").default(0)
+    val status = varchar("status", 50).default("PENDING") // PENDING, PROCESSING, COMPLETED, PARTIALLY_COMPLETED, FAILED
+    val initiatedAt = timestamp("initiated_at").defaultExpression(CurrentTimestamp())
+    val completedAt = timestamp("completed_at").nullable()
+    val description = text("description").nullable()
+    val createdAt = timestamp("created_at").defaultExpression(CurrentTimestamp())
+    val updatedAt = timestamp("updated_at").defaultExpression(CurrentTimestamp())
+}
+
+// Bulk Transfer Recipients Table - Individual recipients in a bulk transfer batch
+object BulkTransferRecipients : UUIDTable("bulk_transfer_recipients") {
+    val bulkTransferId = uuid("bulk_transfer_id").references(BulkTransfers.id, onDelete = ReferenceOption.CASCADE)
+    val recipientName = varchar("recipient_name", 255)
+    val recipientPhone = varchar("recipient_phone", 20)
+    val recipientAccountNumber = varchar("recipient_account_number", 50).nullable()
+    val amount = decimal("amount", 15, 2)
+    val description = text("description").nullable()
+    val status = varchar("status", 50).default("PENDING") // PENDING, COMPLETED, FAILED
+    val transactionId = uuid("transaction_id").references(Transactions.id).nullable()
+    val failureReason = text("failure_reason").nullable()
+    val processedAt = timestamp("processed_at").nullable()
+    val createdAt = timestamp("created_at").defaultExpression(CurrentTimestamp())
+}
+
+// NFC Payments Table - Tracks contactless NFC payments
+object NfcPayments : UUIDTable("nfc_payments") {
+    val customerId = uuid("customer_id").references(Customers.id)
+    val fromAccountId = uuid("from_account_id").references(Accounts.id)
+    val merchantName = varchar("merchant_name", 255)
+    val merchantId = varchar("merchant_id", 100).nullable()
+    val amount = decimal("amount", 15, 2)
+    val currency = varchar("currency", 10).default("USD")
+    val transactionId = uuid("transaction_id").references(Transactions.id).nullable()
+    val deviceId = varchar("device_id", 100).nullable()
+    val nfcTagId = varchar("nfc_tag_id", 100).nullable()
+    val status = varchar("status", 50).default("PENDING") // PENDING, COMPLETED, FAILED, DECLINED
+    val paymentMethod = varchar("payment_method", 50).default("NFC") // NFC, CONTACTLESS_CARD
+    val authorizationCode = varchar("authorization_code", 50).nullable()
+    val failureReason = text("failure_reason").nullable()
+    val initiatedAt = timestamp("initiated_at").defaultExpression(CurrentTimestamp())
+    val completedAt = timestamp("completed_at").nullable()
+    val createdAt = timestamp("created_at").defaultExpression(CurrentTimestamp())
+}
+
+// Overdraft Protection Table - Tracks overdraft protection settings and usage
+object OverdraftProtection : UUIDTable("overdraft_protection") {
+    val customerId = uuid("customer_id").references(Customers.id)
+    val accountId = uuid("account_id").references(Accounts.id)
+    val protectionType = varchar("protection_type", 50) // LINKED_ACCOUNT, LINE_OF_CREDIT, STANDARD_OVERDRAFT
+    val linkedAccountId = uuid("linked_account_id").references(Accounts.id).nullable()
+    val creditLimit = decimal("credit_limit", 15, 2).nullable()
+    val usedAmount = decimal("used_amount", 15, 2).default(java.math.BigDecimal.ZERO)
+    val availableAmount = decimal("available_amount", 15, 2).nullable()
+    val transferFee = decimal("transfer_fee", 10, 2).default(java.math.BigDecimal.ZERO)
+    val interestRate = decimal("interest_rate", 5, 2).nullable()
+    val status = varchar("status", 50).default("ACTIVE") // ACTIVE, SUSPENDED, CANCELLED
+    val autoTransfer = bool("auto_transfer").default(true)
+    val dailyLimit = decimal("daily_limit", 15, 2).nullable()
+    val lastUsedDate = timestamp("last_used_date").nullable()
+    val enrolledAt = timestamp("enrolled_at").defaultExpression(CurrentTimestamp())
+    val cancelledAt = timestamp("cancelled_at").nullable()
+    val createdAt = timestamp("created_at").defaultExpression(CurrentTimestamp())
+    val updatedAt = timestamp("updated_at").defaultExpression(CurrentTimestamp())
+}
+
+// Overdraft Transactions Table - Tracks individual overdraft protection transfers
+object OverdraftTransactions : UUIDTable("overdraft_transactions") {
+    val overdraftProtectionId = uuid("overdraft_protection_id").references(OverdraftProtection.id)
+    val accountId = uuid("account_id").references(Accounts.id)
+    val linkedAccountId = uuid("linked_account_id").references(Accounts.id).nullable()
+    val transactionId = uuid("transaction_id").references(Transactions.id)
+    val amount = decimal("amount", 15, 2)
+    val fee = decimal("fee", 10, 2).default(java.math.BigDecimal.ZERO)
+    val totalAmount = decimal("total_amount", 15, 2)
+    val balanceBefore = decimal("balance_before", 15, 2)
+    val balanceAfter = decimal("balance_after", 15, 2)
+    val protectionType = varchar("protection_type", 50)
+    val status = varchar("status", 50).default("COMPLETED") // COMPLETED, FAILED, REVERSED
+    val failureReason = text("failure_reason").nullable()
+    val createdAt = timestamp("created_at").defaultExpression(CurrentTimestamp())
+}
+
+// Cash Flow Forecasts Table - Tracks predicted cash flow patterns
+object CashFlowForecasts : UUIDTable("cash_flow_forecasts") {
+    val customerId = uuid("customer_id").references(Customers.id)
+    val accountId = uuid("account_id").references(Accounts.id)
+    val forecastDate = date("forecast_date")
+    val predictedIncome = decimal("predicted_income", 15, 2).default(java.math.BigDecimal.ZERO)
+    val predictedExpenses = decimal("predicted_expenses", 15, 2).default(java.math.BigDecimal.ZERO)
+    val predictedBalance = decimal("predicted_balance", 15, 2)
+    val actualIncome = decimal("actual_income", 15, 2).nullable()
+    val actualExpenses = decimal("actual_expenses", 15, 2).nullable()
+    val actualBalance = decimal("actual_balance", 15, 2).nullable()
+    val confidence = decimal("confidence", 5, 2).default(java.math.BigDecimal.ZERO) // 0-100%
+    val forecastMethod = varchar("forecast_method", 50).default("PATTERN_BASED") // PATTERN_BASED, ML_BASED, MANUAL
+    val notes = text("notes").nullable()
+    val createdAt = timestamp("created_at").defaultExpression(CurrentTimestamp())
+    val updatedAt = timestamp("updated_at").defaultExpression(CurrentTimestamp())
+}
+
+// Loan Refinancing Table - Tracks loan refinancing applications
+object LoanRefinancing : UUIDTable("loan_refinancing") {
+    val customerId = uuid("customer_id").references(Customers.id)
+    val originalLoanId = uuid("original_loan_id").references(Loans.id)
+    val originalLoanAmount = decimal("original_loan_amount", 15, 2)
+    val originalInterestRate = decimal("original_interest_rate", 5, 2)
+    val originalMonthlyPayment = decimal("original_monthly_payment", 15, 2)
+    val originalRemainingBalance = decimal("original_remaining_balance", 15, 2)
+    val originalRemainingTermMonths = integer("original_remaining_term_months")
+    val newLoanAmount = decimal("new_loan_amount", 15, 2)
+    val newInterestRate = decimal("new_interest_rate", 5, 2)
+    val newMonthlyPayment = decimal("new_monthly_payment", 15, 2)
+    val newTermMonths = integer("new_term_months")
+    val monthlySavings = decimal("monthly_savings", 15, 2)
+    val totalInterestSavings = decimal("total_interest_savings", 15, 2)
+    val breakEvenMonths = integer("break_even_months").nullable()
+    val closingCosts = decimal("closing_costs", 15, 2).default(java.math.BigDecimal.ZERO)
+    val status = varchar("status", 50).default("PENDING") // PENDING, APPROVED, REJECTED, COMPLETED, CANCELLED
+    val reason = text("reason").nullable()
+    val reviewedBy = uuid("reviewed_by").references(Users.id).nullable()
+    val reviewedAt = timestamp("reviewed_at").nullable()
+    val completedAt = timestamp("completed_at").nullable()
+    val createdAt = timestamp("created_at").defaultExpression(CurrentTimestamp())
+    val updatedAt = timestamp("updated_at").defaultExpression(CurrentTimestamp())
+}
+
+// Budget Transactions Table - Links transactions to budgets
+object BudgetTransactions : UUIDTable("budget_transactions") {
+    val budgetId = uuid("budget_id").references(Budgets.id)
+    val transactionId = uuid("transaction_id").references(Transactions.id)
+    val amount = decimal("amount", 15, 2)
+    val category = varchar("category", 100)
+    val createdAt = timestamp("created_at").defaultExpression(CurrentTimestamp())
+}
+
+// Virtual Cards Table - Tracks virtual/digital cards
+object VirtualCards : UUIDTable("virtual_cards") {
+    val customerId = uuid("customer_id").references(Customers.id)
+    val accountId = uuid("account_id").references(Accounts.id)
+    val cardNumber = varchar("card_number", 19) // Encrypted
+    val cardHolderName = varchar("card_holder_name", 255)
+    val expiryMonth = integer("expiry_month")
+    val expiryYear = integer("expiry_year")
+    val cvv = varchar("cvv", 4) // Encrypted
+    val cardType = varchar("card_type", 50).default("VIRTUAL") // VIRTUAL, SINGLE_USE, RECURRING
+    val spendingLimit = decimal("spending_limit", 15, 2).nullable()
+    val usedAmount = decimal("used_amount", 15, 2).default(java.math.BigDecimal.ZERO)
+    val merchantRestrictions = text("merchant_restrictions").nullable() // JSON array of allowed merchants
+    val categoryRestrictions = text("category_restrictions").nullable() // JSON array of allowed categories
+    val expiresAt = timestamp("expires_at").nullable() // For single-use cards
+    val status = varchar("status", 50).default("ACTIVE") // ACTIVE, FROZEN, EXPIRED, CANCELLED
+    val lastUsedAt = timestamp("last_used_at").nullable()
+    val usageCount = integer("usage_count").default(0)
+    val purpose = varchar("purpose", 255).nullable()
+    val createdAt = timestamp("created_at").defaultExpression(CurrentTimestamp())
+    val updatedAt = timestamp("updated_at").defaultExpression(CurrentTimestamp())
+}
+
+// Exchange Rates Table - Stores currency exchange rates
+object ExchangeRates : Table("exchange_rates") {
+    val fromCurrency = varchar("from_currency", 10)
+    val toCurrency = varchar("to_currency", 10)
+    val rate = decimal("rate", 10, 6)
+    val buyRate = decimal("buy_rate", 10, 6)
+    val sellRate = decimal("sell_rate", 10, 6)
+    val sourceType = varchar("source_type", 100).default("MANUAL") // MANUAL, API, MARKET
+    val validFrom = timestamp("valid_from").defaultExpression(CurrentTimestamp())
+    val validUntil = timestamp("valid_until").nullable()
+    val updatedAt = timestamp("updated_at").defaultExpression(CurrentTimestamp())
+
+    override val primaryKey = PrimaryKey(fromCurrency, toCurrency)
+}
+
 // Enums
 enum class UserRole {
     CUSTOMER, TELLER, CASHIER, CUSTOMER_SERVICE_OFFICER,
@@ -1011,7 +1192,15 @@ enum class TransactionType {
     MOBILE_MONEY_WITHDRAWAL,
     REVERSAL,
     QR_PAYMENT,
-    QR_RECEIPT
+    QR_RECEIPT,
+    BULK_TRANSFER,
+    NFC_PAYMENT,
+    NFC_RECEIPT,
+    INTERNATIONAL_TRANSFER,
+    CRYPTO_BUY,
+    CRYPTO_SELL,
+    CRYPTO_SEND,
+    CRYPTO_RECEIVE
 //    CARD_PAYMENT  // TODO: Re-implement
 }
 
@@ -1372,15 +1561,27 @@ object CryptoTransactions : UUIDTable("crypto_transactions") {
 
 object Budgets : UUIDTable("budgets") {
     val customerId = uuid("customer_id").references(Customers.id, onDelete = ReferenceOption.CASCADE)
+    val accountId = uuid("account_id").references(Accounts.id).nullable()
+    val name = varchar("name", 255).nullable()
     val category = varchar("category", 50)
+    val budgetType = varchar("budget_type", 50).default("MONTHLY")
+    val amount = decimal("amount", 15, 2).nullable()
     val monthlyLimit = decimal("monthly_limit", 15, 2)
+    val spent = decimal("spent", 15, 2).default(java.math.BigDecimal.ZERO)
     val currentSpent = decimal("current_spent", 15, 2).default(java.math.BigDecimal.ZERO)
+    val remaining = decimal("remaining", 15, 2).nullable()
+    val percentage = decimal("percentage", 5, 2).default(java.math.BigDecimal.ZERO)
     val alertThreshold = integer("alert_threshold").default(80) // percentage
+    val alertSent = bool("alert_sent").default(false)
+    val status = varchar("status", 50).default("ACTIVE")
     val colorHex = varchar("color_hex", 10).default("0xFF4CAF50")
     val iconName = varchar("icon_name", 50).default("Category")
     val isActive = bool("is_active").default(true)
     val month = integer("month") // 1-12
     val year = integer("year")
+    val startDate = date("start_date").nullable()
+    val endDate = date("end_date").nullable()
+    val rollover = bool("rollover").default(false)
     val createdAt = timestamp("created_at").defaultExpression(CurrentTimestamp())
     val updatedAt = timestamp("updated_at").defaultExpression(CurrentTimestamp())
 }
@@ -1455,14 +1656,21 @@ object UserDevices : UUIDTable("user_devices") {
 // ==================== ATM LOCATIONS ====================
 
 object ATMLocations : UUIDTable("atm_locations") {
+    val atmId = varchar("atm_id", 100).uniqueIndex().nullable()
     val branchId = uuid("branch_id").references(Branches.id).nullable()
     val name = varchar("name", 255)
     val address = text("address")
     val city = varchar("city", 100)
     val state = varchar("state", 50).nullable()
+    val zipCode = varchar("zip_code", 20).nullable()
     val country = varchar("country", 50).default("Kenya")
     val latitude = decimal("latitude", 10, 7)
     val longitude = decimal("longitude", 10, 7)
+    val atmType = varchar("atm_type", 50).default("FULL_SERVICE")
+    val features = text("features").nullable()
+    val availability = varchar("availability", 50).default("24/7")
+    val status = varchar("status", 50).default("OPERATIONAL")
+    val cashAvailable = bool("cash_available").default(true)
     val isOperational = bool("is_operational").default(true)
     val has24HourAccess = bool("has_24_hour_access").default(true)
     val hasDeposit = bool("has_deposit").default(false)
@@ -1484,20 +1692,30 @@ object InternationalTransfers : UUIDTable("international_transfers") {
     val recipientName = varchar("recipient_name", 255)
     val recipientBank = varchar("recipient_bank", 255)
     val recipientAccountNumber = varchar("recipient_account_number", 50)
-    val recipientSwiftCode = varchar("recipient_swift_code", 20)
+    val recipientSwiftCode = varchar("recipient_swift_code", 20).nullable()
     val recipientCountry = varchar("recipient_country", 100)
     val recipientAddress = text("recipient_address").nullable()
+    val recipientCity = varchar("recipient_city", 100).nullable()
+    val iban = varchar("iban", 34).nullable()
+    val routingNumber = varchar("routing_number", 20).nullable()
     val sendAmount = decimal("send_amount", 15, 2)
     val sendCurrency = varchar("send_currency", 3)
     val receiveAmount = decimal("receive_amount", 15, 2)
     val receiveCurrency = varchar("receive_currency", 3)
     val exchangeRate = decimal("exchange_rate", 15, 6)
     val fee = decimal("fee", 15, 2)
-    val purpose = varchar("purpose", 255)
+    val intermediaryFee = decimal("intermediary_fee", 10, 2).default(java.math.BigDecimal.ZERO)
+    val totalDeducted = decimal("total_deducted", 15, 2).nullable()
+    val purpose = varchar("purpose", 255).nullable()
     val reference = varchar("reference", 100)
+    val swiftReference = varchar("swift_reference", 50).nullable()
     val status = varchar("status", 20).default("PENDING")
     val estimatedDelivery = timestamp("estimated_delivery").nullable()
     val completedAt = timestamp("completed_at").nullable()
+    val failureReason = text("failure_reason").nullable()
+    val transactionId = uuid("transaction_id").references(Transactions.id).nullable()
+    val correspondentBank = varchar("correspondent_bank", 255).nullable()
+    val trackingStatus = text("tracking_status").nullable()
     val createdAt = timestamp("created_at").defaultExpression(CurrentTimestamp())
     val updatedAt = timestamp("updated_at").defaultExpression(CurrentTimestamp())
 }
