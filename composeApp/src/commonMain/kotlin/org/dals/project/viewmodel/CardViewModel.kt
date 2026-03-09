@@ -27,7 +27,7 @@ class CardViewModel(
     private val authRepository: AuthRepository
 ) : ViewModel() {
 
-    private val repository = CardRepository(authRepository)
+    val repository = CardRepository(authRepository)
     private val _uiState = MutableStateFlow(CardUiState())
     val uiState: StateFlow<CardUiState> = _uiState.asStateFlow()
 

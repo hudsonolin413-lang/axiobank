@@ -22,7 +22,9 @@ import org.dals.project.viewmodel.AuthViewModel
 @Composable
 fun SecuritySettingsScreen(
     authViewModel: AuthViewModel,
-    onNavigateBack: () -> Unit
+    onNavigateBack: () -> Unit,
+    onNavigateToTwoFactorAuth: () -> Unit = {},
+    onNavigateToDeviceManagement: () -> Unit = {}
 ) {
     val authUiState by authViewModel.uiState.collectAsStateWithLifecycle()
 
@@ -199,12 +201,11 @@ fun SecuritySettingsScreen(
 
                         HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
 
-                        SecurityToggleItem(
+                        SecurityActionButton(
                             title = "Two-Factor Authentication",
                             subtitle = "Add extra security to your account",
                             icon = "🔢",
-                            checked = twoFactorEnabled,
-                            onCheckedChange = { twoFactorEnabled = it }
+                            onClick = onNavigateToTwoFactorAuth
                         )
 
                         HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
@@ -248,10 +249,11 @@ fun SecuritySettingsScreen(
 
                         HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
 
-                        SecuritySettingsItem(
+                        SecurityActionButton(
                             title = "Connected Devices",
                             subtitle = "Manage devices with access to your account",
-                            icon = "📱"
+                            icon = "📱",
+                            onClick = onNavigateToDeviceManagement
                         )
                     }
                 }

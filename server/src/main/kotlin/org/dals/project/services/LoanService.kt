@@ -371,6 +371,67 @@ class LoanService {
         }
     }
 
+    suspend fun refinanceLoan(request: LoanRefinanceRequest): ApiResponse<LoanDto> {
+        return DatabaseFactory.dbQuery {
+            try {
+                val loanId = UUID.fromString(request.loanId)
+                val newRate = BigDecimal(request.newInterestRate)
+                val newTerm = request.newTermMonths
+
+                val loanRow = Loans.select { Loans.id eq loanId }.singleOrNull()
+                    ?: throw Exception("Loan not found")
+
+                if (loanRow[Loans.status] != LoanStatus.ACTIVE) {
+                    throw Exception("Only active loans can be refinanced. Current status: ${loanRow[Loans.status]}")
+                }
+
+                val currentBalance = loanRow[Loans.currentBalance]
+                val monthlyInterestRate = newRate.divide(BigDecimal(12), 6, BigDecimal.ROUND_HALF_UP)
+                val newMonthlyPayment = calculateMonthlyPayment(currentBalance, monthlyInterestRate, newTerm)
+
+                val maturityDate = LocalDate.now().plusMonths(newTerm.toLong())
+
+                Loans.update({ Loans.id eq loanId }) {
+                    it[interestRate] = newRate
+                    it[termMonths] = newTerm
+                    it[monthlyPayment] = newMonthlyPayment
+                    it[Loans.maturityDate] = maturityDate
+                    it[nextPaymentDate] = LocalDate.now().plusMonths(1)
+                    it[paymentsRemaining] = newTerm
+                    it[updatedAt] = java.time.Instant.now()
+                }
+
+                val updatedLoan = Loans.select { Loans.id eq loanId }
+                    .single()
+                    .let { toLoanDto(it) }
+
+                // Send notification
+                try {
+                    notificationService.notifyLoanRefinanced(
+                        customerId = loanRow[Loans.customerId],
+                        loanId = loanId,
+                        newMonthlyPayment = newMonthlyPayment.toString()
+                    )
+                } catch (e: Exception) {
+                    println("⚠️ Failed to send refinance notification: ${e.message}")
+                }
+
+                ApiResponse(
+                    success = true,
+                    message = "Loan refinanced successfully",
+                    data = updatedLoan
+                )
+            } catch (e: Exception) {
+                println("❌ Error refinancing loan: ${e.message}")
+                ApiResponse(
+                    success = false,
+                    message = "Failed to refinance loan",
+                    error = e.message
+                )
+            }
+        }
+    }
+
     suspend fun createLoanFromApplication(
         applicationId: UUID,
         loanOfficerId: UUID,

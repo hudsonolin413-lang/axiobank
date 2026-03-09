@@ -127,3 +127,31 @@ actual class PlatformFileManager : FileManager {
         }
     }
 }
+
+actual class PlatformShareManager : ShareManager {
+    actual constructor()
+
+    override fun shareText(text: String, title: String) {
+        try {
+            val selection = java.awt.datatransfer.StringSelection(text)
+            java.awt.Toolkit.getDefaultToolkit().systemClipboard.setContents(selection, selection)
+            println("Text copied to clipboard: $text")
+        } catch (e: Exception) {
+            println("Error copying to clipboard: ${e.message}")
+        }
+    }
+
+    override fun shareImage(bytes: ByteArray, fileName: String, title: String) {
+        // On Desktop, we'll save it to a temporary file and open it, or copy to clipboard
+        try {
+            val tempFile = File(System.getProperty("java.io.tmpdir"), fileName)
+            tempFile.writeBytes(bytes)
+            
+            if (java.awt.Desktop.isDesktopSupported()) {
+                java.awt.Desktop.getDesktop().open(tempFile)
+            }
+        } catch (e: Exception) {
+            println("Error opening shared image: ${e.message}")
+        }
+    }
+}

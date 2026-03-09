@@ -3,11 +3,9 @@ package org.dals.project.ui.screens
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -21,114 +19,17 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import org.dals.project.viewmodel.AuthViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun SplitBillScreen(onNavigateBack: () -> Unit) {
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Split Bill") },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
-                    }
-                }
-            )
-        }
-    ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Icon(
-                imageVector = Icons.Default.CallSplit,
-                contentDescription = null,
-                modifier = Modifier.size(100.dp),
-                tint = MaterialTheme.colorScheme.primary
-            )
-            Spacer(modifier = Modifier.height(24.dp))
-            Text(
-                "Split Expenses with Friends",
-                style = MaterialTheme.typography.headlineSmall,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                "Easily divide bills, rent, or dinner expenses with your contacts.",
-                style = MaterialTheme.typography.bodyLarge,
-                textAlign = TextAlign.Center,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            Spacer(modifier = Modifier.weight(1f))
-            Button(
-                onClick = { /* TODO */ },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("Create New Split")
-            }
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun ATMLocatorScreen(onNavigateBack: () -> Unit) {
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("ATM Locator") },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
-                    }
-                }
-            )
-        }
-    ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Icon(
-                imageVector = Icons.Default.LocationOn,
-                contentDescription = null,
-                modifier = Modifier.size(100.dp),
-                tint = MaterialTheme.colorScheme.primary
-            )
-            Spacer(modifier = Modifier.height(24.dp))
-            Text(
-                "Find Nearest ATM or Branch",
-                style = MaterialTheme.typography.headlineSmall,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                "Use our interactive map to find the closest Axio Bank location.",
-                style = MaterialTheme.typography.bodyLarge,
-                textAlign = TextAlign.Center,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            Spacer(modifier = Modifier.weight(1f))
-            Button(
-                onClick = { /* TODO */ },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("Open Map")
-            }
-        }
-    }
-}
-
-// BeneficiaryManagementScreen moved to BeneficiaryManagementScreen.kt (real implementation)
+// SplitBillScreen moved to SplitBillScreen.kt
+// ATMLocatorScreen moved to ATMLocatorScreen.kt
+// CryptoWalletScreen moved to CryptoWalletScreen.kt
+// OverdraftProtectionScreen moved to OverdraftProtectionScreen.kt
+// CashFlowForecastScreen moved to CashFlowForecastScreen.kt
+// InternationalTransferScreen moved to InternationalTransferScreen.kt
+// LoanRefinancingScreen moved to LoanRefinancingScreen.kt
+// DigitalSignatureScreen moved to DigitalSignatureScreen.kt
+// NfcPaymentScreen moved to NfcPaymentScreen.kt
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -149,417 +50,24 @@ fun DeviceManagementScreen(onNavigateBack: () -> Unit) {
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Icon(
-                imageVector = Icons.Default.Devices,
-                contentDescription = null,
-                modifier = Modifier.size(100.dp),
-                tint = MaterialTheme.colorScheme.primary
-            )
-            Spacer(modifier = Modifier.height(24.dp))
-            Text(
-                "Secured Devices",
-                style = MaterialTheme.typography.headlineSmall,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                "Manage the devices authorized to access your account.",
-                style = MaterialTheme.typography.bodyLarge,
-                textAlign = TextAlign.Center,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            Spacer(modifier = Modifier.weight(1f))
-            Button(
-                onClick = { /* TODO */ },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("Refresh List")
-            }
-        }
-    }
-}
-
-// QRPaymentScreen moved to QRPaymentScreen.kt (real implementation with QR code generation and payment processing)
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun BulkTransferScreen(onNavigateBack: () -> Unit) {
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Bulk Transfer") },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
-                    }
-                }
-            )
-        }
-    ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
                 .padding(16.dp)
         ) {
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
-            ) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Text(
-                        "Batch Payments",
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Text(
-                        "Send money to multiple recipients at once.",
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                }
-            }
-            
-            Spacer(modifier = Modifier.height(24.dp))
-            
-            Text("Recipient List", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-            Spacer(modifier = Modifier.height(8.dp))
-            
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
-                    .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(8.dp)),
-                contentAlignment = Alignment.Center
-            ) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Icon(Icons.Default.UploadFile, contentDescription = null, modifier = Modifier.size(48.dp), tint = MaterialTheme.colorScheme.primary)
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text("No recipients added", style = MaterialTheme.typography.bodyMedium)
-                    TextButton(onClick = { /* TODO */ }) {
-                        Text("Upload CSV/Excel")
-                    }
-                }
-            }
-            
+            Text("Trusted Devices", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
             Spacer(modifier = Modifier.height(16.dp))
-            
-            Button(
-                onClick = { /* TODO */ },
-                modifier = Modifier.fillMaxWidth(),
-                enabled = false
-            ) {
-                Text("Continue to Payment")
-            }
-        }
-    }
-}
-
-// SubAccountsScreen moved to SubAccountsScreen.kt (real implementation)
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun CryptoWalletScreen(onNavigateBack: () -> Unit) {
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Crypto Wallet") },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
-                    }
-                }
-            )
-        }
-    ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .padding(16.dp)
-        ) {
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(containerColor = Color(0xFF121212))
-            ) {
-                Column(modifier = Modifier.padding(24.dp)) {
-                    Text("Total Crypto Balance", color = Color.White.copy(alpha = 0.7f))
-                    Text("$0.00", style = MaterialTheme.typography.headlineLarge, fontWeight = FontWeight.Bold, color = Color.White)
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        Button(onClick = { /* TODO */ }, modifier = Modifier.weight(1f)) { Text("Buy") }
-                        Button(onClick = { /* TODO */ }, modifier = Modifier.weight(1f)) { Text("Sell") }
-                    }
-                }
-            }
-            
-            Spacer(modifier = Modifier.height(24.dp))
-            Text("Assets", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
-            Spacer(modifier = Modifier.height(16.dp))
-            
-            Text(
-                "You don't own any crypto assets yet.",
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth().padding(vertical = 32.dp)
-            )
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun OverdraftProtectionScreen(onNavigateBack: () -> Unit) {
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Overdraft Protection") },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
-                    }
-                }
-            )
-        }
-    ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .padding(16.dp)
-        ) {
-            Text(
-                "Safe Spend",
-                style = MaterialTheme.typography.headlineSmall,
-                fontWeight = FontWeight.Bold
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                "Prevent declined transactions and overdraft fees by linking a backup account.",
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            
-            Spacer(modifier = Modifier.height(24.dp))
             
             ListItem(
-                headlineContent = { Text("Enable Protection") },
-                supportingContent = { Text("Automatically cover shortfalls from savings.") },
-                trailingContent = { Switch(checked = false, onCheckedChange = { /* TODO */ }) }
+                headlineContent = { Text("Current Device: Pixel 7") },
+                supportingContent = { Text("Active now • Nairobi, Kenya") },
+                trailingContent = { Text("Active", color = Color.Green) }
             )
             
             HorizontalDivider()
             
             ListItem(
-                headlineContent = { Text("Overdraft Limit") },
-                trailingContent = { Text("$500.00", fontWeight = FontWeight.Bold) }
+                headlineContent = { Text("iPhone 13") },
+                supportingContent = { Text("Last active: Oct 12, 2023") },
+                trailingContent = { TextButton(onClick = { /* TODO */ }) { Text("Remove") } }
             )
-        }
-    }
-}
-
-// TaxReportsScreen moved to TaxReportsScreen.kt (real implementation)
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun CashFlowForecastScreen(onNavigateBack: () -> Unit) {
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Cash Flow Forecast") },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
-                    }
-                }
-            )
-        }
-    ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                "Future Spending Analysis",
-                style = MaterialTheme.typography.headlineSmall,
-                fontWeight = FontWeight.Bold
-            )
-            Spacer(modifier = Modifier.height(24.dp))
-            
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(200.dp)
-                    .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(8.dp)),
-                contentAlignment = Alignment.Center
-            ) {
-                Text("Forecast Chart Placeholder", color = MaterialTheme.colorScheme.onSurfaceVariant)
-            }
-            
-            Spacer(modifier = Modifier.height(24.dp))
-            
-            Card(modifier = Modifier.fillMaxWidth()) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Text("Predicted Balance (30 Days)", fontWeight = FontWeight.Bold)
-                    Text("$4,320.00", style = MaterialTheme.typography.headlineMedium, color = MaterialTheme.colorScheme.primary)
-                }
-            }
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun InternationalTransferScreen(onNavigateBack: () -> Unit) {
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("International Transfer") },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
-                    }
-                }
-            )
-        }
-    ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            Text("Send Money Abroad", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
-            
-            OutlinedTextField(
-                value = "",
-                onValueChange = {},
-                label = { Text("Destination Country") },
-                modifier = Modifier.fillMaxWidth(),
-                trailingIcon = { Icon(Icons.Default.Public, contentDescription = null) }
-            )
-            
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                OutlinedTextField(
-                    value = "",
-                    onValueChange = {},
-                    label = { Text("Amount") },
-                    modifier = Modifier.weight(1f)
-                )
-                OutlinedTextField(
-                    value = "USD",
-                    onValueChange = {},
-                    label = { Text("Currency") },
-                    modifier = Modifier.width(80.dp),
-                    readOnly = true
-                )
-            }
-            
-            Card(
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer)
-            ) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Text("Exchange Rate: 1 USD = 0.92 EUR", style = MaterialTheme.typography.bodySmall)
-                    Text("Fee: $5.00", style = MaterialTheme.typography.bodySmall)
-                }
-            }
-            
-            Spacer(modifier = Modifier.weight(1f))
-            
-            Button(onClick = { /* TODO */ }, modifier = Modifier.fillMaxWidth()) {
-                Text("Continue")
-            }
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun DigitalSignatureScreen(onNavigateBack: () -> Unit) {
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Digital Signature") },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
-                    }
-                }
-            )
-        }
-    ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text("Sign Documents Securely", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
-            Spacer(modifier = Modifier.height(24.dp))
-            
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(300.dp)
-                    .background(Color.White, RoundedCornerShape(8.dp))
-                    .padding(8.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Text("Sign Here", color = Color.Gray)
-            }
-            
-            Spacer(modifier = Modifier.height(24.dp))
-            
-            Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                OutlinedButton(onClick = { /* TODO */ }, modifier = Modifier.weight(1f)) { Text("Clear") }
-                Button(onClick = { /* TODO */ }, modifier = Modifier.weight(1f)) { Text("Save Signature") }
-            }
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun NfcPaymentScreen(onNavigateBack: () -> Unit) {
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Contactless Payment") },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
-                    }
-                }
-            )
-        }
-    ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Icon(
-                imageVector = Icons.Default.Nfc,
-                contentDescription = null,
-                modifier = Modifier.size(150.dp),
-                tint = MaterialTheme.colorScheme.primary
-            )
-            Spacer(modifier = Modifier.height(32.dp))
-            Text("Hold Near Terminal", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
-            Spacer(modifier = Modifier.height(16.dp))
-            Text("Make sure NFC is enabled in your device settings.", textAlign = TextAlign.Center)
         }
     }
 }
@@ -601,49 +109,8 @@ fun OfflineModeScreen(onNavigateBack: () -> Unit) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoanRefinancingScreen(onNavigateBack: () -> Unit) {
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Loan Refinancing") },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
-                    }
-                }
-            )
-        }
-    ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .padding(16.dp)
-        ) {
-            Text("Optimize Your Debt", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
-            Spacer(modifier = Modifier.height(8.dp))
-            Text("Lower your interest rate or change your repayment term.")
-            
-            Spacer(modifier = Modifier.height(24.dp))
-            
-            Card(modifier = Modifier.fillMaxWidth()) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Text("Active Loan", fontWeight = FontWeight.Bold)
-                    Text("Balance: $5,200.00", style = MaterialTheme.typography.bodyLarge)
-                    Text("Current APR: 12.5%", style = MaterialTheme.typography.bodySmall)
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Button(onClick = { /* TODO */ }, modifier = Modifier.fillMaxWidth()) {
-                        Text("View Refinancing Offers")
-                    }
-                }
-            }
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
 fun MoreServicesScreen(
+    authViewModel: AuthViewModel,
     onNavigateBack: () -> Unit,
     onNavigateToBulkTransfer: () -> Unit,
     onNavigateToSubAccounts: () -> Unit,

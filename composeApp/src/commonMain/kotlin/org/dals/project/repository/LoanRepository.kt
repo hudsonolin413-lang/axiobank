@@ -1,6 +1,7 @@
 package org.dals.project.repository
 
 import org.dals.project.model.*
+import org.dals.project.utils.RetryUtils
 import org.dals.project.API_BASE_URL
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,6 +14,7 @@ import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.client.plugins.HttpTimeout
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.http.*
 import kotlinx.serialization.Serializable
@@ -125,6 +127,22 @@ data class LoanApplicationResponse(
     val error: String? = null
 )
 
+@Serializable
+data class LoanRefinanceRequest(
+    val loanId: String,
+    val newTermMonths: Int,
+    val newInterestRate: String,
+    val processedBy: String? = null
+)
+
+@Serializable
+data class LoanResponse(
+    val success: Boolean,
+    val message: String,
+    val data: ServerLoanData? = null,
+    val error: String? = null
+)
+
 class LoanRepository(
     private val authRepository: AuthRepository
 ) {
@@ -137,6 +155,11 @@ class LoanRepository(
                 isLenient = true
                 ignoreUnknownKeys = true
             })
+        }
+        install(HttpTimeout) {
+            requestTimeoutMillis = 120000
+            connectTimeoutMillis = 60000
+            socketTimeoutMillis = 120000
         }
     }
 
@@ -169,11 +192,16 @@ class LoanRepository(
         try {
 //            println("🌐 Fetching loans for customer: $customerId")
 
-            val response = httpClient.get("$baseUrl/loans/customer/$customerId") {
-                contentType(ContentType.Application.Json)
-                headers {
-                    authRepository.getAuthToken()?.let { token ->
-                        append("Authorization", "Bearer $token")
+            val response = RetryUtils.retryWithExponentialBackoff(
+                maxRetries = 2,
+                initialDelayMs = 500
+            ) {
+                httpClient.get("$baseUrl/loans/customer/$customerId") {
+                    contentType(ContentType.Application.Json)
+                    headers {
+                        authRepository.getAuthToken()?.let { token ->
+                            append("Authorization", "Bearer $token")
+                        }
                     }
                 }
             }
@@ -189,6 +217,7 @@ class LoanRepository(
                         Loan(
                             id = serverLoan.id,
                             applicationId = serverLoan.applicationId ?: serverLoan.accountId ?: "",
+                            loanType = serverLoan.loanType,
                             borrowerId = serverLoan.customerId,
                             lenderId = serverLoan.loanOfficerId,
                             amount = serverLoan.originalAmount.toDoubleOrNull() ?: 0.0,
@@ -230,11 +259,16 @@ class LoanRepository(
         try {
 //            println("🌐 Fetching loan applications for customer: $customerId")
 
-            val response = httpClient.get("$baseUrl/loans/applications/customer/$customerId") {
-                contentType(ContentType.Application.Json)
-                headers {
-                    authRepository.getAuthToken()?.let { token ->
-                        append("Authorization", "Bearer $token")
+            val response = RetryUtils.retryWithExponentialBackoff(
+                maxRetries = 2,
+                initialDelayMs = 500
+            ) {
+                httpClient.get("$baseUrl/loans/applications/customer/$customerId") {
+                    contentType(ContentType.Application.Json)
+                    headers {
+                        authRepository.getAuthToken()?.let { token ->
+                            append("Authorization", "Bearer $token")
+                        }
                     }
                 }
             }
@@ -415,7 +449,7 @@ class LoanRepository(
             )
 
             // Make API call to server
-            val response = httpClient.post("$baseUrl/api/v1/loans/$loanId/payments") {
+            val response = httpClient.post("$baseUrl/loans/$loanId/payments") {
                 contentType(ContentType.Application.Json)
                 setBody(requestBody)
             }
@@ -458,6 +492,77 @@ class LoanRepository(
 
     fun getPaymentsByLoanId(loanId: String): List<LoanPayment> {
         return _loanPayments.value.filter { it.loanId == loanId }
+    }
+
+    suspend fun refinanceLoan(loanId: String, newTermMonths: Int, newInterestRate: Double): Result<Loan> {
+        return try {
+            println("🔄 Refinancing loan: $loanId with term $newTermMonths and rate $newInterestRate")
+            
+            val currentUser = authRepository.currentUser.value
+            val request = LoanRefinanceRequest(
+                loanId = loanId,
+                newTermMonths = newTermMonths,
+                newInterestRate = newInterestRate.toString(),
+                processedBy = currentUser?.id
+            )
+
+            val response = httpClient.post("$baseUrl/loans/refinance") {
+                contentType(ContentType.Application.Json)
+                setBody(request)
+                headers {
+                    authRepository.getAuthToken()?.let { token ->
+                        append("Authorization", "Bearer $token")
+                    }
+                }
+            }
+
+            if (response.status.isSuccess()) {
+                val loanResponse = response.body<LoanResponse>()
+                if (loanResponse.success && loanResponse.data != null) {
+                    val serverLoan = loanResponse.data
+                    val updatedLoan = Loan(
+                        id = serverLoan.id,
+                        applicationId = serverLoan.applicationId ?: serverLoan.accountId ?: "",
+                        loanType = serverLoan.loanType,
+                        borrowerId = serverLoan.customerId,
+                        lenderId = serverLoan.loanOfficerId,
+                        amount = serverLoan.originalAmount.toDoubleOrNull() ?: 0.0,
+                        interestRate = serverLoan.interestRate.toDoubleOrNull() ?: 0.0,
+                        termInMonths = serverLoan.termMonths,
+                        monthlyPayment = serverLoan.monthlyPayment.toDoubleOrNull() ?: 0.0,
+                        remainingBalance = serverLoan.currentBalance.toDoubleOrNull() ?: 0.0,
+                        status = parseLoanStatus(serverLoan.status),
+                        createdDate = serverLoan.originationDate ?: serverLoan.createdAt,
+                        dueDate = serverLoan.maturityDate ?: "",
+                        lastPaymentDate = serverLoan.nextPaymentDate,
+                        collateral = Collateral(
+                            type = CollateralType.NONE,
+                            description = "",
+                            value = 0.0
+                        ),
+                        smartContractAddress = null
+                    )
+
+                    // Update local state
+                    val currentLoans = _activeLoans.value.toMutableList()
+                    val index = currentLoans.indexOfFirst { it.id == loanId }
+                    if (index != -1) {
+                        currentLoans[index] = updatedLoan
+                        _activeLoans.value = currentLoans
+                    }
+
+                    Result.success(updatedLoan)
+                } else {
+                    Result.failure(Exception(loanResponse.message))
+                }
+            } else {
+                val errorBody = response.body<String>()
+                Result.failure(Exception("Failed to refinance loan: ${response.status} - $errorBody"))
+            }
+        } catch (e: Exception) {
+            println("❌ Exception refinancing loan: ${e.message}")
+            Result.failure(e)
+        }
     }
 
     fun cleanup() {

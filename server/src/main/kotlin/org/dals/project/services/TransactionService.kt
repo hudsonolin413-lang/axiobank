@@ -3,6 +3,7 @@ package org.dals.project.services
 import org.dals.project.database.*
 import org.dals.project.models.*
 import org.dals.project.utils.IdGenerator
+import java.math.RoundingMode
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.javatime.CurrentTimestamp
@@ -199,25 +200,81 @@ class TransactionService {
                     TransactionType.WITHDRAWAL, TransactionType.PAYMENT, TransactionType.FEE_DEBIT,
                     TransactionType.ATM_WITHDRAWAL, TransactionType.LOAN_PAYMENT -> {
                         val calculatedBalance = currentBalance - totalAmountToDeduct
+                        var finalBalance = calculatedBalance
+                        var overdraftFeeToCharge = BigDecimal.ZERO
 
-                        // Check for sufficient funds
+                        // Check for sufficient funds or overdraft protection
                         if (calculatedBalance < BigDecimal.ZERO) {
-                            throw Exception("Insufficient funds. Current balance: $currentBalance, Requested: $transactionAmount, Fee: $transactionFee, Total: $totalAmountToDeduct")
+                            // Fetch overdraft settings
+                            val overdraftSettings = OverdraftSettings.select { OverdraftSettings.accountId eq accountId }.singleOrNull()
+                            val isOverdraftEnabled = overdraftSettings?.get(OverdraftSettings.isEnabled) ?: false
+                            val overdraftLimit = overdraftSettings?.get(OverdraftSettings.overdraftLimit) ?: BigDecimal.ZERO
+                            
+                            if (isOverdraftEnabled && calculatedBalance.abs() <= overdraftLimit) {
+                                // Overdraft allowed, charge overdraft fee ($25.00)
+                                overdraftFeeToCharge = BigDecimal("25.00")
+                                finalBalance = calculatedBalance - overdraftFeeToCharge
+                                
+                                // Check if total negative balance (including fee) exceeds limit
+                                if (finalBalance.abs() > overdraftLimit) {
+                                    throw Exception("Overdraft limit exceeded including fee. Current balance: $currentBalance, Requested: $transactionAmount, Fee: $transactionFee, Overdraft Fee: $overdraftFeeToCharge, Total: ${totalAmountToDeduct + overdraftFeeToCharge}, Limit: $overdraftLimit")
+                                }
+                                
+                                // Record overdraft usage
+                                OverdraftSettings.update({ OverdraftSettings.accountId eq accountId }) {
+                                    it[usedAmount] = finalBalance.abs()
+                                    it[lastUsedAt] = CurrentTimestamp()
+                                }
+                                
+                                println("🛡️ Overdraft protection used for account $accountId. Charged $overdraftFeeToCharge fee.")
+                            } else {
+                                throw Exception("Insufficient funds. Current balance: $currentBalance, Requested: $transactionAmount, Fee: $transactionFee, Total: $totalAmountToDeduct. Overdraft enabled: $isOverdraftEnabled, Limit: $overdraftLimit")
+                            }
                         }
 
-                        calculatedBalance
+                        // If there's an overdraft fee, record it as a separate transaction or included? 
+                        // To keep it simple and consistent with the balanceAfter, we'll record it as a separate fee transaction later
+                        // but the current transaction's balanceAfter must be correct.
+                        
+                        finalBalance
                     }
 
                     TransactionType.TRANSFER -> {
                         if (request.fromAccountId == request.accountId) {
                             val calculatedBalance = currentBalance - totalAmountToDeduct
+                            var finalBalance = calculatedBalance
+                            var overdraftFeeToCharge = BigDecimal.ZERO
 
-                            // Check for sufficient funds
+                            // Check for sufficient funds or overdraft protection
                             if (calculatedBalance < BigDecimal.ZERO) {
-                                throw Exception("Insufficient funds. Current balance: $currentBalance, Requested: $transactionAmount, Fee: $transactionFee, Total: $totalAmountToDeduct")
+                                // Fetch overdraft settings
+                                val overdraftSettings = OverdraftSettings.select { OverdraftSettings.accountId eq accountId }.singleOrNull()
+                                val isOverdraftEnabled = overdraftSettings?.get(OverdraftSettings.isEnabled) ?: false
+                                val overdraftLimit = overdraftSettings?.get(OverdraftSettings.overdraftLimit) ?: BigDecimal.ZERO
+                                
+                                if (isOverdraftEnabled && calculatedBalance.abs() <= overdraftLimit) {
+                                    // Overdraft allowed, charge overdraft fee ($25.00)
+                                    overdraftFeeToCharge = BigDecimal("25.00")
+                                    finalBalance = calculatedBalance - overdraftFeeToCharge
+                                    
+                                    // Check if total negative balance (including fee) exceeds limit
+                                    if (finalBalance.abs() > overdraftLimit) {
+                                        throw Exception("Overdraft limit exceeded including fee. Current balance: $currentBalance, Requested: $transactionAmount, Fee: $transactionFee, Overdraft Fee: $overdraftFeeToCharge, Total: ${totalAmountToDeduct + overdraftFeeToCharge}, Limit: $overdraftLimit")
+                                    }
+                                    
+                                    // Record overdraft usage
+                                    OverdraftSettings.update({ OverdraftSettings.accountId eq accountId }) {
+                                        it[usedAmount] = finalBalance.abs()
+                                        it[lastUsedAt] = CurrentTimestamp()
+                                    }
+                                    
+                                    println("🛡️ Overdraft protection used for account $accountId during transfer. Charged $overdraftFeeToCharge fee.")
+                                } else {
+                                    throw Exception("Insufficient funds. Current balance: $currentBalance, Requested: $transactionAmount, Fee: $transactionFee, Total: $totalAmountToDeduct. Overdraft enabled: $isOverdraftEnabled, Limit: $overdraftLimit")
+                                }
                             }
 
-                            calculatedBalance
+                            finalBalance
                         } else {
                             currentBalance + transactionAmount
                         }
@@ -255,6 +312,51 @@ class TransactionService {
                     it[balance] = newBalance
                     it[availableBalance] = newBalance
                     it[lastTransactionDate] = CurrentTimestamp()
+                }
+
+                // If overdraft fee was charged, record it as a separate transaction
+                val initialBalance = currentBalance
+                val transactionDiff = initialBalance - newBalance
+                // If the total reduction (totalAmountToDeduct + fee) is more than what was deducted so far
+                // Actually, newBalance already includes the overdraft fee if it was charged.
+                // Let's check if there's an overdraft fee to record.
+                val totalDeducted = currentBalance - newBalance
+                val overdraftFee = if (totalDeducted > totalAmountToDeduct && (request.type.uppercase() != "DEPOSIT")) {
+                    totalDeducted - totalAmountToDeduct
+                } else {
+                    BigDecimal.ZERO
+                }
+
+                if (overdraftFee > BigDecimal.ZERO) {
+                    val feeTransactionId = UUID.randomUUID()
+                    Transactions.insert {
+                        it[id] = feeTransactionId
+                        it[Transactions.accountId] = accountId
+                        it[type] = TransactionType.FEE_DEBIT
+                        it[amount] = overdraftFee
+                        it[description] = "Overdraft Protection Fee for ${request.type} - ${transactionReference}"
+                        it[balanceAfter] = newBalance // It's already the final balance
+                        it[reference] = "ODF-${transactionReference}"
+                        it[category] = "OVERDRAFT_FEE"
+                        it[status] = TransactionStatus.COMPLETED
+                        it[timestamp] = CurrentTimestamp()
+                    }
+                    
+                    // Also record the fee in the fee service for profit tracking
+                    try {
+                        feeService.recordTransactionFee(
+                            transactionId = insertedId.value,
+                            customerId = currentAccount[Customers.id].value,
+                            accountId = accountId,
+                            transactionType = "OVERDRAFT_FEE",
+                            transactionAmount = transactionAmount,
+                            feeAmount = overdraftFee,
+                            processedBy = request.processedBy?.let { UUID.fromString(it) },
+                            branchId = request.branchId?.let { UUID.fromString(it) }
+                        )
+                    } catch (e: Exception) {
+                        println("⚠️ Failed to record overdraft fee in profit tracker: ${e.message}")
+                    }
                 }
 
                 // If it's a transfer, update the other account as well

@@ -1591,6 +1591,7 @@ object Budgets : UUIDTable("budgets") {
 object SubAccounts : UUIDTable("sub_accounts") {
     val customerId = uuid("customer_id").references(Customers.id, onDelete = ReferenceOption.CASCADE)
     val parentAccountId = uuid("parent_account_id").references(Accounts.id)
+    val accountNumber = varchar("account_number", 20).uniqueIndex()
     val name = varchar("name", 100)
     val description = text("description").nullable()
     val targetAmount = decimal("target_amount", 15, 2).nullable()

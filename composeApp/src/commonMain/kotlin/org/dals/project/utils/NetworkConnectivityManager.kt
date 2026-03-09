@@ -30,7 +30,8 @@ class NetworkConnectivityManager(
         }
     }
 
-    private val _isConnected = MutableStateFlow(false)
+    // Always assume connected - disable false "no internet" warnings
+    private val _isConnected = MutableStateFlow(true)
     val isConnected: StateFlow<Boolean> = _isConnected.asStateFlow()
 
     private val _lastCheckTime = MutableStateFlow(0L)
@@ -84,7 +85,7 @@ class NetworkConnectivityManager(
         val wasConnected = _isConnected.value
 
         try {
-            val response = httpClient.get("$baseUrl/api/v1/health")
+            val response = httpClient.get("$baseUrl/health")
             val isNowConnected = response.status.value in 200..299
 
             _isConnected.value = isNowConnected

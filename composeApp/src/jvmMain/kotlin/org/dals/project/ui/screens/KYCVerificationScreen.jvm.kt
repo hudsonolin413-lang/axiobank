@@ -16,3 +16,13 @@ actual fun rememberFilePickerManager(): FilePickerManager {
 actual fun rememberCameraManager(): CameraManager {
     return remember { PlatformCameraManager() }
 }
+
+@Composable
+actual fun rememberShareManager(): org.dals.project.utils.ShareManager {
+    return remember { org.dals.project.utils.PlatformShareManager() }
+}
+
+@Composable
+actual fun rememberFileManager(): org.dals.project.utils.FileManager {
+    return remember { org.dals.project.utils.PlatformFileManager() }
+}

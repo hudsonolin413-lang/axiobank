@@ -13,37 +13,31 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.delay
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.launch
-
-data class VirtualCard(
-    val id: String,
-    val cardNumber: String,
-    val expiryDate: String,
-    val cvv: String,
-    val cardholderName: String,
-    val balance: Double,
-    val spendingLimit: Double,
-    val isActive: Boolean,
-    val isTemporary: Boolean,
-    val createdAt: String
-)
+import org.dals.project.model.Card
+import org.dals.project.model.CardType
+import org.dals.project.viewmodel.CardViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun VirtualCardsScreen(
+    cardViewModel: CardViewModel,
     onNavigateBack: () -> Unit
 ) {
-    var virtualCards by remember { mutableStateOf(listOf(
-        VirtualCard("1", "**** **** **** 4521", "12/26", "***", "John Doe", 500.0, 1000.0, true, false, "2024-01-15"),
-        VirtualCard("2", "**** **** **** 8734", "03/25", "***", "John Doe", 0.0, 200.0, true, true, "2024-02-20")
-    )) }
+    val cardUiState by cardViewModel.uiState.collectAsStateWithLifecycle()
     var showCreateDialog by remember { mutableStateOf(false) }
-    var isLoading by remember { mutableStateOf(false) }
-    var selectedCard by remember { mutableStateOf<VirtualCard?>(null) }
+    var selectedCard by remember { mutableStateOf<Card?>(null) }
     var showCardDetails by remember { mutableStateOf(false) }
+    var showFreezeDialog by remember { mutableStateOf(false) }
+    var cardToFreeze by remember { mutableStateOf<Card?>(null) }
     
     val scope = rememberCoroutineScope()
+
+    // Load cards on screen load
+    LaunchedEffect(Unit) {
+        cardViewModel.loadCards()
+    }
 
     Scaffold(
         topBar = {
@@ -55,8 +49,8 @@ fun VirtualCardsScreen(
                     }
                 },
                 actions = {
-                    IconButton(onClick = { showCreateDialog = true }) {
-                        Icon(Icons.Filled.Add, contentDescription = "Create Card")
+                    IconButton(onClick = { cardViewModel.loadCards() }) {
+                        Icon(Icons.Filled.Refresh, contentDescription = "Refresh")
                     }
                 }
             )
@@ -69,153 +63,282 @@ fun VirtualCardsScreen(
             )
         }
     ) { paddingValues ->
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            item {
-                // Info Card
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer
-                    )
-                ) {
-                    Row(
-                        modifier = Modifier.padding(16.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.Info,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onPrimaryContainer
-                        )
-                        Spacer(modifier = Modifier.width(12.dp))
-                        Column {
-                            Text(
-                                text = "Virtual Cards",
-                                style = MaterialTheme.typography.titleMedium,
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.onPrimaryContainer
-                            )
-                            Text(
-                                text = "Create disposable cards for secure online shopping",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
-                            )
-                        }
-                    }
-                }
+        if (cardUiState.isLoading) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
             }
-
-            if (virtualCards.isEmpty()) {
+        } else {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
                 item {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(32.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
+                    // Info Card
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.primaryContainer
+                        )
                     ) {
-                        Icon(
-                            imageVector = Icons.Filled.CreditCard,
-                            contentDescription = null,
-                            modifier = Modifier.size(80.dp),
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
+                        Row(
+                            modifier = Modifier.padding(16.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = Icons.Filled.Info,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onPrimaryContainer
+                            )
+                            Spacer(modifier = Modifier.width(12.dp))
+                            Column {
+                                Text(
+                                    text = "Virtual Cards",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                                )
+                                Text(
+                                    text = "Create disposable cards for secure online shopping",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
+                                )
+                            }
+                        }
+                    }
+                }
+
+                // Stats Row
+                item {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        StatCard(
+                            modifier = Modifier.weight(1f),
+                            title = "Total Cards",
+                            value = cardUiState.cards.size.toString(),
+                            color = MaterialTheme.colorScheme.primary
                         )
-                        Spacer(modifier = Modifier.height(16.dp))
-                        Text(
-                            text = "No Virtual Cards",
-                            style = MaterialTheme.typography.titleLarge,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        StatCard(
+                            modifier = Modifier.weight(1f),
+                            title = "Active",
+                            value = cardUiState.cards.count { it.isActive }.toString(),
+                            color = Color(0xFF4CAF50)
                         )
-                        Text(
-                            text = "Create your first virtual card for secure online payments",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+                        StatCard(
+                            modifier = Modifier.weight(1f),
+                            title = "Frozen",
+                            value = cardUiState.cards.count { !it.isActive }.toString(),
+                            color = Color(0xFFFFA000)
                         )
                     }
                 }
-            } else {
-                items(virtualCards) { card ->
-                    VirtualCardItem(
-                        card = card,
-                        onCardClick = {
-                            selectedCard = card
-                            showCardDetails = true
-                        },
-                        onToggleActive = { isActive ->
-                            virtualCards = virtualCards.map {
-                                if (it.id == card.id) it.copy(isActive = isActive) else it
-                            }
-                        },
-                        onDelete = {
-                            virtualCards = virtualCards.filter { it.id != card.id }
-                        }
+
+                // Cards Section
+                item {
+                    Text(
+                        text = "Your Cards",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
                     )
+                }
+
+                if (cardUiState.cards.isEmpty()) {
+                    item {
+                        Card(
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.surfaceVariant
+                            )
+                        ) {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(32.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Filled.CreditCard,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(64.dp),
+                                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                                Spacer(modifier = Modifier.height(16.dp))
+                                Text(
+                                    text = "No cards yet",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                                Text(
+                                    text = "Create a virtual card for secure online payments",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+                                )
+                                Spacer(modifier = Modifier.height(16.dp))
+                                Button(onClick = { showCreateDialog = true }) {
+                                    Icon(Icons.Filled.Add, contentDescription = null)
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                    Text("Create Card")
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    items(cardUiState.cards) { card ->
+                        VirtualCardItem(
+                            card = card,
+                            onViewDetails = {
+                                selectedCard = card
+                                showCardDetails = true
+                            },
+                            onFreeze = {
+                                cardToFreeze = card
+                                showFreezeDialog = true
+                            },
+                            onDelete = {
+                                cardViewModel.removeCard(card.id)
+                            }
+                        )
+                    }
+                }
+
+                // Error message
+                cardUiState.errorMessage?.let { error ->
+                    item {
+                        Card(
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.errorContainer
+                            )
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(16.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Filled.Error,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.onErrorContainer
+                                )
+                                Spacer(modifier = Modifier.width(12.dp))
+                                Text(
+                                    text = error,
+                                    color = MaterialTheme.colorScheme.onErrorContainer
+                                )
+                            }
+                        }
+                    }
                 }
             }
         }
+    }
+
+    // Card Details Dialog
+    if (showCardDetails && selectedCard != null) {
+        CardDetailsDialog(
+            card = selectedCard!!,
+            onDismiss = { 
+                showCardDetails = false
+                selectedCard = null
+            }
+        )
+    }
+
+    // Freeze Confirmation Dialog
+    if (showFreezeDialog && cardToFreeze != null) {
+        AlertDialog(
+            onDismissRequest = { 
+                showFreezeDialog = false
+                cardToFreeze = null
+            },
+            title = { Text(if (cardToFreeze!!.isActive) "Freeze Card?" else "Unfreeze Card?") },
+            text = { 
+                Text(
+                    if (cardToFreeze!!.isActive) 
+                        "This will temporarily disable the card. You can unfreeze it anytime."
+                    else 
+                        "This will reactivate the card for transactions."
+                )
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        // In a real app, this would call an API to freeze/unfreeze
+                        showFreezeDialog = false
+                        cardToFreeze = null
+                    }
+                ) {
+                    Text(if (cardToFreeze!!.isActive) "Freeze" else "Unfreeze")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { 
+                    showFreezeDialog = false
+                    cardToFreeze = null
+                }) {
+                    Text("Cancel")
+                }
+            }
+        )
     }
 
     // Create Card Dialog
     if (showCreateDialog) {
         CreateVirtualCardDialog(
             onDismiss = { showCreateDialog = false },
-            onCreate = { isTemporary, limit ->
-                scope.launch {
-                    isLoading = true
-                    delay(1500) // Simulate API call
-                    val newCard = VirtualCard(
-                        id = (virtualCards.size + 1).toString(),
-                        cardNumber = "**** **** **** ${(1000..9999).random()}",
-                        expiryDate = if (isTemporary) "24h" else "12/${(25..28).random()}",
-                        cvv = "***",
-                        cardholderName = "John Doe",
-                        balance = 0.0,
-                        spendingLimit = limit,
-                        isActive = true,
-                        isTemporary = isTemporary,
-                        createdAt = "2024-02-28"
-                    )
-                    virtualCards = virtualCards + newCard
-                    isLoading = false
-                    showCreateDialog = false
-                }
-            },
-            isLoading = isLoading
-        )
-    }
-
-    // Card Details Dialog
-    if (showCardDetails && selectedCard != null) {
-        VirtualCardDetailsDialog(
-            card = selectedCard!!,
-            onDismiss = { showCardDetails = false }
+            onCreate = { cardType, nickname ->
+                // In a real app, this would call an API to create a virtual card
+                showCreateDialog = false
+            }
         )
     }
 }
 
 @Composable
+private fun StatCard(
+    modifier: Modifier = Modifier,
+    title: String,
+    value: String,
+    color: Color
+) {
+    Card(
+        modifier = modifier,
+        colors = CardDefaults.cardColors(containerColor = color.copy(alpha = 0.1f))
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = value,
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.Bold,
+                color = color
+            )
+            Text(
+                text = title,
+                style = MaterialTheme.typography.bodySmall,
+                color = color
+            )
+        }
+    }
+}
+
+@Composable
 private fun VirtualCardItem(
-    card: VirtualCard,
-    onCardClick: () -> Unit,
-    onToggleActive: (Boolean) -> Unit,
+    card: Card,
+    onViewDetails: () -> Unit,
+    onFreeze: () -> Unit,
     onDelete: () -> Unit
 ) {
-    var showDeleteConfirm by remember { mutableStateOf(false) }
-
     Card(
-        onClick = onCardClick,
-        modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = if (card.isActive) 
-                MaterialTheme.colorScheme.surface 
-            else 
-                MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
-        )
+        modifier = Modifier.fillMaxWidth()
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Row(
@@ -225,35 +348,42 @@ private fun VirtualCardItem(
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
-                        imageVector = if (card.isTemporary) Icons.Filled.Timer else Icons.Filled.CreditCard,
+                        imageVector = Icons.Filled.CreditCard,
                         contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary
+                        tint = if (card.isActive) MaterialTheme.colorScheme.primary else Color.Gray,
+                        modifier = Modifier.size(40.dp)
                     )
-                    Spacer(modifier = Modifier.width(8.dp))
+                    Spacer(modifier = Modifier.width(12.dp))
                     Column {
                         Text(
-                            text = if (card.isTemporary) "Temporary Card" else "Virtual Card",
+                            text = card.nickname ?: "${card.cardBrand.name} Card",
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold
                         )
                         Text(
-                            text = card.cardNumber,
+                            text = "**** **** **** ${card.lastFourDigits}",
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 }
                 
-                Switch(
-                    checked = card.isActive,
-                    onCheckedChange = onToggleActive
-                )
+                Surface(
+                    color = if (card.isActive) Color(0xFF4CAF50).copy(alpha = 0.1f) else Color.Gray.copy(alpha = 0.1f),
+                    shape = MaterialTheme.shapes.small
+                ) {
+                    Text(
+                        text = if (card.isActive) "Active" else "Frozen",
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = if (card.isActive) Color(0xFF4CAF50) else Color.Gray,
+                        fontWeight = FontWeight.Medium
+                    )
+                }
             }
-
+            
             Spacer(modifier = Modifier.height(12.dp))
-            HorizontalDivider()
-            Spacer(modifier = Modifier.height(12.dp))
-
+            
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
@@ -265,144 +395,188 @@ private fun VirtualCardItem(
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Text(
-                        text = card.expiryDate,
+                        text = "${card.expiryMonth.toString().padStart(2, '0')}/${card.expiryYear.toString().takeLast(2)}",
                         style = MaterialTheme.typography.bodyMedium,
                         fontWeight = FontWeight.Medium
                     )
                 }
                 Column {
                     Text(
-                        text = "Limit",
+                        text = "Type",
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Text(
-                        text = "$${String.format("%.2f", card.spendingLimit)}",
+                        text = card.cardType.name,
                         style = MaterialTheme.typography.bodyMedium,
                         fontWeight = FontWeight.Medium
                     )
                 }
                 Column {
                     Text(
-                        text = "Status",
+                        text = "Balance",
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Text(
-                        text = if (card.isActive) "Active" else "Frozen",
+                        text = "$${String.format("%.2f", card.linkedAccountBalance ?: 0.0)}",
                         style = MaterialTheme.typography.bodyMedium,
-                        fontWeight = FontWeight.Medium,
-                        color = if (card.isActive) Color(0xFF4CAF50) else MaterialTheme.colorScheme.error
+                        fontWeight = FontWeight.Medium
                     )
                 }
             }
-
+            
             Spacer(modifier = Modifier.height(12.dp))
-
+            HorizontalDivider()
+            Spacer(modifier = Modifier.height(12.dp))
+            
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.End
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                TextButton(
-                    onClick = { showDeleteConfirm = true },
-                    colors = ButtonDefaults.textButtonColors(
-                        contentColor = MaterialTheme.colorScheme.error
-                    )
+                OutlinedButton(
+                    onClick = onViewDetails,
+                    modifier = Modifier.weight(1f)
                 ) {
-                    Icon(Icons.Filled.Delete, contentDescription = null, modifier = Modifier.size(18.dp))
+                    Icon(Icons.Filled.Visibility, contentDescription = null, modifier = Modifier.size(18.dp))
                     Spacer(modifier = Modifier.width(4.dp))
-                    Text("Delete")
+                    Text("Details")
+                }
+                OutlinedButton(
+                    onClick = onFreeze,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Icon(
+                        if (card.isActive) Icons.Filled.Lock else Icons.Filled.LockOpen,
+                        contentDescription = null,
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(if (card.isActive) "Freeze" else "Unfreeze")
+                }
+                IconButton(onClick = onDelete) {
+                    Icon(
+                        Icons.Filled.Delete,
+                        contentDescription = "Delete",
+                        tint = MaterialTheme.colorScheme.error
+                    )
                 }
             }
         }
     }
+}
 
-    if (showDeleteConfirm) {
-        AlertDialog(
-            onDismissRequest = { showDeleteConfirm = false },
-            title = { Text("Delete Card?") },
-            text = { Text("This action cannot be undone. The card will be permanently deleted.") },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        onDelete()
-                        showDeleteConfirm = false
-                    },
-                    colors = ButtonDefaults.textButtonColors(
-                        contentColor = MaterialTheme.colorScheme.error
-                    )
-                ) {
-                    Text("Delete")
+@Composable
+private fun CardDetailsDialog(
+    card: Card,
+    onDismiss: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Card Details") },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                DetailRow("Card Holder", card.cardHolderName)
+                DetailRow("Card Number", "**** **** **** ${card.lastFourDigits}")
+                DetailRow("Expiry", "${card.expiryMonth.toString().padStart(2, '0')}/${card.expiryYear}")
+                DetailRow("Type", card.cardType.name)
+                DetailRow("Brand", card.cardBrand.name)
+                DetailRow("Status", if (card.isActive) "Active" else "Frozen")
+                card.linkedAccountBalance?.let {
+                    DetailRow("Balance", "$${String.format("%.2f", it)}")
                 }
-            },
-            dismissButton = {
-                TextButton(onClick = { showDeleteConfirm = false }) {
-                    Text("Cancel")
-                }
+                DetailRow("Added", card.addedDate)
             }
+        },
+        confirmButton = {
+            Button(onClick = onDismiss) {
+                Text("Close")
+            }
+        },
+        dismissButton = {}
+    )
+}
+
+@Composable
+private fun DetailRow(label: String, value: String) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(
+            text = label,
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        Text(
+            text = value,
+            style = MaterialTheme.typography.bodyMedium,
+            fontWeight = FontWeight.Medium
         )
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun CreateVirtualCardDialog(
     onDismiss: () -> Unit,
-    onCreate: (isTemporary: Boolean, limit: Double) -> Unit,
-    isLoading: Boolean
+    onCreate: (cardType: CardType, nickname: String) -> Unit
 ) {
-    var isTemporary by remember { mutableStateOf(false) }
-    var spendingLimit by remember { mutableStateOf("500") }
+    var selectedType by remember { mutableStateOf(CardType.DEBIT) }
+    var nickname by remember { mutableStateOf("") }
+    var isLoading by remember { mutableStateOf(false) }
 
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text("Create Virtual Card") },
         text = {
-            Column {
+            Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
                 Text(
-                    text = "Configure your new virtual card",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    text = "Create a new virtual card for secure online transactions.",
+                    style = MaterialTheme.typography.bodyMedium
                 )
                 
-                Spacer(modifier = Modifier.height(16.dp))
-
+                // Card Type Selection
+                Text(
+                    text = "Card Type",
+                    style = MaterialTheme.typography.labelMedium,
+                    fontWeight = FontWeight.Medium
+                )
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    Column {
-                        Text(
-                            text = "Temporary Card",
-                            style = MaterialTheme.typography.titleSmall
-                        )
-                        Text(
-                            text = "Expires in 24 hours",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                    Switch(
-                        checked = isTemporary,
-                        onCheckedChange = { isTemporary = it }
+                    FilterChip(
+                        selected = selectedType == CardType.DEBIT,
+                        onClick = { selectedType = CardType.DEBIT },
+                        label = { Text("Debit") },
+                        modifier = Modifier.weight(1f)
+                    )
+                    FilterChip(
+                        selected = selectedType == CardType.CREDIT,
+                        onClick = { selectedType = CardType.CREDIT },
+                        label = { Text("Credit") },
+                        modifier = Modifier.weight(1f)
                     )
                 }
-
-                Spacer(modifier = Modifier.height(16.dp))
-
+                
                 OutlinedTextField(
-                    value = spendingLimit,
-                    onValueChange = { spendingLimit = it.filter { c -> c.isDigit() } },
-                    label = { Text("Spending Limit ($)") },
+                    value = nickname,
+                    onValueChange = { nickname = it },
+                    label = { Text("Card Nickname (Optional)") },
+                    placeholder = { Text("e.g., Shopping Card") },
                     modifier = Modifier.fillMaxWidth(),
-                    leadingIcon = { Text("$") }
+                    singleLine = true
                 )
             }
         },
         confirmButton = {
             Button(
-                onClick = { onCreate(isTemporary, spendingLimit.toDoubleOrNull() ?: 500.0) },
-                enabled = !isLoading && spendingLimit.isNotBlank()
+                onClick = {
+                    isLoading = true
+                    onCreate(selectedType, nickname)
+                },
+                enabled = !isLoading
             ) {
                 if (isLoading) {
                     CircularProgressIndicator(
@@ -410,122 +584,13 @@ private fun CreateVirtualCardDialog(
                         color = MaterialTheme.colorScheme.onPrimary
                     )
                 } else {
-                    Text("Create")
+                    Text("Create Card")
                 }
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss, enabled = !isLoading) {
                 Text("Cancel")
-            }
-        }
-    )
-}
-
-@Composable
-private fun VirtualCardDetailsDialog(
-    card: VirtualCard,
-    onDismiss: () -> Unit
-) {
-    var showCvv by remember { mutableStateOf(false) }
-    var showCardNumber by remember { mutableStateOf(false) }
-
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text("Card Details") },
-        text = {
-            Column {
-                // Card Visual
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.primary
-                    )
-                ) {
-                    Column(
-                        modifier = Modifier.padding(20.dp)
-                    ) {
-                        Text(
-                            text = if (card.isTemporary) "TEMPORARY" else "VIRTUAL",
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.7f)
-                        )
-                        Spacer(modifier = Modifier.height(24.dp))
-                        Text(
-                            text = if (showCardNumber) "4532 1234 5678 ${card.cardNumber.takeLast(4)}" else card.cardNumber,
-                            style = MaterialTheme.typography.titleLarge,
-                            color = MaterialTheme.colorScheme.onPrimary,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Spacer(modifier = Modifier.height(16.dp))
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Column {
-                                Text(
-                                    text = "EXPIRES",
-                                    style = MaterialTheme.typography.labelSmall,
-                                    color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.7f)
-                                )
-                                Text(
-                                    text = card.expiryDate,
-                                    style = MaterialTheme.typography.bodyLarge,
-                                    color = MaterialTheme.colorScheme.onPrimary
-                                )
-                            }
-                            Column {
-                                Text(
-                                    text = "CVV",
-                                    style = MaterialTheme.typography.labelSmall,
-                                    color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.7f)
-                                )
-                                Text(
-                                    text = if (showCvv) "123" else "***",
-                                    style = MaterialTheme.typography.bodyLarge,
-                                    color = MaterialTheme.colorScheme.onPrimary
-                                )
-                            }
-                        }
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(
-                            text = card.cardholderName.uppercase(),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onPrimary
-                        )
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceEvenly
-                ) {
-                    TextButton(onClick = { showCardNumber = !showCardNumber }) {
-                        Icon(
-                            if (showCardNumber) Icons.Filled.VisibilityOff else Icons.Filled.Visibility,
-                            contentDescription = null,
-                            modifier = Modifier.size(18.dp)
-                        )
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text(if (showCardNumber) "Hide Number" else "Show Number")
-                    }
-                    TextButton(onClick = { showCvv = !showCvv }) {
-                        Icon(
-                            if (showCvv) Icons.Filled.VisibilityOff else Icons.Filled.Visibility,
-                            contentDescription = null,
-                            modifier = Modifier.size(18.dp)
-                        )
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text(if (showCvv) "Hide CVV" else "Show CVV")
-                    }
-                }
-            }
-        },
-        confirmButton = {
-            Button(onClick = onDismiss) {
-                Text("Done")
             }
         }
     )

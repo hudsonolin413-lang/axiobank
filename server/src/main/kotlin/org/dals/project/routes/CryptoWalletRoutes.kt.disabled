@@ -1,0 +1,101 @@
+package org.dals.project.routes
+
+import io.ktor.http.*
+import io.ktor.server.application.*
+import io.ktor.server.request.*
+import io.ktor.server.response.*
+import io.ktor.server.routing.*
+import org.dals.project.services.*
+
+fun Route.cryptoWalletRoutes() {
+    route("/crypto") {
+        post("/wallet/create") {
+            try {
+                val request = call.receive<CreateCryptoWalletRequest>()
+                val result = CryptoWalletService.createWallet(request)
+                if (result.isSuccess) call.respond(HttpStatusCode.Created, result.getOrNull()!!)
+                else call.respond(HttpStatusCode.BadRequest, mapOf("error" to result.exceptionOrNull()?.message))
+            } catch (e: Exception) {
+                call.respond(HttpStatusCode.InternalServerError, mapOf("error" to e.message))
+            }
+        }
+
+        get("/wallet/customer/{customerId}") {
+            try {
+                val result = CryptoWalletService.getWallets(call.parameters["customerId"]!!)
+                if (result.isSuccess) call.respond(HttpStatusCode.OK, result.getOrNull()!!)
+                else call.respond(HttpStatusCode.BadRequest, mapOf("error" to result.exceptionOrNull()?.message))
+            } catch (e: Exception) {
+                call.respond(HttpStatusCode.InternalServerError, mapOf("error" to e.message))
+            }
+        }
+
+        post("/buy") {
+            try {
+                val request = call.receive<BuyCryptoRequest>()
+                val result = CryptoWalletService.buyCrypto(request)
+                if (result.isSuccess) call.respond(HttpStatusCode.Created, result.getOrNull()!!)
+                else call.respond(HttpStatusCode.BadRequest, mapOf("error" to result.exceptionOrNull()?.message))
+            } catch (e: Exception) {
+                call.respond(HttpStatusCode.InternalServerError, mapOf("error" to e.message))
+            }
+        }
+
+        post("/sell") {
+            try {
+                val request = call.receive<SellCryptoRequest>()
+                val result = CryptoWalletService.sellCrypto(request)
+                if (result.isSuccess) call.respond(HttpStatusCode.Created, result.getOrNull()!!)
+                else call.respond(HttpStatusCode.BadRequest, mapOf("error" to result.exceptionOrNull()?.message))
+            } catch (e: Exception) {
+                call.respond(HttpStatusCode.InternalServerError, mapOf("error" to e.message))
+            }
+        }
+
+        post("/send") {
+            try {
+                val request = call.receive<SendCryptoRequest>()
+                val result = CryptoWalletService.sendCrypto(request)
+                if (result.isSuccess) call.respond(HttpStatusCode.Created, result.getOrNull()!!)
+                else call.respond(HttpStatusCode.BadRequest, mapOf("error" to result.exceptionOrNull()?.message))
+            } catch (e: Exception) {
+                call.respond(HttpStatusCode.InternalServerError, mapOf("error" to e.message))
+            }
+        }
+
+        get("/transactions/{walletId}") {
+            try {
+                val result = CryptoWalletService.getCryptoTransactions(call.parameters["walletId"]!!)
+                if (result.isSuccess) call.respond(HttpStatusCode.OK, result.getOrNull()!!)
+                else call.respond(HttpStatusCode.BadRequest, mapOf("error" to result.exceptionOrNull()?.message))
+            } catch (e: Exception) {
+                call.respond(HttpStatusCode.InternalServerError, mapOf("error" to e.message))
+            }
+        }
+
+        get("/portfolio/{customerId}") {
+            try {
+                val result = CryptoWalletService.getPortfolio(call.parameters["customerId"]!!)
+                if (result.isSuccess) call.respond(HttpStatusCode.OK, result.getOrNull()!!)
+                else call.respond(HttpStatusCode.BadRequest, mapOf("error" to result.exceptionOrNull()?.message))
+            } catch (e: Exception) {
+                call.respond(HttpStatusCode.InternalServerError, mapOf("error" to e.message))
+            }
+        }
+
+        post("/price/update") {
+            try {
+                val crypto = call.request.queryParameters["crypto"]!!
+                val price = call.request.queryParameters["price"]!!.toDouble()
+                val change = call.request.queryParameters["change24h"]!!.toDouble()
+                val volume = call.request.queryParameters["volume24h"]!!.toDouble()
+
+                val result = CryptoWalletService.updateCryptoPrice(crypto, price, change, volume)
+                if (result.isSuccess) call.respond(HttpStatusCode.OK, result.getOrNull()!!)
+                else call.respond(HttpStatusCode.BadRequest, mapOf("error" to result.exceptionOrNull()?.message))
+            } catch (e: Exception) {
+                call.respond(HttpStatusCode.InternalServerError, mapOf("error" to e.message))
+            }
+        }
+    }
+}

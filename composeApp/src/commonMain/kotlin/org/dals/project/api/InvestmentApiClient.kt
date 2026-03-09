@@ -3,6 +3,7 @@ package org.dals.project.api
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
@@ -52,6 +53,11 @@ class InvestmentApiClient(private val baseUrl: String = "https://axiobank-produc
                 prettyPrint = true
                 isLenient = true
             })
+        }
+        install(HttpTimeout) {
+            requestTimeoutMillis = 120000
+            connectTimeoutMillis = 60000
+            socketTimeoutMillis = 120000
         }
     }
 

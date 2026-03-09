@@ -291,5 +291,188 @@ fun Route.cardRoutes(cardService: CardService) {
                 )
             }
         }
+
+        // Freeze card
+        post("/freeze/{cardId}") {
+            try {
+                val cardId = call.parameters["cardId"]
+                    ?: return@post call.respond(
+                        HttpStatusCode.BadRequest,
+                        ApiResponse(
+                            success = false,
+                            message = "Card ID is required",
+                            data = null
+                        )
+                    )
+
+                val requestBody = try {
+                    call.receive<Map<String, String>>()
+                } catch (e: Exception) {
+                    emptyMap()
+                }
+                val reason = requestBody["reason"]
+
+                val result = cardService.freezeCard(cardId, reason)
+
+                result.fold(
+                    onSuccess = { message ->
+                        call.respond(
+                            HttpStatusCode.OK,
+                            ApiResponse(
+                                success = true,
+                                message = message,
+                                data = mapOf("cardId" to cardId, "status" to "FROZEN")
+                            )
+                        )
+                    },
+                    onFailure = { error ->
+                        call.respond(
+                            HttpStatusCode.BadRequest,
+                            ApiResponse(
+                                success = false,
+                                message = error.message ?: "Failed to freeze card",
+                                data = null
+                            )
+                        )
+                    }
+                )
+            } catch (e: Exception) {
+                call.respond(
+                    HttpStatusCode.InternalServerError,
+                    ApiResponse(
+                        success = false,
+                        message = "Error freezing card: ${e.message}",
+                        data = null,
+                        error = e.message
+                    )
+                )
+            }
+        }
+
+        // Unfreeze card
+        post("/unfreeze/{cardId}") {
+            try {
+                val cardId = call.parameters["cardId"]
+                    ?: return@post call.respond(
+                        HttpStatusCode.BadRequest,
+                        ApiResponse(
+                            success = false,
+                            message = "Card ID is required",
+                            data = null
+                        )
+                    )
+
+                val result = cardService.unfreezeCard(cardId)
+
+                result.fold(
+                    onSuccess = { message ->
+                        call.respond(
+                            HttpStatusCode.OK,
+                            ApiResponse(
+                                success = true,
+                                message = message,
+                                data = mapOf("cardId" to cardId, "status" to "ACTIVE")
+                            )
+                        )
+                    },
+                    onFailure = { error ->
+                        call.respond(
+                            HttpStatusCode.BadRequest,
+                            ApiResponse(
+                                success = false,
+                                message = error.message ?: "Failed to unfreeze card",
+                                data = null
+                            )
+                        )
+                    }
+                )
+            } catch (e: Exception) {
+                call.respond(
+                    HttpStatusCode.InternalServerError,
+                    ApiResponse(
+                        success = false,
+                        message = "Error unfreezing card: ${e.message}",
+                        data = null,
+                        error = e.message
+                    )
+                )
+            }
+        }
+
+        // Get card freeze status
+        get("/freeze-status/{cardId}") {
+            try {
+                val cardId = call.parameters["cardId"]
+                    ?: return@get call.respond(
+                        HttpStatusCode.BadRequest,
+                        ApiResponse(
+                            success = false,
+                            message = "Card ID is required",
+                            data = null
+                        )
+                    )
+
+                val isFrozen = cardService.isCardFrozen(cardId)
+
+                call.respond(
+                    HttpStatusCode.OK,
+                    ApiResponse(
+                        success = true,
+                        message = "Freeze status retrieved",
+                        data = mapOf(
+                            "cardId" to cardId,
+                            "isFrozen" to isFrozen,
+                            "status" to if (isFrozen) "FROZEN" else "ACTIVE"
+                        )
+                    )
+                )
+            } catch (e: Exception) {
+                call.respond(
+                    HttpStatusCode.InternalServerError,
+                    ApiResponse(
+                        success = false,
+                        message = "Error retrieving freeze status: ${e.message}",
+                        data = null,
+                        error = e.message
+                    )
+                )
+            }
+        }
+
+        // Get card freeze history
+        get("/freeze-history/{cardId}") {
+            try {
+                val cardId = call.parameters["cardId"]
+                    ?: return@get call.respond(
+                        HttpStatusCode.BadRequest,
+                        ApiResponse(
+                            success = false,
+                            message = "Card ID is required",
+                            data = null
+                        )
+                    )
+
+                val history = cardService.getCardFreezeHistory(cardId)
+
+                call.respond(
+                    HttpStatusCode.OK,
+                    ApiResponse(
+                        success = true,
+                        message = "Freeze history retrieved",
+                        data = history
+                    )
+                )
+            } catch (e: Exception) {
+                call.respond(
+                    HttpStatusCode.InternalServerError,
+                    ApiResponse(
+                        success = false,
+                        message = "Error retrieving freeze history: ${e.message}",
+                        data = null,
+                        error = e.message
+                    )
+                )
+            }
+        }
     }
 }

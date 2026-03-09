@@ -4,6 +4,7 @@ import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.client.plugins.HttpTimeout
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.coroutines.delay
@@ -16,6 +17,7 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import org.dals.project.model.*
+import org.dals.project.utils.RetryUtils
 import org.dals.project.API_BASE_URL
 
 @Serializable
@@ -54,6 +56,11 @@ class NotificationRepository(
                 isLenient = true
             })
         }
+        install(HttpTimeout) {
+            requestTimeoutMillis = 120000
+            connectTimeoutMillis = 60000
+            socketTimeoutMillis = 120000
+        }
     }
 
     private val baseUrl = API_BASE_URL
@@ -84,11 +91,16 @@ class NotificationRepository(
         try {
 //            println("📬 Fetching notifications for user: $userId")
 
-            val response = httpClient.get("$baseUrl/notifications/user/$userId") {
-                contentType(ContentType.Application.Json)
-                headers {
-                    authRepository.getAuthToken()?.let { token ->
-                        append("Authorization", "Bearer $token")
+            val response = RetryUtils.retryWithExponentialBackoff(
+                maxRetries = 2,
+                initialDelayMs = 500
+            ) {
+                httpClient.get("$baseUrl/notifications/user/$userId") {
+                    contentType(ContentType.Application.Json)
+                    headers {
+                        authRepository.getAuthToken()?.let { token ->
+                            append("Authorization", "Bearer $token")
+                        }
                     }
                 }
             }

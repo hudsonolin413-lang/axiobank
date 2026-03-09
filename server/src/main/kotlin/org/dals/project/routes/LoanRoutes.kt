@@ -9,6 +9,7 @@ import org.dals.project.models.CreateLoanApplicationRequest
 import org.dals.project.models.CustomerCareListResponse
 import org.dals.project.models.LoanApplicationDto
 import org.dals.project.models.LoanDto
+import org.dals.project.models.LoanRefinanceRequest
 import org.dals.project.services.LoanService
 import java.util.*
 
@@ -174,6 +175,24 @@ fun Route.loanRoutes(loanService: LoanService) {
                         page = 1,
                         pageSize = 10,
                         timestamp = java.time.Instant.now().toString()
+                    )
+                )
+            }
+        }
+
+        // Refinance loan
+        post("/refinance") {
+            try {
+                val request = call.receive<LoanRefinanceRequest>()
+                val response = loanService.refinanceLoan(request)
+                call.respond(if (response.success) HttpStatusCode.OK else HttpStatusCode.BadRequest, response)
+            } catch (e: Exception) {
+                call.respond(
+                    HttpStatusCode.InternalServerError,
+                    org.dals.project.models.ApiResponse<LoanDto>(
+                        success = false,
+                        message = "Failed to refinance loan: ${e.message}",
+                        error = e.message
                     )
                 )
             }

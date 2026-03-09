@@ -34,6 +34,7 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.foundation.Image
 import androidx.compose.ui.unit.dp
+import coil3.compose.AsyncImage
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.dals.project.model.*
 import org.dals.project.model.Advertisement
@@ -61,7 +62,9 @@ fun HomeScreen(
     onNavigateBack: () -> Unit = {},
     onTransactionClick: (Transaction) -> Unit = {},
     onNavigateToCards: () -> Unit = {},
-    onNavigateToBankAccounts: () -> Unit = {}
+    onNavigateToBankAccounts: () -> Unit = {},
+    onNavigateToMoreServices: () -> Unit = {},
+    onNavigateToCrypto: () -> Unit = {}
 ) {
     val authUiState by authViewModel.uiState.collectAsStateWithLifecycle()
     val transactionUiState by transactionViewModel.uiState.collectAsStateWithLifecycle()
@@ -185,7 +188,8 @@ fun HomeScreen(
             CompactQuickActionsCard(
                 onNavigateToTransact = onNavigateToTransact,
                 onNavigateToCards = onNavigateToCards,
-                onNavigateToBankAccounts = onNavigateToBankAccounts
+                onNavigateToCrypto = onNavigateToCrypto,
+                onNavigateToMoreServices = onNavigateToMoreServices
             )
         }
 
@@ -807,7 +811,9 @@ private fun BalanceItemCard(
 private fun QuickActionsCard(
     onNavigateToTransact: () -> Unit,
     onNavigateToCards: () -> Unit,
-    onNavigateToBankAccounts: () -> Unit
+    onNavigateToBankAccounts: () -> Unit,
+    onNavigateToMoreServices: () -> Unit,
+    onNavigateToCrypto: () -> Unit
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -854,9 +860,15 @@ private fun QuickActionsCard(
                     modifier = Modifier.weight(1f)
                 )
                 QuickActionButton(
-                    text = "Accounts",
-                    iconVector = Icons.Filled.AccountBalance,
-                    onClick = onNavigateToBankAccounts,
+                    text = "Crypto",
+                    iconVector = Icons.Filled.AttachMoney,
+                    onClick = onNavigateToCrypto,
+                    modifier = Modifier.weight(1f)
+                )
+                QuickActionButton(
+                    text = "More",
+                    iconVector = Icons.Filled.MoreVert,
+                    onClick = onNavigateToMoreServices,
                     modifier = Modifier.weight(1f)
                 )
             }
@@ -1282,7 +1294,8 @@ private fun CompactWalletCard(
 private fun CompactQuickActionsCard(
     onNavigateToTransact: () -> Unit,
     onNavigateToCards: () -> Unit,
-    onNavigateToBankAccounts: () -> Unit
+    onNavigateToCrypto: () -> Unit,
+    onNavigateToMoreServices: () -> Unit
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -1310,9 +1323,15 @@ private fun CompactQuickActionsCard(
                 modifier = Modifier.weight(1f)
             )
             CompactQuickActionButton(
-                text = "Accounts",
-                iconVector = Icons.Filled.AccountBalance,
-                onClick = onNavigateToBankAccounts,
+                text = "Crypto",
+                iconVector = Icons.Filled.AttachMoney,
+                onClick = onNavigateToCrypto,
+                modifier = Modifier.weight(1f)
+            )
+            CompactQuickActionButton(
+                text = "More",
+                iconVector = Icons.Filled.MoreVert,
+                onClick = onNavigateToMoreServices,
                 modifier = Modifier.weight(1f)
             )
         }
@@ -1411,9 +1430,12 @@ private fun AdvertisementCarousel(
                 else -> {
                     val currentAd = advertisements[currentAdIndex]
 
-                    // Convert base64 image to ImageBitmap using platform-specific decoder
+                    // Determine if image is base64 or URL
+                    val isBase64 = currentAd.imageUrl.startsWith("data:image/")
+
+                    // Convert base64 image to ImageBitmap if needed
                     val imageBitmap = remember(currentAd.imageUrl) {
-                        if (currentAd.imageUrl.startsWith("data:image/")) {
+                        if (isBase64) {
                             decodeBase64ToImageBitmap(currentAd.imageUrl)
                         } else {
                             null
@@ -1430,10 +1452,19 @@ private fun AdvertisementCarousel(
                                 }
                             }
                     ) {
-                        // Background image
-                        if (imageBitmap != null) {
+                        // Background image - support both base64 and URL
+                        if (isBase64 && imageBitmap != null) {
+                            // Display base64 image
                             Image(
                                 bitmap = imageBitmap,
+                                contentDescription = currentAd.title,
+                                modifier = Modifier.fillMaxSize(),
+                                contentScale = ContentScale.Fit
+                            )
+                        } else if (!isBase64) {
+                            // Display URL image using Coil
+                            AsyncImage(
+                                model = currentAd.imageUrl,
                                 contentDescription = currentAd.title,
                                 modifier = Modifier.fillMaxSize(),
                                 contentScale = ContentScale.Fit

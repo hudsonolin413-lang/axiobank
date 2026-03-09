@@ -19,8 +19,8 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import decentralizedaccessloan.composeapp.generated.resources.AxioBank
-import decentralizedaccessloan.composeapp.generated.resources.Res
+import org.dals.project.resources.AxioBank
+import org.dals.project.resources.Res
 import org.jetbrains.compose.resources.painterResource
 import org.dals.project.viewmodel.AuthViewModel
 import org.dals.project.model.AuthState
@@ -112,7 +112,11 @@ fun LoginScreen(
         }
     }
 
-    val effectiveLastUsername = authUiState.lastUsername ?: authUiState.currentUser?.username
+    // Use the user's first name (from fullName) or username for the welcome message
+    val effectiveLastUsername = authUiState.currentUser?.let { user ->
+        // Extract first name from fullName, or fall back to username
+        user.fullName.split(" ").firstOrNull()?.takeIf { it.isNotBlank() } ?: user.username
+    } ?: authUiState.lastUsername
 
     Box(
         modifier = Modifier
@@ -171,8 +175,8 @@ fun LoginScreen(
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // Username/Email Field - always show when logged out or if no username is set
-                if (authUiState.authState == AuthState.LOGGED_OUT || effectiveLastUsername == null) {
+                // Username/Email Field - hide when returning user is detected (effectiveLastUsername is set)
+                if (effectiveLastUsername == null) {
                     OutlinedTextField(
                         value = username,
                         onValueChange = {
@@ -187,11 +191,15 @@ fun LoginScreen(
                         enabled = !authUiState.isLoading
                     )
                 } else {
-                    // For LOCKED state, hide username field (it's already filled)
-                    // Update username state for login if it's currently empty but we have effectiveLastUsername
-                    LaunchedEffect(effectiveLastUsername) {
-                        if (username.isEmpty()) {
-                            username = effectiveLastUsername
+                    // For returning user, hide username field and use stored username/email for login
+                    LaunchedEffect(effectiveLastUsername, authUiState.currentUser) {
+                        // Use email or username for actual login (backend expects email/username, not display name)
+                        val loginIdentifier = authUiState.currentUser?.email 
+                            ?: authUiState.currentUser?.username 
+                            ?: authUiState.lastUsername 
+                            ?: effectiveLastUsername
+                        if (username.isEmpty() || username == effectiveLastUsername) {
+                            username = loginIdentifier
                         }
                     }
                 }

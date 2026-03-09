@@ -9,11 +9,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.dals.project.model.*
 import org.dals.project.utils.DateTimeUtils
+import org.dals.project.utils.RetryUtils
 import org.dals.project.API_BASE_URL
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.client.plugins.HttpTimeout
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.http.*
 import kotlinx.serialization.Serializable
@@ -91,6 +93,11 @@ class TransactionRepository(
                 ignoreUnknownKeys = true
             })
         }
+        install(HttpTimeout) {
+            requestTimeoutMillis = 120000
+            connectTimeoutMillis = 60000
+            socketTimeoutMillis = 120000
+        }
     }
 
     private val _transactions = MutableStateFlow<List<Transaction>>(emptyList())
@@ -131,11 +138,16 @@ class TransactionRepository(
         try {
 //            println("🌐 Fetching account balance for customer: $customerId")
 
-            val response = httpClient.get("$baseUrl/customer-care/accounts/customer/$customerId") {
-                contentType(ContentType.Application.Json)
-                headers {
-                    authRepository.getAuthToken()?.let { token ->
-                        append("Authorization", "Bearer $token")
+            val response = RetryUtils.retryWithExponentialBackoff(
+                maxRetries = 2,
+                initialDelayMs = 500
+            ) {
+                httpClient.get("$baseUrl/customer-care/accounts/customer/$customerId") {
+                    contentType(ContentType.Application.Json)
+                    headers {
+                        authRepository.getAuthToken()?.let { token ->
+                            append("Authorization", "Bearer $token")
+                        }
                     }
                 }
             }
@@ -207,11 +219,16 @@ class TransactionRepository(
         try {
             println("🌐 Fetching transactions for customer: $customerId")
 
-            val response = httpClient.get("$baseUrl/transactions/customer/$customerId") {
-                contentType(ContentType.Application.Json)
-                headers {
-                    authRepository.getAuthToken()?.let { token ->
-                        append("Authorization", "Bearer $token")
+            val response = RetryUtils.retryWithExponentialBackoff(
+                maxRetries = 2,
+                initialDelayMs = 500
+            ) {
+                httpClient.get("$baseUrl/transactions/customer/$customerId") {
+                    contentType(ContentType.Application.Json)
+                    headers {
+                        authRepository.getAuthToken()?.let { token ->
+                            append("Authorization", "Bearer $token")
+                        }
                     }
                 }
             }
@@ -254,12 +271,13 @@ class TransactionRepository(
         }
     }
 
-    private fun clearData() {
+    fun clearData() {
         _walletBalance.value = null
         _transactions.value = emptyList()
         _accounts.value = emptyList()
         _billPayments.value = emptyList()
         _investments.value = emptyList()
+        _savingsAccounts.value = emptyList()
     }
 
     private fun formatAccountName(type: String): String {

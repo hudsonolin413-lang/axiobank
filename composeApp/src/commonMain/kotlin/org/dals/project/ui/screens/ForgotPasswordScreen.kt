@@ -19,8 +19,8 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import decentralizedaccessloan.composeapp.generated.resources.AxioBank
-import decentralizedaccessloan.composeapp.generated.resources.Res
+import org.dals.project.resources.AxioBank
+import org.dals.project.resources.Res
 import org.jetbrains.compose.resources.painterResource
 import org.dals.project.viewmodel.AuthViewModel
 

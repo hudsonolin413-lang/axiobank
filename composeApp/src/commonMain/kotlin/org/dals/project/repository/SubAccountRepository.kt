@@ -11,6 +11,7 @@ data class SubAccountRecord(
     val id: String,
     val customerId: String,
     val parentAccountId: String,
+    val accountNumber: String,
     val name: String,
     val description: String?,
     val targetAmount: String?,

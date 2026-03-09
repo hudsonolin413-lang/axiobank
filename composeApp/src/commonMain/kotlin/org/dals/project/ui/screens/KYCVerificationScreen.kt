@@ -40,6 +40,12 @@ expect fun rememberFilePickerManager(): org.dals.project.utils.FilePickerManager
 @Composable
 expect fun rememberCameraManager(): org.dals.project.utils.CameraManager
 
+@Composable
+expect fun rememberShareManager(): org.dals.project.utils.ShareManager
+
+@Composable
+expect fun rememberFileManager(): org.dals.project.utils.FileManager
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun KYCVerificationScreen(

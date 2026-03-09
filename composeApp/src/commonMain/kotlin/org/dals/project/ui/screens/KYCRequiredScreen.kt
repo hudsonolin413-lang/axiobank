@@ -27,24 +27,38 @@ fun KYCRequiredScreen(
     authViewModel: AuthViewModel,
     onNavigateToMainApp: () -> Unit
 ) {
+    println("🏁 KYCRequiredScreen: Composable function started")
+
     val authUiState by authViewModel.uiState.collectAsStateWithLifecycle()
+    println("🏁 KYCRequiredScreen: authUiState collected")
+
     val scope = rememberCoroutineScope()
+    println("🏁 KYCRequiredScreen: coroutine scope created")
 
     var showUploadOptions by remember { mutableStateOf(false) }
     var selectedDocumentType by remember { mutableStateOf<DocumentType?>(null) }
     var uploadedDocuments by remember { mutableStateOf(emptyList<KYCDocument>()) }
     var showLogoutDialog by remember { mutableStateOf(false) }
+    println("🏁 KYCRequiredScreen: State variables initialized")
 
     // Platform-specific file picker and camera managers
-    val filePickerManager = rememberFilePickerManager()
-    val cameraManager = rememberCameraManager()
+    println("🏁 KYCRequiredScreen: About to create filePickerManager")
+    val filePickerManager = org.dals.project.ui.screens.rememberFilePickerManager()
+    println("🏁 KYCRequiredScreen: filePickerManager created successfully")
+
+    println("🏁 KYCRequiredScreen: About to create cameraManager")
+    val cameraManager = org.dals.project.ui.screens.rememberCameraManager()
+    println("🏁 KYCRequiredScreen: cameraManager created successfully")
 
     // Fetch KYC documents when screen loads
     LaunchedEffect(authUiState.currentUser?.id) {
+        println("🏁 KYCRequiredScreen: LaunchedEffect started for user ${authUiState.currentUser?.id}")
         authUiState.currentUser?.id?.let { customerId ->
+            println("🏁 KYCRequiredScreen: Fetching KYC documents for customer $customerId")
             authViewModel.getKYCDocuments(
                 customerId = customerId,
                 onSuccess = { documents ->
+                    println("🏁 KYCRequiredScreen: Successfully fetched ${documents.size} documents")
                     // Map backend document format to frontend KYCDocument model
                     uploadedDocuments = documents.map { doc ->
                         val docType = when (doc["documentType"]) {
@@ -78,18 +92,26 @@ fun KYCRequiredScreen(
                     }
                 },
                 onError = { error ->
-                    println("Failed to fetch KYC documents: $error")
+                    println("❌ KYCRequiredScreen: Failed to fetch KYC documents: $error")
                 }
             )
         }
     }
 
+    println("🏁 KYCRequiredScreen: About to render Scaffold")
+
     Scaffold(
         topBar = {
+            println("🏁 KYCRequiredScreen: TopAppBar composable started")
             TopAppBar(
-                title = { Text("Complete Your Profile") },
+                title = {
+                    println("🏁 KYCRequiredScreen: TopAppBar title composable")
+                    Text("Complete Your Profile")
+                },
                 actions = {
+                    println("🏁 KYCRequiredScreen: TopAppBar actions composable")
                     IconButton(onClick = { showLogoutDialog = true }) {
+                        println("🏁 KYCRequiredScreen: IconButton content composable")
                         Icon(
                             imageVector = Icons.Default.Logout,
                             contentDescription = "Logout",
@@ -101,8 +123,11 @@ fun KYCRequiredScreen(
                     containerColor = MaterialTheme.colorScheme.primaryContainer
                 )
             )
+            println("🏁 KYCRequiredScreen: TopAppBar completed")
         }
     ) { paddingValues ->
+        println("🏁 KYCRequiredScreen: Scaffold content lambda started")
+        println("🏁 KYCRequiredScreen: About to create LazyColumn")
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -111,12 +136,15 @@ fun KYCRequiredScreen(
             verticalArrangement = Arrangement.spacedBy(20.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            println("🏁 KYCRequiredScreen: Inside LazyColumn lambda")
             item {
+                println("🏁 KYCRequiredScreen: LazyColumn item 1 - Spacer")
                 Spacer(modifier = Modifier.height(16.dp))
             }
 
             // Header Icon
             item {
+                println("🏁 KYCRequiredScreen: LazyColumn item 2 - Header Icon")
                 Surface(
                     color = MaterialTheme.colorScheme.primaryContainer,
                     shape = RoundedCornerShape(50),

@@ -19,7 +19,9 @@ import org.dals.project.services.MpesaReversalScheduler
 private var reversalScheduler: MpesaReversalScheduler? = null
 
 fun main() {
-    val server = embeddedServer(Netty, port = 8081, host = "0.0.0.0", module = Application::module)
+    // Use PORT environment variable from Railway, or default to 8081 for local development
+    val port = System.getenv("PORT")?.toIntOrNull() ?: 8081
+    val server = embeddedServer(Netty, port = port, host = "0.0.0.0", module = Application::module)
 
     // Add shutdown hook to cleanup scheduler
     Runtime.getRuntime().addShutdownHook(Thread {

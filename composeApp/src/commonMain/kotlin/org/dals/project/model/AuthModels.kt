@@ -30,3 +30,6 @@ data class AuthResponse(
 enum class AuthState {
     LOGGED_OUT, LOGGED_IN, LOADING, LOCKED
 }
+
+// Two-Factor Authentication Models
+// Two-Factor Authentication models - TODO: Re-implement

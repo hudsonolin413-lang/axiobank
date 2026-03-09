@@ -1,5 +1,6 @@
 package org.dals.project.ui.screens
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -13,8 +14,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.dals.project.model.Transaction
+import org.dals.project.model.TransactionStatus
+import org.dals.project.viewmodel.TransactionViewModel
 
 enum class DisputeStatus {
     PENDING, UNDER_REVIEW, RESOLVED, REJECTED
@@ -40,16 +45,24 @@ data class TransactionDispute(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TransactionDisputeScreen(
+    transactionViewModel: TransactionViewModel,
     onNavigateBack: () -> Unit
 ) {
-    var disputes by remember { mutableStateOf(listOf(
-        TransactionDispute("1", "TXN001", 150.0, "Unknown Merchant", "2024-02-15", DisputeReason.UNAUTHORIZED, "I did not make this transaction", DisputeStatus.UNDER_REVIEW, "2024-02-16"),
-        TransactionDispute("2", "TXN002", 50.0, "Amazon", "2024-02-10", DisputeReason.DUPLICATE, "Charged twice for same order", DisputeStatus.RESOLVED, "2024-02-11", "2024-02-18")
-    )) }
+    val transactionUiState by transactionViewModel.uiState.collectAsStateWithLifecycle()
+    
+    // Local state for disputes (in a real app, this would come from a DisputeViewModel/Repository)
+    var disputes by remember { mutableStateOf<List<TransactionDispute>>(emptyList()) }
     var showNewDisputeDialog by remember { mutableStateOf(false) }
     var selectedDispute by remember { mutableStateOf<TransactionDispute?>(null) }
+    var showTransactionPicker by remember { mutableStateOf(false) }
+    var selectedTransaction by remember { mutableStateOf<Transaction?>(null) }
     
     val scope = rememberCoroutineScope()
+
+    // Refresh transactions on load
+    LaunchedEffect(Unit) {
+        transactionViewModel.refreshAllData()
+    }
 
     Scaffold(
         topBar = {
@@ -59,12 +72,17 @@ fun TransactionDisputeScreen(
                     IconButton(onClick = onNavigateBack) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
+                },
+                actions = {
+                    IconButton(onClick = { transactionViewModel.refreshAllData() }) {
+                        Icon(Icons.Filled.Refresh, contentDescription = "Refresh")
+                    }
                 }
             )
         },
         floatingActionButton = {
             ExtendedFloatingActionButton(
-                onClick = { showNewDisputeDialog = true },
+                onClick = { showTransactionPicker = true },
                 icon = { Icon(Icons.Filled.Add, contentDescription = null) },
                 text = { Text("New Dispute") }
             )
@@ -112,41 +130,77 @@ fun TransactionDisputeScreen(
                 }
             }
 
+            // Statistics
+            item {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    StatCard(
+                        modifier = Modifier.weight(1f),
+                        title = "Active",
+                        value = disputes.count { it.status == DisputeStatus.PENDING || it.status == DisputeStatus.UNDER_REVIEW }.toString(),
+                        color = Color(0xFFFFA000)
+                    )
+                    StatCard(
+                        modifier = Modifier.weight(1f),
+                        title = "Resolved",
+                        value = disputes.count { it.status == DisputeStatus.RESOLVED }.toString(),
+                        color = Color(0xFF4CAF50)
+                    )
+                    StatCard(
+                        modifier = Modifier.weight(1f),
+                        title = "Total",
+                        value = disputes.size.toString(),
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
+            }
+
+            // Disputes List
+            item {
+                Text(
+                    text = "Your Disputes",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+
             if (disputes.isEmpty()) {
                 item {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(32.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceVariant
+                        )
                     ) {
-                        Icon(
-                            imageVector = Icons.Filled.CheckCircle,
-                            contentDescription = null,
-                            modifier = Modifier.size(80.dp),
-                            tint = Color(0xFF4CAF50)
-                        )
-                        Spacer(modifier = Modifier.height(16.dp))
-                        Text(
-                            text = "No Disputes",
-                            style = MaterialTheme.typography.titleLarge
-                        )
-                        Text(
-                            text = "You haven't filed any transaction disputes",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(32.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Icon(
+                                imageVector = Icons.Filled.CheckCircle,
+                                contentDescription = null,
+                                modifier = Modifier.size(64.dp),
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                            Spacer(modifier = Modifier.height(16.dp))
+                            Text(
+                                text = "No disputes filed",
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            Text(
+                                text = "If you notice any unauthorized transactions, tap the button below to file a dispute",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+                            )
+                        }
                     }
                 }
             } else {
-                item {
-                    Text(
-                        text = "Your Disputes",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
-
                 items(disputes) { dispute ->
                     DisputeCard(
                         dispute = dispute,
@@ -157,26 +211,43 @@ fun TransactionDisputeScreen(
         }
     }
 
+    // Transaction Picker Dialog
+    if (showTransactionPicker) {
+        TransactionPickerDialog(
+            transactions = transactionUiState.transactions,
+            isLoading = transactionUiState.isLoading,
+            onDismiss = { showTransactionPicker = false },
+            onSelectTransaction = { transaction ->
+                selectedTransaction = transaction
+                showTransactionPicker = false
+                showNewDisputeDialog = true
+            }
+        )
+    }
+
     // New Dispute Dialog
-    if (showNewDisputeDialog) {
+    if (showNewDisputeDialog && selectedTransaction != null) {
         NewDisputeDialog(
-            onDismiss = { showNewDisputeDialog = false },
-            onSubmit = { transactionId, amount, merchant, reason, description ->
-                scope.launch {
-                    val newDispute = TransactionDispute(
-                        id = (disputes.size + 1).toString(),
-                        transactionId = transactionId,
-                        transactionAmount = amount,
-                        merchantName = merchant,
-                        transactionDate = "2024-02-28",
-                        reason = reason,
-                        description = description,
-                        status = DisputeStatus.PENDING,
-                        createdAt = "2024-02-28"
-                    )
-                    disputes = disputes + newDispute
-                    showNewDisputeDialog = false
-                }
+            transaction = selectedTransaction!!,
+            onDismiss = { 
+                showNewDisputeDialog = false
+                selectedTransaction = null
+            },
+            onSubmit = { reason, description ->
+                val newDispute = TransactionDispute(
+                    id = "DSP${disputes.size + 1}",
+                    transactionId = selectedTransaction!!.id,
+                    transactionAmount = selectedTransaction!!.amount,
+                    merchantName = selectedTransaction!!.recipientName ?: selectedTransaction!!.description,
+                    transactionDate = selectedTransaction!!.timestamp,
+                    reason = reason,
+                    description = description,
+                    status = DisputeStatus.PENDING,
+                    createdAt = "Just now"
+                )
+                disputes = disputes + newDispute
+                showNewDisputeDialog = false
+                selectedTransaction = null
             }
         )
     }
@@ -191,13 +262,44 @@ fun TransactionDisputeScreen(
 }
 
 @Composable
+private fun StatCard(
+    modifier: Modifier = Modifier,
+    title: String,
+    value: String,
+    color: Color
+) {
+    Card(
+        modifier = modifier,
+        colors = CardDefaults.cardColors(containerColor = color.copy(alpha = 0.1f))
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = value,
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.Bold,
+                color = color
+            )
+            Text(
+                text = title,
+                style = MaterialTheme.typography.bodySmall,
+                color = color
+            )
+        }
+    }
+}
+
+@Composable
 private fun DisputeCard(
     dispute: TransactionDispute,
     onClick: () -> Unit
 ) {
     Card(
-        onClick = onClick,
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Row(
@@ -219,11 +321,9 @@ private fun DisputeCard(
                 }
                 DisputeStatusChip(status = dispute.status)
             }
-
+            
             Spacer(modifier = Modifier.height(12.dp))
-            HorizontalDivider()
-            Spacer(modifier = Modifier.height(12.dp))
-
+            
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
@@ -292,14 +392,102 @@ private fun DisputeStatusChip(status: DisputeStatus) {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun TransactionPickerDialog(
+    transactions: List<Transaction>,
+    isLoading: Boolean,
+    onDismiss: () -> Unit,
+    onSelectTransaction: (Transaction) -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Select Transaction to Dispute") },
+        text = {
+            if (isLoading) {
+                Box(
+                    modifier = Modifier.fillMaxWidth().height(200.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
+                }
+            } else if (transactions.isEmpty()) {
+                Box(
+                    modifier = Modifier.fillMaxWidth().height(200.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Icon(
+                            imageVector = Icons.Filled.Receipt,
+                            contentDescription = null,
+                            modifier = Modifier.size(48.dp),
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = "No transactions found",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
+            } else {
+                LazyColumn(
+                    modifier = Modifier.height(400.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    items(transactions.take(20)) { transaction ->
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable { onSelectTransaction(transaction) }
+                        ) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(12.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text(
+                                        text = transaction.recipientName ?: transaction.description,
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        fontWeight = FontWeight.Medium
+                                    )
+                                    Text(
+                                        text = transaction.timestamp,
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                }
+                                Text(
+                                    text = "$${String.format("%.2f", transaction.amount)}",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        confirmButton = {},
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Cancel")
+            }
+        }
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun NewDisputeDialog(
+    transaction: Transaction,
     onDismiss: () -> Unit,
-    onSubmit: (transactionId: String, amount: Double, merchant: String, reason: DisputeReason, description: String) -> Unit
+    onSubmit: (reason: DisputeReason, description: String) -> Unit
 ) {
-    var transactionId by remember { mutableStateOf("") }
-    var amount by remember { mutableStateOf("") }
-    var merchant by remember { mutableStateOf("") }
     var selectedReason by remember { mutableStateOf(DisputeReason.UNAUTHORIZED) }
     var description by remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(false) }
@@ -310,30 +498,31 @@ private fun NewDisputeDialog(
         title = { Text("File a Dispute") },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                OutlinedTextField(
-                    value = transactionId,
-                    onValueChange = { transactionId = it },
-                    label = { Text("Transaction ID") },
-                    modifier = Modifier.fillMaxWidth(),
-                    singleLine = true
-                )
-
-                OutlinedTextField(
-                    value = amount,
-                    onValueChange = { amount = it.filter { c -> c.isDigit() || c == '.' } },
-                    label = { Text("Amount ($)") },
-                    modifier = Modifier.fillMaxWidth(),
-                    singleLine = true,
-                    leadingIcon = { Text("$") }
-                )
-
-                OutlinedTextField(
-                    value = merchant,
-                    onValueChange = { merchant = it },
-                    label = { Text("Merchant Name") },
-                    modifier = Modifier.fillMaxWidth(),
-                    singleLine = true
-                )
+                // Transaction Info
+                Card(
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant
+                    )
+                ) {
+                    Column(modifier = Modifier.padding(12.dp)) {
+                        Text(
+                            text = "Transaction Details",
+                            style = MaterialTheme.typography.labelMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = transaction.recipientName ?: transaction.description,
+                            style = MaterialTheme.typography.bodyMedium,
+                            fontWeight = FontWeight.Medium
+                        )
+                        Text(
+                            text = "$${String.format("%.2f", transaction.amount)} • ${transaction.timestamp}",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
 
                 // Reason Dropdown
                 ExposedDropdownMenuBox(
@@ -368,6 +557,7 @@ private fun NewDisputeDialog(
                     value = description,
                     onValueChange = { description = it },
                     label = { Text("Description") },
+                    placeholder = { Text("Describe the issue with this transaction...") },
                     modifier = Modifier.fillMaxWidth(),
                     minLines = 3,
                     maxLines = 5
@@ -378,9 +568,9 @@ private fun NewDisputeDialog(
             Button(
                 onClick = {
                     isLoading = true
-                    onSubmit(transactionId, amount.toDoubleOrNull() ?: 0.0, merchant, selectedReason, description)
+                    onSubmit(selectedReason, description)
                 },
-                enabled = !isLoading && transactionId.isNotBlank() && amount.isNotBlank() && merchant.isNotBlank() && description.isNotBlank()
+                enabled = !isLoading && description.isNotBlank()
             ) {
                 if (isLoading) {
                     CircularProgressIndicator(modifier = Modifier.size(20.dp), color = MaterialTheme.colorScheme.onPrimary)
@@ -439,7 +629,8 @@ private fun DisputeDetailsDialog(
             Button(onClick = onDismiss) {
                 Text("Close")
             }
-        }
+        },
+        dismissButton = {}
     )
 }
 

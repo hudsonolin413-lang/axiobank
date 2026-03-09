@@ -27,7 +27,7 @@ class LoanViewModel(
     private val notificationRepository: NotificationRepository? = null
 ) : ViewModel() {
 
-    private val repository = LoanRepository(authRepository)
+    val repository = LoanRepository(authRepository)
     private val _uiState = MutableStateFlow(LoanUiState())
     val uiState: StateFlow<LoanUiState> = _uiState.asStateFlow()
 
@@ -201,5 +201,33 @@ class LoanViewModel(
 
     fun getApplicationById(applicationId: String): LoanApplication? {
         return _uiState.value.loanApplications.find { it.id == applicationId }
+    }
+
+    fun refinanceLoan(loanId: String, newTermMonths: Int, newInterestRate: Double) {
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
+
+            repository.refinanceLoan(loanId, newTermMonths, newInterestRate)
+                .onSuccess { updatedLoan ->
+                    val message = "Loan refinanced successfully! Your new monthly payment is $${updatedLoan.monthlyPayment}"
+                    _uiState.value = _uiState.value.copy(
+                        isLoading = false,
+                        successMessage = message
+                    )
+                    SnackbarManager.showSuccess(message)
+                    // Refresh notifications
+                    viewModelScope.launch {
+                        notificationRepository?.refreshNotifications()
+                    }
+                }
+                .onFailure { error ->
+                    val message = "Refinancing failed: ${error.message}"
+                    _uiState.value = _uiState.value.copy(
+                        isLoading = false,
+                        errorMessage = message
+                    )
+                    SnackbarManager.showError(message)
+                }
+        }
     }
 }

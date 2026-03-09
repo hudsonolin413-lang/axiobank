@@ -8,7 +8,12 @@ data class AppSettings(
     val language: String = "en",
     val currency: String = "USD",
     val isBiometricEnabled: Boolean = false,
-    val theme: String = "system"
+    val theme: String = "system",
+    val isOfflineModeEnabled: Boolean = false,
+    val isAutoSyncEnabled: Boolean = true,
+    val cacheTransactions: Boolean = true,
+    val cacheStatements: Boolean = false,
+    val lastSyncTime: String = "Never"
 )
 
 class SettingsRepository {
@@ -45,6 +50,31 @@ class SettingsRepository {
     fun updateBiometricEnabled(enabled: Boolean) {
         _appSettings.value = _appSettings.value.copy(isBiometricEnabled = enabled)
         println("Biometric enabled: $enabled")
+    }
+
+    fun updateOfflineModeEnabled(enabled: Boolean) {
+        _appSettings.value = _appSettings.value.copy(isOfflineModeEnabled = enabled)
+        println("Offline mode enabled: $enabled")
+    }
+
+    fun updateAutoSyncEnabled(enabled: Boolean) {
+        _appSettings.value = _appSettings.value.copy(isAutoSyncEnabled = enabled)
+        println("Auto-sync enabled: $enabled")
+    }
+
+    fun updateCacheTransactions(enabled: Boolean) {
+        _appSettings.value = _appSettings.value.copy(cacheTransactions = enabled)
+        println("Cache transactions: $enabled")
+    }
+
+    fun updateCacheStatements(enabled: Boolean) {
+        _appSettings.value = _appSettings.value.copy(cacheStatements = enabled)
+        println("Cache statements: $enabled")
+    }
+
+    fun updateLastSyncTime(time: String) {
+        _appSettings.value = _appSettings.value.copy(lastSyncTime = time)
+        println("Last sync time updated: $time")
     }
 
     fun getCurrentLanguage(): String = _appSettings.value.language

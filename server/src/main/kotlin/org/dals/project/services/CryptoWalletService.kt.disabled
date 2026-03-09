@@ -1,0 +1,516 @@
+package org.dals.project.services
+
+import org.dals.project.database.*
+import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.transactions.transaction
+import java.math.BigDecimal
+import java.math.RoundingMode
+import java.security.MessageDigest
+import java.time.LocalDateTime
+import java.util.*
+import kotlin.random.Random
+
+data class CreateCryptoWalletRequest(
+    val customerId: String,
+    val accountId: String,
+    val cryptocurrency: String,
+    val network: String = "MAINNET",
+    val walletType: String = "HOT"
+)
+
+data class CryptoWalletDto(
+    val id: String,
+    val customerId: String,
+    val accountId: String,
+    val cryptocurrency: String,
+    val walletAddress: String,
+    val balance: Double,
+    val fiatEquivalent: Double,
+    val network: String,
+    val walletType: String,
+    val status: String,
+    val lastSyncedAt: String?,
+    val createdAt: String
+)
+
+data class BuyCryptoRequest(
+    val customerId: String,
+    val walletId: String,
+    val accountId: String,
+    val cryptocurrency: String,
+    val fiatAmount: Double
+)
+
+data class SellCryptoRequest(
+    val customerId: String,
+    val walletId: String,
+    val accountId: String,
+    val cryptocurrency: String,
+    val cryptoAmount: Double
+)
+
+data class SendCryptoRequest(
+    val customerId: String,
+    val walletId: String,
+    val toAddress: String,
+    val amount: Double,
+    val memo: String? = null
+)
+
+data class CryptoTransactionDto(
+    val id: String,
+    val customerId: String,
+    val walletId: String,
+    val accountId: String?,
+    val transactionType: String,
+    val cryptocurrency: String,
+    val amount: Double,
+    val fiatAmount: Double?,
+    val exchangeRate: Double?,
+    val fee: Double,
+    val networkFee: Double,
+    val fromAddress: String?,
+    val toAddress: String?,
+    val txHash: String?,
+    val blockNumber: Long?,
+    val confirmations: Int,
+    val status: String,
+    val failureReason: String?,
+    val bankTransactionId: String?,
+    val memo: String?,
+    val createdAt: String
+)
+
+data class CryptoPriceDto(
+    val cryptocurrency: String,
+    val priceUsd: Double,
+    val priceChange24h: Double,
+    val volume24h: Double,
+    val marketCap: Double?,
+    val circulatingSupply: Double?,
+    val lastUpdated: String
+)
+
+data class CryptoPortfolioDto(
+    val totalValue: Double,
+    val wallets: List<CryptoWalletDto>,
+    val recentTransactions: List<CryptoTransactionDto>,
+    val performance24h: Double
+)
+
+object CryptoWalletService {
+
+    fun createWallet(request: CreateCryptoWalletRequest): Result<CryptoWalletDto> {
+        return try {
+            transaction {
+                // Validate account
+                val account = Accounts.select {
+                    (Accounts.id eq UUID.fromString(request.accountId)) and
+                    (Accounts.customerId eq UUID.fromString(request.customerId))
+                }.singleOrNull()
+                    ?: return@transaction Result.failure(Exception("Account not found"))
+
+                // Generate wallet address and keys
+                val (walletAddress, publicKey, privateKey) = generateWalletKeys(request.cryptocurrency)
+
+                // Create wallet
+                val walletId = CryptoWallets.insert {
+                    it[customerId] = UUID.fromString(request.customerId)
+                    it[accountId] = UUID.fromString(request.accountId)
+                    it[cryptocurrency] = request.cryptocurrency
+                    it[CryptoWallets.walletAddress] = walletAddress
+                    it[CryptoWallets.publicKey] = publicKey
+                    it[privateKeyEncrypted] = encryptPrivateKey(privateKey)
+                    it[network] = request.network
+                    it[walletType] = request.walletType
+                }[CryptoWallets.id].value
+
+                val wallet = CryptoWallets.select { CryptoWallets.id eq walletId }.single()
+                Result.success(mapToCryptoWalletDto(wallet))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    fun buyCrypto(request: BuyCryptoRequest): Result<CryptoTransactionDto> {
+        return try {
+            transaction {
+                // Get wallet
+                val wallet = CryptoWallets.select {
+                    (CryptoWallets.id eq UUID.fromString(request.walletId)) and
+                    (CryptoWallets.customerId eq UUID.fromString(request.customerId))
+                }.singleOrNull()
+                    ?: return@transaction Result.failure(Exception("Wallet not found"))
+
+                // Get account
+                val account = Accounts.select {
+                    (Accounts.id eq UUID.fromString(request.accountId)) and
+                    (Accounts.customerId eq UUID.fromString(request.customerId))
+                }.singleOrNull()
+                    ?: return@transaction Result.failure(Exception("Account not found"))
+
+                val currentBalance = account[Accounts.balance].toDouble()
+
+                // Get crypto price
+                val price = getCryptoPrice(request.cryptocurrency)
+                    ?: return@transaction Result.failure(Exception("Price not available for ${request.cryptocurrency}"))
+
+                // Calculate amounts
+                val tradingFee = request.fiatAmount * 0.02 // 2% trading fee
+                val totalDeducted = request.fiatAmount + tradingFee
+                val cryptoAmount = BigDecimal(request.fiatAmount / price.priceUsd)
+                    .setScale(8, RoundingMode.HALF_UP).toDouble()
+
+                // Check balance
+                if (currentBalance < totalDeducted) {
+                    return@transaction Result.failure(Exception("Insufficient balance. Required: $$totalDeducted, Available: $$currentBalance"))
+                }
+
+                // Deduct from bank account
+                Accounts.update({ Accounts.id eq UUID.fromString(request.accountId) }) {
+                    it[balance] = BigDecimal(currentBalance - totalDeducted)
+                    it[updatedAt] = LocalDateTime.now()
+                }
+
+                // Create bank transaction
+                val bankTransactionId = Transactions.insert {
+                    it[Transactions.customerId] = UUID.fromString(request.customerId)
+                    it[accountId] = UUID.fromString(request.accountId)
+                    it[type] = TransactionType.CRYPTO_BUY.name
+                    it[Transactions.amount] = BigDecimal(totalDeducted)
+                    it[currency] = "USD"
+                    it[description] = "Buy ${request.cryptocurrency} - $cryptoAmount ${request.cryptocurrency}"
+                    it[status] = "COMPLETED"
+                    it[category] = "CRYPTO"
+                }[Transactions.id].value
+
+                // Update wallet balance
+                val currentCryptoBalance = wallet[CryptoWallets.balance].toDouble()
+                val newCryptoBalance = currentCryptoBalance + cryptoAmount
+                val fiatEquivalent = newCryptoBalance * price.priceUsd
+
+                CryptoWallets.update({ CryptoWallets.id eq UUID.fromString(request.walletId) }) {
+                    it[balance] = BigDecimal(newCryptoBalance)
+                    it[CryptoWallets.fiatEquivalent] = BigDecimal(fiatEquivalent)
+                    it[lastSyncedAt] = LocalDateTime.now()
+                    it[updatedAt] = LocalDateTime.now()
+                }
+
+                // Create crypto transaction
+                val txHash = generateTxHash()
+                val cryptoTxId = CryptoTransactions.insert {
+                    it[customerId] = UUID.fromString(request.customerId)
+                    it[walletId] = UUID.fromString(request.walletId)
+                    it[accountId] = UUID.fromString(request.accountId)
+                    it[transactionType] = "BUY"
+                    it[cryptocurrency] = request.cryptocurrency
+                    it[amount] = BigDecimal(cryptoAmount)
+                    it[fiatAmount] = BigDecimal(request.fiatAmount)
+                    it[exchangeRate] = BigDecimal(price.priceUsd)
+                    it[fee] = BigDecimal(tradingFee)
+                    it[toAddress] = wallet[CryptoWallets.walletAddress]
+                    it[CryptoTransactions.txHash] = txHash
+                    it[status] = "COMPLETED"
+                    it[confirmations] = 6
+                    it[bankTransactionId] = bankTransactionId
+                }[CryptoTransactions.id].value
+
+                val cryptoTx = CryptoTransactions.select { CryptoTransactions.id eq cryptoTxId }.single()
+                Result.success(mapToCryptoTransactionDto(cryptoTx))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    fun sellCrypto(request: SellCryptoRequest): Result<CryptoTransactionDto> {
+        return try {
+            transaction {
+                // Get wallet
+                val wallet = CryptoWallets.select {
+                    (CryptoWallets.id eq UUID.fromString(request.walletId)) and
+                    (CryptoWallets.customerId eq UUID.fromString(request.customerId))
+                }.singleOrNull()
+                    ?: return@transaction Result.failure(Exception("Wallet not found"))
+
+                val currentCryptoBalance = wallet[CryptoWallets.balance].toDouble()
+
+                // Check crypto balance
+                if (currentCryptoBalance < request.cryptoAmount) {
+                    return@transaction Result.failure(Exception("Insufficient crypto balance"))
+                }
+
+                // Get crypto price
+                val price = getCryptoPrice(request.cryptocurrency)
+                    ?: return@transaction Result.failure(Exception("Price not available"))
+
+                // Calculate amounts
+                val fiatAmount = request.cryptoAmount * price.priceUsd
+                val tradingFee = fiatAmount * 0.02 // 2% fee
+                val netFiatAmount = fiatAmount - tradingFee
+
+                // Get account
+                val account = Accounts.select { Accounts.id eq UUID.fromString(request.accountId) }.single()
+                val currentBalance = account[Accounts.balance].toDouble()
+
+                // Credit bank account
+                Accounts.update({ Accounts.id eq UUID.fromString(request.accountId) }) {
+                    it[balance] = BigDecimal(currentBalance + netFiatAmount)
+                    it[updatedAt] = LocalDateTime.now()
+                }
+
+                // Create bank transaction
+                val bankTransactionId = Transactions.insert {
+                    it[Transactions.customerId] = UUID.fromString(request.customerId)
+                    it[accountId] = UUID.fromString(request.accountId)
+                    it[type] = TransactionType.CRYPTO_SELL.name
+                    it[Transactions.amount] = BigDecimal(netFiatAmount)
+                    it[currency] = "USD"
+                    it[description] = "Sell ${request.cryptoAmount} ${request.cryptocurrency}"
+                    it[status] = "COMPLETED"
+                    it[category] = "CRYPTO"
+                }[Transactions.id].value
+
+                // Update wallet balance
+                val newCryptoBalance = currentCryptoBalance - request.cryptoAmount
+                val fiatEquivalent = newCryptoBalance * price.priceUsd
+
+                CryptoWallets.update({ CryptoWallets.id eq UUID.fromString(request.walletId) }) {
+                    it[balance] = BigDecimal(newCryptoBalance)
+                    it[CryptoWallets.fiatEquivalent] = BigDecimal(fiatEquivalent)
+                    it[lastSyncedAt] = LocalDateTime.now()
+                    it[updatedAt] = LocalDateTime.now()
+                }
+
+                // Create crypto transaction
+                val txHash = generateTxHash()
+                val cryptoTxId = CryptoTransactions.insert {
+                    it[customerId] = UUID.fromString(request.customerId)
+                    it[walletId] = UUID.fromString(request.walletId)
+                    it[accountId] = UUID.fromString(request.accountId)
+                    it[transactionType] = "SELL"
+                    it[cryptocurrency] = request.cryptocurrency
+                    it[amount] = BigDecimal(request.cryptoAmount)
+                    it[fiatAmount] = BigDecimal(netFiatAmount)
+                    it[exchangeRate] = BigDecimal(price.priceUsd)
+                    it[fee] = BigDecimal(tradingFee)
+                    it[fromAddress] = wallet[CryptoWallets.walletAddress]
+                    it[CryptoTransactions.txHash] = txHash
+                    it[status] = "COMPLETED"
+                    it[confirmations] = 6
+                    it[bankTransactionId] = bankTransactionId
+                }[CryptoTransactions.id].value
+
+                val cryptoTx = CryptoTransactions.select { CryptoTransactions.id eq cryptoTxId }.single()
+                Result.success(mapToCryptoTransactionDto(cryptoTx))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    fun sendCrypto(request: SendCryptoRequest): Result<CryptoTransactionDto> {
+        return try {
+            transaction {
+                // Get wallet
+                val wallet = CryptoWallets.select {
+                    (CryptoWallets.id eq UUID.fromString(request.walletId)) and
+                    (CryptoWallets.customerId eq UUID.fromString(request.customerId))
+                }.singleOrNull()
+                    ?: return@transaction Result.failure(Exception("Wallet not found"))
+
+                val currentBalance = wallet[CryptoWallets.balance].toDouble()
+                val networkFee = calculateNetworkFee(wallet[CryptoWallets.cryptocurrency])
+
+                // Check balance
+                if (currentBalance < request.amount + networkFee) {
+                    return@transaction Result.failure(Exception("Insufficient balance including network fee"))
+                }
+
+                // Update wallet balance
+                val newBalance = currentBalance - request.amount - networkFee
+                CryptoWallets.update({ CryptoWallets.id eq UUID.fromString(request.walletId) }) {
+                    it[balance] = BigDecimal(newBalance)
+                    it[lastSyncedAt] = LocalDateTime.now()
+                    it[updatedAt] = LocalDateTime.now()
+                }
+
+                // Create crypto transaction
+                val txHash = generateTxHash()
+                val cryptoTxId = CryptoTransactions.insert {
+                    it[customerId] = UUID.fromString(request.customerId)
+                    it[walletId] = UUID.fromString(request.walletId)
+                    it[transactionType] = "SEND"
+                    it[cryptocurrency] = wallet[CryptoWallets.cryptocurrency]
+                    it[amount] = BigDecimal(request.amount)
+                    it[CryptoTransactions.networkFee] = BigDecimal(networkFee)
+                    it[fromAddress] = wallet[CryptoWallets.walletAddress]
+                    it[toAddress] = request.toAddress
+                    it[CryptoTransactions.txHash] = txHash
+                    it[status] = "PENDING"
+                    it[memo] = request.memo
+                }[CryptoTransactions.id].value
+
+                val cryptoTx = CryptoTransactions.select { CryptoTransactions.id eq cryptoTxId }.single()
+                Result.success(mapToCryptoTransactionDto(cryptoTx))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    fun getWallets(customerId: String): Result<List<CryptoWalletDto>> {
+        return try {
+            transaction {
+                val wallets = CryptoWallets.select { CryptoWallets.customerId eq UUID.fromString(customerId) }
+                    .map { mapToCryptoWalletDto(it) }
+                Result.success(wallets)
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    fun getCryptoTransactions(walletId: String): Result<List<CryptoTransactionDto>> {
+        return try {
+            transaction {
+                val txs = CryptoTransactions.select { CryptoTransactions.walletId eq UUID.fromString(walletId) }
+                    .orderBy(CryptoTransactions.createdAt to SortOrder.DESC)
+                    .map { mapToCryptoTransactionDto(it) }
+                Result.success(txs)
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    fun getPortfolio(customerId: String): Result<CryptoPortfolioDto> {
+        return try {
+            transaction {
+                val wallets = CryptoWallets.select { CryptoWallets.customerId eq UUID.fromString(customerId) }
+                    .map { mapToCryptoWalletDto(it) }
+
+                val totalValue = wallets.sumOf { it.fiatEquivalent }
+
+                val walletIds = wallets.map { UUID.fromString(it.id) }
+                val recentTxs = CryptoTransactions.select { CryptoTransactions.walletId inList walletIds }
+                    .orderBy(CryptoTransactions.createdAt to SortOrder.DESC)
+                    .limit(10)
+                    .map { mapToCryptoTransactionDto(it) }
+
+                Result.success(CryptoPortfolioDto(totalValue, wallets, recentTxs, 0.0))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    fun updateCryptoPrice(crypto: String, priceUsd: Double, change24h: Double, volume24h: Double): Result<CryptoPriceDto> {
+        return try {
+            transaction {
+                CryptoPrices.deleteWhere { CryptoPrices.cryptocurrency eq crypto }
+
+                CryptoPrices.insert {
+                    it[cryptocurrency] = crypto
+                    it[CryptoPrices.priceUsd] = BigDecimal(priceUsd)
+                    it[priceChange24h] = BigDecimal(change24h)
+                    it[CryptoPrices.volume24h] = BigDecimal(volume24h)
+                }
+
+                val price = CryptoPrices.select { CryptoPrices.cryptocurrency eq crypto }.single()
+                Result.success(mapToCryptoPriceDto(price))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    private fun getCryptoPrice(cryptocurrency: String): CryptoPriceDto? {
+        return CryptoPrices.select { CryptoPrices.cryptocurrency eq cryptocurrency }
+            .singleOrNull()?.let { mapToCryptoPriceDto(it) }
+    }
+
+    private fun generateWalletKeys(crypto: String): Triple<String, String, String> {
+        val random = Random.nextBytes(32).joinToString("") { "%02x".format(it) }
+        val walletAddress = when (crypto) {
+            "BTC" -> "1${random.take(33)}"
+            "ETH" -> "0x${random.take(40)}"
+            "USDT" -> "0x${random.take(40)}"
+            else -> random.take(40)
+        }
+        val publicKey = "pub_$random"
+        val privateKey = "priv_$random"
+        return Triple(walletAddress, publicKey, privateKey)
+    }
+
+    private fun encryptPrivateKey(privateKey: String): String {
+        // TODO: Implement real encryption (AES-256)
+        return MessageDigest.getInstance("SHA-256")
+            .digest(privateKey.toByteArray())
+            .joinToString("") { "%02x".format(it) }
+    }
+
+    private fun calculateNetworkFee(crypto: String): Double {
+        return when (crypto) {
+            "BTC" -> 0.0001
+            "ETH" -> 0.001
+            "USDT" -> 0.0005
+            else -> 0.001
+        }
+    }
+
+    private fun generateTxHash(): String {
+        return "0x${Random.nextBytes(32).joinToString("") { "%02x".format(it) }}"
+    }
+
+    private fun mapToCryptoWalletDto(row: ResultRow) = CryptoWalletDto(
+        id = row[CryptoWallets.id].value.toString(),
+        customerId = row[CryptoWallets.customerId].toString(),
+        accountId = row[CryptoWallets.accountId].toString(),
+        cryptocurrency = row[CryptoWallets.cryptocurrency],
+        walletAddress = row[CryptoWallets.walletAddress],
+        balance = row[CryptoWallets.balance].toDouble(),
+        fiatEquivalent = row[CryptoWallets.fiatEquivalent].toDouble(),
+        network = row[CryptoWallets.network],
+        walletType = row[CryptoWallets.walletType],
+        status = row[CryptoWallets.status],
+        lastSyncedAt = row[CryptoWallets.lastSyncedAt]?.toString(),
+        createdAt = row[CryptoWallets.createdAt].toString()
+    )
+
+    private fun mapToCryptoTransactionDto(row: ResultRow) = CryptoTransactionDto(
+        id = row[CryptoTransactions.id].value.toString(),
+        customerId = row[CryptoTransactions.customerId].toString(),
+        walletId = row[CryptoTransactions.walletId].toString(),
+        accountId = row[CryptoTransactions.accountId]?.toString(),
+        transactionType = row[CryptoTransactions.transactionType],
+        cryptocurrency = row[CryptoTransactions.cryptocurrency],
+        amount = row[CryptoTransactions.amount].toDouble(),
+        fiatAmount = row[CryptoTransactions.fiatAmount]?.toDouble(),
+        exchangeRate = row[CryptoTransactions.exchangeRate]?.toDouble(),
+        fee = row[CryptoTransactions.fee].toDouble(),
+        networkFee = row[CryptoTransactions.networkFee].toDouble(),
+        fromAddress = row[CryptoTransactions.fromAddress],
+        toAddress = row[CryptoTransactions.toAddress],
+        txHash = row[CryptoTransactions.txHash],
+        blockNumber = row[CryptoTransactions.blockNumber],
+        confirmations = row[CryptoTransactions.confirmations],
+        status = row[CryptoTransactions.status],
+        failureReason = row[CryptoTransactions.failureReason],
+        bankTransactionId = row[CryptoTransactions.bankTransactionId]?.toString(),
+        memo = row[CryptoTransactions.memo],
+        createdAt = row[CryptoTransactions.createdAt].toString()
+    )
+
+    private fun mapToCryptoPriceDto(row: ResultRow) = CryptoPriceDto(
+        cryptocurrency = row[CryptoPrices.cryptocurrency],
+        priceUsd = row[CryptoPrices.priceUsd].toDouble(),
+        priceChange24h = row[CryptoPrices.priceChange24h].toDouble(),
+        volume24h = row[CryptoPrices.volume24h].toDouble(),
+        marketCap = row[CryptoPrices.marketCap]?.toDouble(),
+        circulatingSupply = row[CryptoPrices.circulatingSupply]?.toDouble(),
+        lastUpdated = row[CryptoPrices.lastUpdated].toString()
+    )
+}

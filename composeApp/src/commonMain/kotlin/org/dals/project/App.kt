@@ -12,11 +12,14 @@ import kotlinx.coroutines.launch
 import org.dals.project.navigation.AppNavGraph
 import org.dals.project.repository.AuthRepository
 import org.dals.project.repository.NotificationRepository
+import org.dals.project.repository.SettingsRepository
+import org.dals.project.viewmodel.ReferralViewModel
 import org.dals.project.ui.theme.AppTheme
 import org.dals.project.viewmodel.AuthViewModel
 import org.dals.project.viewmodel.LoanViewModel
 import org.dals.project.viewmodel.NotificationViewModel
 import org.dals.project.viewmodel.TransactionViewModel
+import org.dals.project.viewmodel.OfflineViewModel
 import org.dals.project.storage.PreferencesStorage
 import org.dals.project.utils.InactivityManager
 import org.dals.project.utils.InactivityTracker
@@ -36,12 +39,23 @@ fun App(preferencesStorage: PreferencesStorage? = null) {
         }
 
         val authRepository = remember { AuthRepository() }
+        val settingsRepository = remember { SettingsRepository() }
         val notificationRepository = remember { NotificationRepository(authRepository) }
         val authViewModel = remember { AuthViewModel(authRepository) }
         val loanViewModel = remember { LoanViewModel(authRepository, notificationRepository) }
         val transactionViewModel = remember { TransactionViewModel(authRepository, notificationRepository) }
         val notificationViewModel = remember { NotificationViewModel(authRepository, notificationRepository) }
         val cardViewModel = remember { org.dals.project.viewmodel.CardViewModel(authRepository) }
+        val referralViewModel = remember { ReferralViewModel(authRepository) }
+        val offlineViewModel = remember {
+            OfflineViewModel(
+                transactionRepository = transactionViewModel.repository,
+                cardRepository = cardViewModel.repository,
+                loanRepository = loanViewModel.repository,
+                settingsRepository = settingsRepository,
+                authRepository = authRepository
+            )
+        }
 
         // Inactivity manager for auto-logout
         val inactivityManager = remember {
@@ -85,6 +99,9 @@ fun App(preferencesStorage: PreferencesStorage? = null) {
                         transactionViewModel = transactionViewModel,
                         notificationViewModel = notificationViewModel,
                         cardViewModel = cardViewModel,
+                        referralViewModel = referralViewModel,
+                        offlineViewModel = offlineViewModel,
+                        settingsRepository = settingsRepository,
                         inactivityManager = inactivityManager
                     )
                 }

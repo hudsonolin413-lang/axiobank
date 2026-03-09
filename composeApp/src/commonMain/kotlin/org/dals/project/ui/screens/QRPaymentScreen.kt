@@ -24,6 +24,12 @@ import org.dals.project.viewmodel.QRPaymentTab
 import org.jetbrains.compose.resources.painterResource
 import org.dals.project.resources.Res
 import org.dals.project.resources.AxioBank
+import org.dals.project.utils.QRCodeGenerator
+import org.dals.project.utils.QRCodeScanner
+import org.dals.project.utils.PlatformFilePickerManager
+import androidx.compose.ui.graphics.ImageBitmap
+import kotlinx.coroutines.launch
+import java.io.File
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -124,6 +130,22 @@ private fun MyQRCodeContent(
     uiState: org.dals.project.viewmodel.QRPaymentUiState,
     viewModel: QRPaymentViewModel
 ) {
+    // Generate QR code image with logo
+    val qrCodeImage: ImageBitmap? = remember(uiState.myQRCode) {
+        uiState.myQRCode?.let { qrData ->
+            val qrJsonData = viewModel.getQRCodeJsonString()
+            if (qrJsonData != null) {
+                // Get the logo path from resources
+                val logoPath = getLogoPath()
+                QRCodeGenerator.generateQRCode(
+                    data = qrJsonData,
+                    size = 512,
+                    logoPath = logoPath
+                )
+            } else null
+        }
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -147,53 +169,28 @@ private fun MyQRCodeContent(
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            // QR Code Container with Logo
+            // QR Code Container with Generated QR Code
             Card(
                 modifier = Modifier
-                    .size(300.dp)
+                    .size(340.dp)
                     .padding(16.dp),
                 elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
                 colors = CardDefaults.cardColors(containerColor = Color.White)
             ) {
                 Box(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier.fillMaxSize().padding(16.dp),
                     contentAlignment = Alignment.Center
                 ) {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        // Axio Bank Logo
+                    if (qrCodeImage != null) {
+                        // Display actual QR code with embedded logo
                         Image(
-                            painter = painterResource(Res.drawable.AxioBank),
-                            contentDescription = "Axio Bank Logo",
-                            modifier = Modifier.size(60.dp)
+                            bitmap = qrCodeImage,
+                            contentDescription = "QR Code",
+                            modifier = Modifier.fillMaxSize()
                         )
-
-                        Spacer(modifier = Modifier.height(16.dp))
-
-                        // QR Code placeholder (In real implementation, generate actual QR code image)
-                        Box(
-                            modifier = Modifier
-                                .size(160.dp)
-                                .background(Color.Black, RoundedCornerShape(8.dp)),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.QrCode2,
-                                contentDescription = null,
-                                modifier = Modifier.size(140.dp),
-                                tint = Color.White
-                            )
-                        }
-
-                        Spacer(modifier = Modifier.height(8.dp))
-
-                        Text(
-                            text = "Scan to Pay",
-                            style = MaterialTheme.typography.labelSmall,
-                            color = Color.Black
-                        )
+                    } else {
+                        // Fallback if QR generation fails
+                        CircularProgressIndicator()
                     }
                 }
             }
@@ -221,12 +218,21 @@ private fun MyQRCodeContent(
             Spacer(modifier = Modifier.height(24.dp))
 
             // Share/Save buttons
+            var showSaveDialog by remember { mutableStateOf(false) }
+            var showShareDialog by remember { mutableStateOf(false) }
+
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 OutlinedButton(
-                    onClick = { /* TODO: Share QR code */ },
+                    onClick = {
+                        val qrJsonData = viewModel.getQRCodeJsonString()
+                        if (qrJsonData != null) {
+                            shareQRCode(qrJsonData, qrData.accountName)
+                            showShareDialog = true
+                        }
+                    },
                     modifier = Modifier.weight(1f)
                 ) {
                     Icon(Icons.Default.Share, contentDescription = null)
@@ -235,13 +241,34 @@ private fun MyQRCodeContent(
                 }
 
                 Button(
-                    onClick = { /* TODO: Save QR code */ },
+                    onClick = {
+                        val qrJsonData = viewModel.getQRCodeJsonString()
+                        if (qrJsonData != null) {
+                            val success = downloadQRCode(qrJsonData, qrData.accountName)
+                            showSaveDialog = success
+                        }
+                    },
                     modifier = Modifier.weight(1f)
                 ) {
                     Icon(Icons.Default.Download, contentDescription = null)
                     Spacer(modifier = Modifier.width(8.dp))
                     Text("Save")
                 }
+            }
+
+            // Save success dialog
+            if (showSaveDialog) {
+                AlertDialog(
+                    onDismissRequest = { showSaveDialog = false },
+                    icon = { Icon(Icons.Default.CheckCircle, contentDescription = null, tint = Color(0xFF4CAF50)) },
+                    title = { Text("QR Code Saved!") },
+                    text = { Text("Your QR code has been saved to your Downloads folder.") },
+                    confirmButton = {
+                        Button(onClick = { showSaveDialog = false }) {
+                            Text("OK")
+                        }
+                    }
+                )
             }
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -290,7 +317,9 @@ private fun ScanToPayContent(
     uiState: org.dals.project.viewmodel.QRPaymentUiState,
     viewModel: QRPaymentViewModel
 ) {
-    var showPaymentDialog by remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
+    val filePickerManager = remember { PlatformFilePickerManager() }
+    var scanningError by remember { mutableStateOf<String?>(null) }
 
     Column(
         modifier = Modifier
@@ -321,7 +350,7 @@ private fun ScanToPayContent(
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(
-                text = "Point your camera at the recipient's QR code to make a secure payment.",
+                text = "Upload a QR code image to make a secure payment.",
                 style = MaterialTheme.typography.bodyLarge,
                 textAlign = TextAlign.Center,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -329,38 +358,108 @@ private fun ScanToPayContent(
 
             Spacer(modifier = Modifier.height(48.dp))
 
+            // Camera Scan Button
             Button(
-                onClick = { /* TODO: Open Camera Scanner */ },
+                onClick = {
+                    scope.launch {
+                        scanningError = null
+                        try {
+                            openCameraScanner { qrData ->
+                                if (qrData != null && qrData.isNotBlank()) {
+                                    if (QRCodeScanner.validateQRPaymentData(qrData)) {
+                                        println("✅ QR Code scanned from camera: $qrData")
+                                        viewModel.validateScannedQR(qrData)
+                                    } else {
+                                        scanningError = "Invalid QR code. Please scan a valid Axio Bank payment QR code."
+                                    }
+                                } else if (qrData != null) {
+                                    scanningError = "No camera available or camera access denied."
+                                }
+                            }
+                        } catch (e: Exception) {
+                            scanningError = "Camera error: ${e.message}"
+                            println("❌ Camera error: ${e.message}")
+                            e.printStackTrace()
+                        }
+                    }
+                },
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Icon(Icons.Default.CameraAlt, contentDescription = null)
                 Spacer(modifier = Modifier.width(8.dp))
-                Text("Open Camera")
+                Text("Open Camera to Scan")
             }
 
             Spacer(modifier = Modifier.height(16.dp))
 
+            // Upload Image Button
             OutlinedButton(
-                onClick = { /* TODO: Upload from Gallery */ },
+                onClick = {
+                    scope.launch {
+                        scanningError = null
+                        val imageBytes = filePickerManager.pickImage()
+                        if (imageBytes != null) {
+                            try {
+                                // Save to temp file for scanning
+                                val tempDir = System.getProperty("java.io.tmpdir")
+                                val tempFile = File(tempDir, "qr_temp_${System.currentTimeMillis()}.png")
+                                tempFile.writeBytes(imageBytes)
+
+                                // Scan QR code
+                                val scannedData = QRCodeScanner.scanQRCodeFromFile(tempFile.absolutePath)
+
+                                // Clean up temp file
+                                tempFile.delete()
+
+                                if (scannedData != null && QRCodeScanner.validateQRPaymentData(scannedData)) {
+                                    println("✅ QR Code scanned successfully: $scannedData")
+                                    viewModel.validateScannedQR(scannedData)
+                                } else {
+                                    scanningError = "Invalid QR code. Please scan a valid Axio Bank payment QR code."
+                                    println("❌ Invalid QR code data: $scannedData")
+                                }
+                            } catch (e: Exception) {
+                                scanningError = "Failed to scan QR code: ${e.message}"
+                                println("❌ QR Scan error: ${e.message}")
+                                e.printStackTrace()
+                            }
+                        }
+                    }
+                },
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Icon(Icons.Default.PhotoLibrary, contentDescription = null)
                 Spacer(modifier = Modifier.width(8.dp))
-                Text("Upload from Gallery")
+                Text("Upload QR Code Image")
             }
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
-            // Demo: Manual QR input for testing
-            OutlinedButton(
-                onClick = {
-                    // Simulate QR scan - for demo purposes
-                    val demoQRData = """{"accountNumber":"123456789","accountName":"John Doe","bankName":"Axio Bank","customerId":"550e8400-e29b-41d4-a716-446655440000","timestamp":"${System.currentTimeMillis()}"}"""
-                    viewModel.validateScannedQR(demoQRData)
-                },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("Demo: Test QR Scan")
+            // Show scanning error if any
+            scanningError?.let { error ->
+                Card(
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.errorContainer
+                    ),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Row(
+                        modifier = Modifier.padding(16.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            Icons.Default.Error,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.error
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = error,
+                            color = MaterialTheme.colorScheme.error,
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
+                }
             }
         } else {
             // Payment Details Form
@@ -415,6 +514,10 @@ private fun PaymentDetailsForm(
     onPayClick: () -> Unit,
     onCancelClick: () -> Unit
 ) {
+    var password by remember { mutableStateOf("") }
+    var passwordVisible by remember { mutableStateOf(false) }
+    var showConfirmDialog by remember { mutableStateOf(false) }
+
     Column(
         modifier = Modifier.fillMaxWidth()
     ) {
@@ -491,6 +594,31 @@ private fun PaymentDetailsForm(
             enabled = !isLoading
         )
 
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Password Input
+        OutlinedTextField(
+            value = password,
+            onValueChange = { password = it },
+            label = { Text("Enter Password to Confirm") },
+            leadingIcon = {
+                Icon(Icons.Default.Lock, contentDescription = null)
+            },
+            trailingIcon = {
+                IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                    Icon(
+                        if (passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                        contentDescription = if (passwordVisible) "Hide password" else "Show password"
+                    )
+                }
+            },
+            visualTransformation = if (passwordVisible) androidx.compose.ui.text.input.VisualTransformation.None
+                                   else androidx.compose.ui.text.input.PasswordVisualTransformation(),
+            modifier = Modifier.fillMaxWidth(),
+            singleLine = true,
+            enabled = !isLoading
+        )
+
         Spacer(modifier = Modifier.height(32.dp))
 
         // Action Buttons
@@ -507,9 +635,12 @@ private fun PaymentDetailsForm(
             }
 
             Button(
-                onClick = onPayClick,
+                onClick = { showConfirmDialog = true },
                 modifier = Modifier.weight(1f),
-                enabled = !isLoading && amount.toDoubleOrNull() != null && amount.toDouble() > 0
+                enabled = !isLoading &&
+                         amount.toDoubleOrNull() != null &&
+                         amount.toDouble() > 0 &&
+                         password.isNotBlank()
             ) {
                 if (isLoading) {
                     CircularProgressIndicator(
@@ -522,6 +653,55 @@ private fun PaymentDetailsForm(
                 }
             }
         }
+    }
+
+    // Confirmation Dialog
+    if (showConfirmDialog) {
+        AlertDialog(
+            onDismissRequest = { showConfirmDialog = false },
+            icon = {
+                Icon(
+                    Icons.Default.Warning,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(48.dp)
+                )
+            },
+            title = { Text("Confirm Payment") },
+            text = {
+                Column {
+                    Text("Are you sure you want to send:")
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = "$$amount to $recipientName",
+                        fontWeight = FontWeight.Bold,
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = "This action cannot be undone.",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        showConfirmDialog = false
+                        // TODO: Validate password before processing
+                        onPayClick()
+                    }
+                ) {
+                    Text("Confirm & Pay")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showConfirmDialog = false }) {
+                    Text("Cancel")
+                }
+            }
+        )
     }
 }
 
@@ -590,5 +770,102 @@ private fun InfoRow(label: String, value: String) {
             style = MaterialTheme.typography.bodyMedium,
             fontWeight = FontWeight.SemiBold
         )
+    }
+}
+
+// Helper functions for QR code operations
+
+/**
+ * Get the path to the Axio Bank logo
+ */
+private fun getLogoPath(): String? {
+    return try {
+        val possiblePaths = listOf(
+            // Try resource path
+            System.getProperty("compose.application.resources.dir")?.let { "$it/composeResources/drawable/AxioBank.png" },
+            // Try user.dir
+            System.getProperty("user.dir")?.let { "$it/composeApp/src/commonMain/composeResources/drawable/AxioBank.png" },
+            // Try relative paths
+            "composeApp/src/commonMain/composeResources/drawable/AxioBank.png",
+            "src/commonMain/composeResources/drawable/AxioBank.png",
+            "../composeApp/src/commonMain/composeResources/drawable/AxioBank.png",
+            // Try absolute path
+            "C:/Users/ADMIN/AxionBank/Axio Bank/composeApp/src/commonMain/composeResources/drawable/AxioBank.png"
+        )
+
+        for (path in possiblePaths) {
+            if (path != null && File(path).exists()) {
+                println("✅ Logo found at: $path")
+                return path
+            }
+        }
+
+        println("⚠️ Logo not found in any of the expected locations")
+        null
+    } catch (e: Exception) {
+        println("⚠️ Error locating logo: ${e.message}")
+        e.printStackTrace()
+        null
+    }
+}
+
+/**
+ * Download QR code to user's device
+ */
+private fun downloadQRCode(qrJsonData: String, accountName: String): Boolean {
+    return try {
+        val downloadsDir = System.getProperty("user.home") + "/Downloads"
+        val fileName = "AxioBank_QR_${accountName.replace(" ", "_")}_${System.currentTimeMillis()}.png"
+        val outputPath = "$downloadsDir/$fileName"
+
+        val logoPath = getLogoPath()
+        val success = QRCodeGenerator.saveQRCodeToFile(
+            data = qrJsonData,
+            size = 1024, // Higher resolution for saving
+            logoPath = logoPath,
+            outputPath = outputPath
+        )
+
+        if (success) {
+            println("✅ QR Code saved to: $outputPath")
+        }
+        success
+    } catch (e: Exception) {
+        println("❌ Failed to save QR code: ${e.message}")
+        e.printStackTrace()
+        false
+    }
+}
+
+/**
+ * Share QR code (opens system share dialog)
+ */
+private fun shareQRCode(qrJsonData: String, accountName: String) {
+    try {
+        val logoPath = getLogoPath()
+        val qrBytes = QRCodeGenerator.getQRCodeBytes(
+            data = qrJsonData,
+            size = 1024,
+            logoPath = logoPath
+        )
+
+        if (qrBytes != null) {
+            // Save to temp file for sharing
+            val tempDir = System.getProperty("java.io.tmpdir")
+            val fileName = "AxioBank_QR_${accountName.replace(" ", "_")}.png"
+            val tempFile = File(tempDir, fileName)
+            tempFile.writeBytes(qrBytes)
+
+            // Open file location (platform-specific)
+            val desktop = java.awt.Desktop.getDesktop()
+            if (desktop.isSupported(java.awt.Desktop.Action.OPEN)) {
+                desktop.open(tempFile.parentFile)
+            }
+
+            println("✅ QR Code ready to share at: ${tempFile.absolutePath}")
+        }
+    } catch (e: Exception) {
+        println("❌ Failed to prepare QR code for sharing: ${e.message}")
+        e.printStackTrace()
     }
 }

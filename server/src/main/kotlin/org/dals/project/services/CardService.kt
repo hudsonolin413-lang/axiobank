@@ -461,7 +461,7 @@ class CardService {
     }
 
     /**
-     * Suspend a card
+     * Suspend a card (permanent)
      */
     fun suspendCard(cardId: String) {
         transaction {
@@ -476,6 +476,124 @@ class CardService {
                 it[status] = CardStatus.BLOCKED
                 it[updatedAt] = Instant.now()
             }
+        }
+    }
+
+    /**
+     * Freeze a card (temporary, reversible)
+     */
+    fun freezeCard(cardId: String, reason: String? = null): Result<String> {
+        return try {
+            transaction {
+                val card = Cards.select { Cards.id eq UUID.fromString(cardId) }
+                    .singleOrNull()
+                    ?: throw IllegalArgumentException("Card not found")
+
+                // Check if card is already frozen
+                if (card[Cards.status] == CardStatus.BLOCKED) {
+                    return@transaction Result.failure(Exception("Card is already frozen"))
+                }
+
+                println("❄️ CardService: Freezing card $cardId - Reason: ${reason ?: "User request"}")
+
+                // Store previous status for unfreezing
+                val previousStatus = card[Cards.status]
+
+                Cards.update({ Cards.id eq UUID.fromString(cardId) }) {
+                    it[status] = CardStatus.BLOCKED
+                    it[updatedAt] = Instant.now()
+                }
+
+                // Log freeze action
+                AuditLogs.insert {
+                    it[userId] = card[Cards.customerId]
+                    it[action] = "FREEZE"
+                    it[entityType] = "CARD"
+                    it[entityId] = cardId
+                    it[description] = "Card frozen. Reason: ${reason ?: "User request"}. Previous status: $previousStatus"
+                    it[ipAddress] = "SYSTEM"
+                    it[timestamp] = Instant.now()
+                }
+
+                Result.success("Card frozen successfully")
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    /**
+     * Unfreeze a card
+     */
+    fun unfreezeCard(cardId: String): Result<String> {
+        return try {
+            transaction {
+                val card = Cards.select { Cards.id eq UUID.fromString(cardId) }
+                    .singleOrNull()
+                    ?: throw IllegalArgumentException("Card not found")
+
+                // Check if card is frozen
+                if (card[Cards.status] != CardStatus.BLOCKED) {
+                    return@transaction Result.failure(Exception("Card is not frozen"))
+                }
+
+                println("🔥 CardService: Unfreezing card $cardId")
+
+                // Restore to ACTIVE status
+                Cards.update({ Cards.id eq UUID.fromString(cardId) }) {
+                    it[status] = CardStatus.ACTIVE
+                    it[updatedAt] = Instant.now()
+                }
+
+                // Log unfreeze action
+                AuditLogs.insert {
+                    it[userId] = card[Cards.customerId]
+                    it[action] = "UNFREEZE"
+                    it[entityType] = "CARD"
+                    it[entityId] = cardId
+                    it[description] = "Card unfrozen and restored to ACTIVE status"
+                    it[ipAddress] = "SYSTEM"
+                    it[timestamp] = Instant.now()
+                }
+
+                Result.success("Card unfrozen successfully")
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    /**
+     * Check if card is frozen
+     */
+    fun isCardFrozen(cardId: String): Boolean {
+        return transaction {
+            val card = Cards.select { Cards.id eq UUID.fromString(cardId) }
+                .singleOrNull()
+                ?: throw IllegalArgumentException("Card not found")
+
+            card[Cards.status] == CardStatus.BLOCKED
+        }
+    }
+
+    /**
+     * Get card freeze history
+     */
+    fun getCardFreezeHistory(cardId: String): List<Map<String, Any>> {
+        return transaction {
+            AuditLogs.select {
+                (AuditLogs.entityType eq "CARD") and
+                (AuditLogs.entityId eq cardId) and
+                (AuditLogs.action inList listOf("FREEZE", "UNFREEZE"))
+            }
+                .orderBy(AuditLogs.timestamp to SortOrder.DESC)
+                .map { row ->
+                    mapOf(
+                        "action" to row[AuditLogs.action],
+                        "details" to (row[AuditLogs.description] ?: ""),
+                        "timestamp" to row[AuditLogs.timestamp].toString()
+                    )
+                }
         }
     }
 }

@@ -9,10 +9,14 @@ import org.dals.project.storage.PreferencesStorage
 import org.dals.project.storage.PreferencesKeys
 import org.dals.project.storage.createPreferencesStorage
 import org.dals.project.API_BASE_URL
+import org.dals.project.utils.RetryUtils
 import io.ktor.client.*
 import io.ktor.client.call.*
+import io.ktor.client.plugins.*
 import io.ktor.client.request.*
+import io.ktor.client.statement.*
 import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.client.plugins.HttpTimeout
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.http.*
 import kotlinx.serialization.Serializable
@@ -137,6 +141,15 @@ class AuthRepository {
                 ignoreUnknownKeys = true
             })
         }
+
+        install(HttpTimeout) {
+            requestTimeoutMillis = 120000
+            connectTimeoutMillis = 60000
+            socketTimeoutMillis = 120000
+        }
+
+        // Don't throw on non-2xx responses for better error handling
+        expectSuccess = false
     }
 
     private val _authState = MutableStateFlow(AuthState.LOGGED_OUT)
@@ -362,10 +375,11 @@ class AuthRepository {
             val firstName = nameParts.getOrNull(0) ?: ""
             val lastName = nameParts.getOrNull(1) ?: ""
 
-            println("Attempting to register new customer")
-            println("Email: $email")
-            println("Phone: $phoneNumber")
-            println("Name: $firstName $lastName")
+            println("📝 Attempting to register new customer")
+            println("📧 Email: $email")
+            println("📱 Phone: $phoneNumber")
+            println("👤 Name: $firstName $lastName")
+            println("🌐 API URL: $baseUrl/auth/customer/register")
 
             val response = httpClient.post("$baseUrl/auth/customer/register") {
                 contentType(ContentType.Application.Json)
@@ -464,12 +478,18 @@ class AuthRepository {
         } catch (e: Exception) {
             _authState.value = AuthState.LOGGED_OUT
             val errorMessage = "Network error: ${e.message}"
-            println("Registration error: $errorMessage")
+            println("❌ Registration error: $errorMessage")
+            println("❌ Error type: ${e.javaClass.simpleName}")
             e.printStackTrace()
 
             AuthResponse(
                 success = false,
-                message = "Unable to connect to server. Please check your network connection and ensure the server is running on localhost:8081"
+                message = when {
+                    e.message?.contains("UnknownHostException") == true -> "Unable to reach server. Please check your internet connection."
+                    e.message?.contains("ConnectException") == true -> "Connection failed. Server may be unavailable."
+                    e.message?.contains("SocketTimeoutException") == true -> "Connection timeout. Please try again."
+                    else -> "Registration failed: ${e.message ?: "Unknown error"}. Please check your connection and try again."
+                }
             )
         }
     }
@@ -579,6 +599,11 @@ class AuthRepository {
         return _authState.value == AuthState.LOGGED_IN && _currentUser.value != null
     }
 
+    fun setGuestUser(user: User) {
+        _currentUser.value = user
+        _authState.value = AuthState.LOGGED_IN
+    }
+
     suspend fun verifyPassword(password: String): Boolean {
         // In a real app, this would verify with the server or a secure local storage
         // For now, we'll check against the saved password if available, or simulate a check
@@ -612,11 +637,17 @@ class AuthRepository {
         return try {
             println("🔍 Fetching account number for verified customer: $customerId")
 
-            val response = httpClient.get("$baseUrl/customer-care/accounts/customer/$customerId") {
-                contentType(ContentType.Application.Json)
-                headers {
-                    authToken?.let { token ->
-                        append("Authorization", "Bearer $token")
+            // Use retry logic for network resilience
+            val response: HttpResponse = RetryUtils.retryWithExponentialBackoff(
+                maxRetries = 2,
+                initialDelayMs = 500
+            ) {
+                httpClient.get("$baseUrl/customer-care/accounts/customer/$customerId") {
+                    contentType(ContentType.Application.Json)
+                    headers {
+                        authToken?.let { token ->
+                            append("Authorization", "Bearer $token")
+                        }
                     }
                 }
             }
@@ -632,12 +663,16 @@ class AuthRepository {
                     println("⚠️ No accounts found for verified customer")
                     null
                 }
+            } else if (response.status == HttpStatusCode.NotFound) {
+                println("⚠️ Account endpoint not found (404) - this feature may not be deployed yet")
+                null
             } else {
                 println("❌ Failed to fetch account number: ${response.status}")
                 null
             }
         } catch (e: Exception) {
             println("❌ Error fetching account number: ${e.message}")
+            e.printStackTrace()
             null
         }
     }

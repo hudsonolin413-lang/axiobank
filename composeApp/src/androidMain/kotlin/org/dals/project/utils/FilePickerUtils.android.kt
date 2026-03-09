@@ -12,7 +12,7 @@ import java.io.IOException
 import kotlin.coroutines.resume
 
 actual class PlatformFilePickerManager : FilePickerManager {
-    private lateinit var context: Context
+    private var context: Context? = null
     private var imagePickerLauncher: ActivityResultLauncher<String>? = null
     private var imageContinuation: ((ByteArray?) -> Unit)? = null
 
@@ -21,11 +21,34 @@ actual class PlatformFilePickerManager : FilePickerManager {
 
     actual constructor()
 
-    constructor(context: Context) {
+    fun setContext(context: Context) {
         this.context = context
     }
 
+    // New method: Set launchers directly (for Compose with rememberLauncherForActivityResult)
+    fun setLaunchers(
+        imagePicker: ActivityResultLauncher<String>,
+        permissions: ActivityResultLauncher<Array<String>>
+    ) {
+        this.imagePickerLauncher = imagePicker
+        this.permissionLauncher = permissions
+    }
+
+    // Methods to trigger callbacks from external launchers
+    fun triggerImageCallback(data: ByteArray?) {
+        imageContinuation?.invoke(data)
+        imageContinuation = null
+    }
+
+    fun triggerPermissionCallback(granted: Boolean) {
+        permissionContinuation?.invoke(granted)
+        permissionContinuation = null
+    }
+
+    @Deprecated("Use setLaunchers() instead to avoid lifecycle issues")
     fun initialize(activity: ComponentActivity) {
+        // Kept for backward compatibility but should not be used in Compose
+        println("⚠️ Warning: initialize() is deprecated. Use setLaunchers() instead")
         imagePickerLauncher = activity.registerForActivityResult(
             ActivityResultContracts.GetContent()
         ) { uri: Uri? ->
@@ -64,17 +87,30 @@ actual class PlatformFilePickerManager : FilePickerManager {
         permissionContinuation = { granted ->
             continuation.resume(granted)
         }
-        permissionLauncher?.launch(
+
+        // Request appropriate permissions based on Android version
+        val permissions = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            // Android 13+ (API 33+)
+            arrayOf(
+                android.Manifest.permission.READ_MEDIA_IMAGES,
+                android.Manifest.permission.READ_MEDIA_VIDEO,
+                android.Manifest.permission.CAMERA
+            )
+        } else {
+            // Android 12 and below
             arrayOf(
                 android.Manifest.permission.READ_EXTERNAL_STORAGE,
-                android.Manifest.permission.READ_MEDIA_IMAGES
+                android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                android.Manifest.permission.CAMERA
             )
-        )
+        }
+
+        permissionLauncher?.launch(permissions)
     }
 
     private fun readBytesFromUri(uri: Uri): ByteArray? {
         return try {
-            context.contentResolver.openInputStream(uri)?.use { inputStream ->
+            context?.contentResolver?.openInputStream(uri)?.use { inputStream ->
                 inputStream.readBytes()
             }
         } catch (e: IOException) {
@@ -84,7 +120,7 @@ actual class PlatformFilePickerManager : FilePickerManager {
 }
 
 actual class PlatformCameraManager : CameraManager {
-    private lateinit var context: Context
+    private var context: Context? = null
     private var cameraLauncher: ActivityResultLauncher<Uri>? = null
     private var cameraContinuation: ((ByteArray?) -> Unit)? = null
     private var photoUri: Uri? = null
@@ -94,11 +130,38 @@ actual class PlatformCameraManager : CameraManager {
 
     actual constructor()
 
-    constructor(context: Context) {
+    fun setContext(context: Context) {
         this.context = context
     }
 
+    // New method: Set launchers directly (for Compose)
+    fun setLaunchers(
+        camera: ActivityResultLauncher<Uri>,
+        permission: ActivityResultLauncher<String>
+    ) {
+        this.cameraLauncher = camera
+        this.permissionLauncher = permission
+    }
+
+    // Methods to trigger callbacks
+    fun triggerCameraCallback(success: Boolean) {
+        val data = if (success) {
+            photoUri?.let { readBytesFromUri(it) }
+        } else {
+            null
+        }
+        cameraContinuation?.invoke(data)
+        cameraContinuation = null
+    }
+
+    fun triggerPermissionCallback(granted: Boolean) {
+        permissionContinuation?.invoke(granted)
+        permissionContinuation = null
+    }
+
+    @Deprecated("Use setLaunchers() instead to avoid lifecycle issues")
     fun initialize(activity: ComponentActivity) {
+        println("⚠️ Warning: initialize() is deprecated. Use setLaunchers() instead")
         cameraLauncher = activity.registerForActivityResult(
             ActivityResultContracts.TakePicture()
         ) { success ->
@@ -121,15 +184,20 @@ actual class PlatformCameraManager : CameraManager {
 
     override suspend fun capturePhoto(): ByteArray? = suspendCancellableCoroutine { continuation ->
         try {
+            val ctx = context ?: run {
+                continuation.resume(null)
+                return@suspendCancellableCoroutine
+            }
+
             val photoFile = File.createTempFile(
                 "KYC_",
                 ".jpg",
-                context.cacheDir
+                ctx.cacheDir
             )
 
             photoUri = FileProvider.getUriForFile(
-                context,
-                "${context.packageName}.fileprovider",
+                ctx,
+                "${ctx.packageName}.fileprovider",
                 photoFile
             )
 
@@ -152,7 +220,7 @@ actual class PlatformCameraManager : CameraManager {
 
     private fun readBytesFromUri(uri: Uri): ByteArray? {
         return try {
-            context.contentResolver.openInputStream(uri)?.use { inputStream ->
+            context?.contentResolver?.openInputStream(uri)?.use { inputStream ->
                 inputStream.readBytes()
             }
         } catch (e: IOException) {
@@ -162,11 +230,11 @@ actual class PlatformCameraManager : CameraManager {
 }
 
 actual class PlatformLocationManager : LocationManager {
-    private lateinit var context: Context
+    private var context: Context? = null
 
     actual constructor()
 
-    constructor(context: Context) {
+    fun setContext(context: Context) {
         this.context = context
     }
 
@@ -182,16 +250,17 @@ actual class PlatformLocationManager : LocationManager {
 }
 
 actual class PlatformFileManager : FileManager {
-    private lateinit var context: Context
+    private var context: Context? = null
 
     actual constructor()
 
-    constructor(context: Context) {
+    fun setContext(context: Context) {
         this.context = context
     }
 
     override suspend fun saveFile(fileName: String, data: ByteArray): String {
-        val file = File(context.filesDir, fileName)
+        val ctx = context ?: throw IllegalStateException("Context not set")
+        val file = File(ctx.filesDir, fileName)
         file.writeBytes(data)
         return file.absolutePath
     }
@@ -204,5 +273,48 @@ actual class PlatformFileManager : FileManager {
     override suspend fun getFileSize(filePath: String): Long {
         val file = File(filePath)
         return if (file.exists()) file.length() else 0L
+    }
+}
+
+actual class PlatformShareManager : ShareManager {
+    private var context: android.content.Context? = null
+
+    actual constructor()
+
+    fun setContext(context: android.content.Context) {
+        this.context = context
+    }
+
+    override fun shareText(text: String, title: String) {
+        val ctx = context ?: return
+        val intent = android.content.Intent(android.content.Intent.ACTION_SEND).apply {
+            type = "text/plain"
+            putExtra(android.content.Intent.EXTRA_TEXT, text)
+            addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+        ctx.startActivity(android.content.Intent.createChooser(intent, title).addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK))
+    }
+
+    override fun shareImage(bytes: ByteArray, fileName: String, title: String) {
+        val ctx = context ?: return
+        try {
+            val cacheFile = File(ctx.cacheDir, fileName)
+            cacheFile.writeBytes(bytes)
+            val uri = androidx.core.content.FileProvider.getUriForFile(
+                ctx,
+                "${ctx.packageName}.fileprovider",
+                cacheFile
+            )
+
+            val intent = android.content.Intent(android.content.Intent.ACTION_SEND).apply {
+                type = "image/*"
+                putExtra(android.content.Intent.EXTRA_STREAM, uri)
+                addFlags(android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            ctx.startActivity(android.content.Intent.createChooser(intent, title).addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK))
+        } catch (e: Exception) {
+            println("Error sharing image: ${e.message}")
+        }
     }
 }

@@ -21,6 +21,9 @@ fun AppNavGraph(
     transactionViewModel: TransactionViewModel,
     notificationViewModel: NotificationViewModel,
     cardViewModel: org.dals.project.viewmodel.CardViewModel,
+    referralViewModel: org.dals.project.viewmodel.ReferralViewModel,
+    offlineViewModel: org.dals.project.viewmodel.OfflineViewModel,
+    settingsRepository: org.dals.project.repository.SettingsRepository,
     inactivityManager: org.dals.project.utils.InactivityManager? = null
 ) {
     val authUiState by authViewModel.uiState.collectAsStateWithLifecycle()
@@ -44,6 +47,7 @@ fun AppNavGraph(
     // Handle authentication state changes
     LaunchedEffect(authUiState.authState, authUiState.currentUser) {
         println("🔄 NavGraph: AuthState = ${authUiState.authState}, User = ${authUiState.currentUser?.username}, Current Screen = $currentScreen")
+        println("🔄 NavGraph: User KYC Status = ${authUiState.currentUser?.kycStatus}")
 
         when (authUiState.authState) {
             AuthState.LOGGED_OUT -> {
@@ -61,13 +65,17 @@ fun AppNavGraph(
             }
             AuthState.LOGGED_IN -> {
                 val user = authUiState.currentUser
+                println("🔑 NavGraph: LOGGED_IN - User is ${if (user != null) "NOT NULL" else "NULL"}")
                 if (user != null) {
+                    println("🔑 NavGraph: User details - Username: ${user.username}, KYC: ${user.kycStatus}")
                     if (user.kycStatus == KycStatus.VERIFIED) {
                         println("✅ NavGraph: Navigating to MAIN_APP (verified)")
                         currentScreen = Screen.MAIN_APP
                     } else {
-                        println("⚠️ NavGraph: Navigating to KYC_REQUIRED (not verified)")
+                        println("⚠️ NavGraph: Navigating to KYC_REQUIRED (not verified) - KYC Status is ${user.kycStatus}")
+                        println("⚠️ NavGraph: About to set currentScreen to KYC_REQUIRED")
                         currentScreen = Screen.KYC_REQUIRED
+                        println("⚠️ NavGraph: Successfully set currentScreen to KYC_REQUIRED")
                     }
                 }
             }
@@ -78,8 +86,11 @@ fun AppNavGraph(
         }
     }
 
+    println("📱 NavGraph: Rendering screen = $currentScreen")
+
     when (currentScreen) {
         Screen.WELCOME -> {
+            println("📱 NavGraph: Rendering WELCOME screen")
             WelcomeScreen(
                 onNavigateToLogin = {
                     currentScreen = Screen.LOGIN
@@ -91,6 +102,7 @@ fun AppNavGraph(
         }
 
         Screen.LOGIN -> {
+            println("📱 NavGraph: Rendering LOGIN screen")
             LoginScreen(
                 authViewModel = authViewModel,
                 onNavigateToRegister = {
@@ -100,12 +112,17 @@ fun AppNavGraph(
                     currentScreen = Screen.FORGOT_PASSWORD
                 },
                 onLoginSuccess = {
+                    println("✅ NavGraph: Login success callback triggered")
                     val user = authUiState.currentUser
+                    println("✅ NavGraph: User after login - ${user?.username}, KYC: ${user?.kycStatus}")
                     if (user != null && user.kycStatus == KycStatus.VERIFIED) {
+                        println("✅ NavGraph: Navigating to MAIN_APP from login callback")
                         currentScreen = Screen.MAIN_APP
                     } else {
+                        println("✅ NavGraph: Navigating to KYC_REQUIRED from login callback")
                         currentScreen = Screen.KYC_REQUIRED
                     }
+                    println("✅ NavGraph: Login success callback completed")
                 }
             )
         }
@@ -143,12 +160,14 @@ fun AppNavGraph(
         }
 
         Screen.KYC_REQUIRED -> {
+            println("📱 NavGraph: Rendering KYC_REQUIRED screen - STARTING")
             KYCRequiredScreen(
                 authViewModel = authViewModel,
                 onNavigateToMainApp = {
                     currentScreen = Screen.MAIN_APP
                 }
             )
+            println("📱 NavGraph: KYC_REQUIRED screen composable returned")
         }
 
         Screen.MAIN_APP -> {
@@ -158,6 +177,9 @@ fun AppNavGraph(
                 transactionViewModel = transactionViewModel,
                 notificationViewModel = notificationViewModel,
                 cardViewModel = cardViewModel,
+                referralViewModel = referralViewModel,
+                offlineViewModel = offlineViewModel,
+                settingsRepository = settingsRepository,
                 inactivityManager = inactivityManager,
                 onNavigateToKYCRequired = {
                     currentScreen = Screen.KYC_REQUIRED
@@ -178,6 +200,9 @@ fun AppNavGraph(
                 transactionViewModel = transactionViewModel,
                 notificationViewModel = notificationViewModel,
                 cardViewModel = cardViewModel,
+                referralViewModel = referralViewModel,
+                offlineViewModel = offlineViewModel,
+                settingsRepository = settingsRepository,
                 inactivityManager = inactivityManager,
                 onNavigateToKYCRequired = {
                     currentScreen = Screen.KYC_REQUIRED

@@ -14,6 +14,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import org.dals.project.viewmodel.AuthViewModel
+import org.dals.project.viewmodel.ReferralViewModel
 
 data class Referral(
     val id: String,
@@ -27,17 +30,29 @@ data class Referral(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ReferralScreen(
+    authViewModel: AuthViewModel,
+    referralViewModel: ReferralViewModel,
     onNavigateBack: () -> Unit
 ) {
-    val referralCode = "AXIO2024JD"
-    var referrals by remember { mutableStateOf(listOf(
-        Referral("1", "Jane Smith", "jane@email.com", "Completed", 25.0, "2024-02-15"),
-        Referral("2", "Bob Wilson", "bob@email.com", "Pending", 0.0, "2024-02-20"),
-        Referral("3", "Alice Brown", "alice@email.com", "Completed", 25.0, "2024-01-10")
-    )) }
+    val authUiState by authViewModel.uiState.collectAsStateWithLifecycle()
+    val referralUiState by referralViewModel.uiState.collectAsStateWithLifecycle()
+    val currentUser = authUiState.currentUser
     
-    val totalEarnings = referrals.filter { it.status == "Completed" }.sumOf { it.reward }
-    val pendingReferrals = referrals.count { it.status == "Pending" }
+    // Generate referral code based on user info
+    val referralCode = remember(currentUser) {
+        currentUser?.let {
+            "AXIO${it.username.take(4).uppercase()}${it.id.takeLast(4).uppercase()}"
+        } ?: "AXIO0000"
+    }
+    
+    val referrals = referralUiState.referrals
+    val isLoading = referralUiState.isLoading
+    var showInviteDialog by remember { mutableStateOf(false) }
+    var inviteEmail by remember { mutableStateOf("") }
+    var snackbarMessage by remember { mutableStateOf<String?>(null) }
+    
+    val totalEarnings = referrals.filter { it.status == "Completed" }.sumOf { it.rewardAmount.toDoubleOrNull() ?: 0.0 }
+    val pendingReferrals = referrals.count { it.status == "PENDING" || it.status == "Pending" }
 
     Scaffold(
         topBar = {
@@ -49,6 +64,19 @@ fun ReferralScreen(
                     }
                 }
             )
+        },
+        snackbarHost = {
+            snackbarMessage?.let { message ->
+                Snackbar(
+                    action = {
+                        TextButton(onClick = { snackbarMessage = null }) {
+                            Text("Dismiss")
+                        }
+                    }
+                ) {
+                    Text(message)
+                }
+            }
         }
     ) { paddingValues ->
         LazyColumn(
@@ -95,6 +123,43 @@ fun ReferralScreen(
                 }
             }
 
+            // User Info Card
+            currentUser?.let { user ->
+                item {
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceVariant
+                        )
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(16.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = Icons.Filled.Person,
+                                contentDescription = null,
+                                modifier = Modifier.size(40.dp),
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                            Spacer(modifier = Modifier.width(12.dp))
+                            Column {
+                                Text(
+                                    text = user.fullName,
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.Bold
+                                )
+                                Text(
+                                    text = "Share your code and earn rewards",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+
             // Referral Code Card
             item {
                 Card(modifier = Modifier.fillMaxWidth()) {
@@ -110,55 +175,40 @@ fun ReferralScreen(
                         Spacer(modifier = Modifier.height(12.dp))
                         
                         Surface(
-                            color = MaterialTheme.colorScheme.surfaceVariant,
+                            color = MaterialTheme.colorScheme.secondaryContainer,
                             shape = MaterialTheme.shapes.medium
                         ) {
-                            Row(
-                                modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Text(
-                                    text = referralCode,
-                                    style = MaterialTheme.typography.headlineMedium,
-                                    fontWeight = FontWeight.Bold,
-                                    color = MaterialTheme.colorScheme.primary
-                                )
-                                Spacer(modifier = Modifier.width(16.dp))
-                                IconButton(onClick = { /* Copy to clipboard */ }) {
-                                    Icon(
-                                        imageVector = Icons.Filled.ContentCopy,
-                                        contentDescription = "Copy",
-                                        tint = MaterialTheme.colorScheme.primary
-                                    )
-                                }
-                            }
+                            Text(
+                                text = referralCode,
+                                modifier = Modifier.padding(horizontal = 24.dp, vertical = 12.dp),
+                                style = MaterialTheme.typography.headlineMedium,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.onSecondaryContainer
+                            )
                         }
-
+                        
                         Spacer(modifier = Modifier.height(16.dp))
-
+                        
                         Row(
                             modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceEvenly
+                            horizontalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
                             OutlinedButton(
-                                onClick = { /* Share via SMS */ }
+                                onClick = { 
+                                    snackbarMessage = "Referral code copied to clipboard!"
+                                },
+                                modifier = Modifier.weight(1f)
                             ) {
-                                Icon(Icons.Filled.Sms, contentDescription = null, modifier = Modifier.size(18.dp))
-                                Spacer(modifier = Modifier.width(4.dp))
-                                Text("SMS")
+                                Icon(Icons.Filled.ContentCopy, contentDescription = null, modifier = Modifier.size(18.dp))
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text("Copy")
                             }
-                            OutlinedButton(
-                                onClick = { /* Share via Email */ }
-                            ) {
-                                Icon(Icons.Filled.Email, contentDescription = null, modifier = Modifier.size(18.dp))
-                                Spacer(modifier = Modifier.width(4.dp))
-                                Text("Email")
-                            }
-                            OutlinedButton(
-                                onClick = { /* Share via other */ }
+                            Button(
+                                onClick = { showInviteDialog = true },
+                                modifier = Modifier.weight(1f)
                             ) {
                                 Icon(Icons.Filled.Share, contentDescription = null, modifier = Modifier.size(18.dp))
-                                Spacer(modifier = Modifier.width(4.dp))
+                                Spacer(modifier = Modifier.width(8.dp))
                                 Text("Share")
                             }
                         }
@@ -166,46 +216,47 @@ fun ReferralScreen(
                 }
             }
 
-            // Stats Card
+            // Stats Cards
             item {
-                Card(modifier = Modifier.fillMaxWidth()) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(20.dp),
-                        horizontalArrangement = Arrangement.SpaceEvenly
-                    ) {
-                        StatItem(
-                            value = "$${String.format("%.0f", totalEarnings)}",
-                            label = "Total Earned",
-                            color = Color(0xFF4CAF50)
-                        )
-                        StatItem(
-                            value = referrals.size.toString(),
-                            label = "Total Referrals",
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                        StatItem(
-                            value = pendingReferrals.toString(),
-                            label = "Pending",
-                            color = Color(0xFFFFA000)
-                        )
-                    }
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    StatCard(
+                        modifier = Modifier.weight(1f),
+                        title = "Total Earned",
+                        value = "$${String.format("%.2f", totalEarnings)}",
+                        icon = Icons.Filled.AttachMoney,
+                        color = Color(0xFF4CAF50)
+                    )
+                    StatCard(
+                        modifier = Modifier.weight(1f),
+                        title = "Referrals",
+                        value = referrals.size.toString(),
+                        icon = Icons.Filled.People,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                    StatCard(
+                        modifier = Modifier.weight(1f),
+                        title = "Pending",
+                        value = pendingReferrals.toString(),
+                        icon = Icons.Filled.Schedule,
+                        color = Color(0xFFFFA000)
+                    )
                 }
             }
 
-            // How It Works
-            item {
-                Text(
-                    text = "How It Works",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
-                )
-            }
-
+            // How it Works
             item {
                 Card(modifier = Modifier.fillMaxWidth()) {
                     Column(modifier = Modifier.padding(16.dp)) {
+                        Text(
+                            text = "How it Works",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        
                         HowItWorksStep(
                             number = "1",
                             title = "Share Your Code",
@@ -218,87 +269,218 @@ fun ReferralScreen(
                         )
                         HowItWorksStep(
                             number = "3",
-                            title = "First Transaction",
-                            description = "They complete their first transaction"
-                        )
-                        HowItWorksStep(
-                            number = "4",
-                            title = "Get Rewarded",
-                            description = "You both receive \$25 bonus!"
+                            title = "Earn Rewards",
+                            description = "Get \$25 when they complete their first transaction"
                         )
                     }
                 }
             }
 
             // Referral History
-            if (referrals.isNotEmpty()) {
-                item {
-                    Text(
-                        text = "Your Referrals",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
-
-                items(referrals) { referral ->
-                    ReferralItem(referral = referral)
-                }
+            item {
+                Text(
+                    text = "Your Referrals",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
+                )
             }
 
-            // Terms
-            item {
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.surfaceVariant
-                    )
-                ) {
-                    Column(modifier = Modifier.padding(16.dp)) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
+            if (referrals.isEmpty()) {
+                item {
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceVariant
+                        )
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(32.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
                             Icon(
-                                imageVector = Icons.Filled.Info,
+                                imageVector = Icons.Filled.GroupAdd,
                                 contentDescription = null,
-                                modifier = Modifier.size(16.dp),
+                                modifier = Modifier.size(64.dp),
                                 tint = MaterialTheme.colorScheme.onSurfaceVariant
                             )
-                            Spacer(modifier = Modifier.width(8.dp))
+                            Spacer(modifier = Modifier.height(16.dp))
                             Text(
-                                text = "Terms & Conditions",
-                                style = MaterialTheme.typography.titleSmall,
-                                fontWeight = FontWeight.Medium
+                                text = "No referrals yet",
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
+                            Text(
+                                text = "Share your code with friends to start earning rewards",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                                textAlign = TextAlign.Center
+                            )
+                            Spacer(modifier = Modifier.height(16.dp))
+                            Button(onClick = { showInviteDialog = true }) {
+                                Icon(Icons.Filled.PersonAdd, contentDescription = null)
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text("Invite Friends")
+                            }
                         }
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(
-                            text = "• Referral bonus is credited after the referred user completes their first transaction\n• Maximum 10 referrals per month\n• Rewards are subject to verification\n• AxioBank reserves the right to modify the program",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
+                    }
+                }
+            } else {
+                items(referrals) { referral ->
+                    Card(modifier = Modifier.fillMaxWidth()) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Surface(
+                                    color = MaterialTheme.colorScheme.primaryContainer,
+                                    shape = MaterialTheme.shapes.small,
+                                    modifier = Modifier.size(40.dp)
+                                ) {
+                                    Box(contentAlignment = Alignment.Center) {
+                                        Text(
+                                            text = (referral.referredName ?: referral.referredEmail ?: "F").first().toString().uppercase(),
+                                            style = MaterialTheme.typography.titleMedium,
+                                            fontWeight = FontWeight.Bold,
+                                            color = MaterialTheme.colorScheme.onPrimaryContainer
+                                        )
+                                    }
+                                }
+                                Spacer(modifier = Modifier.width(12.dp))
+                                Column {
+                                    Text(
+                                        text = referral.referredName ?: referral.referredEmail ?: "Friend",
+                                        style = MaterialTheme.typography.titleSmall,
+                                        fontWeight = FontWeight.Medium
+                                    )
+                                    Text(
+                                        text = referral.createdAt.split("T")[0],
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                }
+                            }
+                            
+                            Column(horizontalAlignment = Alignment.End) {
+                                Surface(
+                                    color = if (referral.status == "Completed") Color(0xFF4CAF50).copy(alpha = 0.1f) 
+                                           else Color(0xFFFFA000).copy(alpha = 0.1f),
+                                    shape = MaterialTheme.shapes.small
+                                ) {
+                                    Text(
+                                        text = referral.status,
+                                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                                        style = MaterialTheme.typography.labelSmall,
+                                        color = if (referral.status == "Completed") Color(0xFF4CAF50) else Color(0xFFFFA000),
+                                        fontWeight = FontWeight.Medium
+                                    )
+                                }
+                                if (referral.rewardAmount.toDoubleOrNull() ?: 0.0 > 0) {
+                                    Text(
+                                        text = "+$${referral.rewardAmount}",
+                                        style = MaterialTheme.typography.titleSmall,
+                                        fontWeight = FontWeight.Bold,
+                                        color = Color(0xFF4CAF50)
+                                    )
+                                }
+                            }
+                        }
                     }
                 }
             }
         }
     }
+
+    // Invite Dialog
+    if (showInviteDialog) {
+        AlertDialog(
+            onDismissRequest = { showInviteDialog = false },
+            title = { Text("Invite a Friend") },
+            text = {
+                Column {
+                    Text(
+                        text = "Enter your friend's email to send them an invitation with your referral code.",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    OutlinedTextField(
+                        value = inviteEmail,
+                        onValueChange = { inviteEmail = it },
+                        label = { Text("Email Address") },
+                        placeholder = { Text("friend@email.com") },
+                        modifier = Modifier.fillMaxWidth(),
+                        singleLine = true,
+                        leadingIcon = { Icon(Icons.Filled.Email, contentDescription = null) }
+                    )
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        if (inviteEmail.isNotBlank() && inviteEmail.contains("@")) {
+                            referralViewModel.inviteFriend(inviteEmail, referralCode)
+                            inviteEmail = ""
+                            showInviteDialog = false
+                        }
+                    },
+                    enabled = inviteEmail.isNotBlank() && inviteEmail.contains("@") && !isLoading
+                ) {
+                    if (isLoading) {
+                        CircularProgressIndicator(modifier = Modifier.size(16.dp), strokeWidth = 2.dp)
+                    } else {
+                        Text("Send Invite")
+                    }
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showInviteDialog = false }) {
+                    Text("Cancel")
+                }
+            }
+        )
+    }
 }
 
 @Composable
-private fun StatItem(
+private fun StatCard(
+    modifier: Modifier = Modifier,
+    title: String,
     value: String,
-    label: String,
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
     color: Color
 ) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(
-            text = value,
-            style = MaterialTheme.typography.headlineSmall,
-            fontWeight = FontWeight.Bold,
-            color = color
-        )
-        Text(
-            text = label,
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
+    Card(
+        modifier = modifier,
+        colors = CardDefaults.cardColors(containerColor = color.copy(alpha = 0.1f))
+    ) {
+        Column(
+            modifier = Modifier.padding(12.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                tint = color,
+                modifier = Modifier.size(24.dp)
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = value,
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold,
+                color = color
+            )
+            Text(
+                text = title,
+                style = MaterialTheme.typography.labelSmall,
+                color = color
+            )
+        }
     }
 }
 
@@ -312,17 +494,17 @@ private fun HowItWorksStep(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.Top
     ) {
         Surface(
             color = MaterialTheme.colorScheme.primary,
             shape = MaterialTheme.shapes.small,
-            modifier = Modifier.size(32.dp)
+            modifier = Modifier.size(28.dp)
         ) {
             Box(contentAlignment = Alignment.Center) {
                 Text(
                     text = number,
-                    style = MaterialTheme.typography.titleMedium,
+                    style = MaterialTheme.typography.labelLarge,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onPrimary
                 )
@@ -345,7 +527,7 @@ private fun HowItWorksStep(
 }
 
 @Composable
-private fun ReferralItem(referral: Referral) {
+private fun ReferralCard(referral: Referral) {
     Card(modifier = Modifier.fillMaxWidth()) {
         Row(
             modifier = Modifier
@@ -383,11 +565,11 @@ private fun ReferralItem(referral: Referral) {
                     )
                 }
             }
-
+            
             Column(horizontalAlignment = Alignment.End) {
                 Surface(
-                    color = if (referral.status == "Completed") Color(0xFF4CAF50).copy(alpha = 0.1f)
-                            else Color(0xFFFFA000).copy(alpha = 0.1f),
+                    color = if (referral.status == "Completed") Color(0xFF4CAF50).copy(alpha = 0.1f) 
+                           else Color(0xFFFFA000).copy(alpha = 0.1f),
                     shape = MaterialTheme.shapes.small
                 ) {
                     Text(
@@ -399,9 +581,8 @@ private fun ReferralItem(referral: Referral) {
                     )
                 }
                 if (referral.reward > 0) {
-                    Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = "+$${String.format("%.0f", referral.reward)}",
+                        text = "+$${String.format("%.2f", referral.reward)}",
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.Bold,
                         color = Color(0xFF4CAF50)

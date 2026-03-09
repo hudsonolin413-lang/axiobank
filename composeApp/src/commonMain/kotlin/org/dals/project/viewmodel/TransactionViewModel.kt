@@ -43,7 +43,7 @@ class TransactionViewModel(
     private val notificationRepository: NotificationRepository? = null
 ) : ViewModel() {
 
-    private val repository = TransactionRepository(authRepository)
+    val repository = TransactionRepository(authRepository)
     private val _uiState = MutableStateFlow(TransactionUiState())
     val uiState: StateFlow<TransactionUiState> = _uiState.asStateFlow()
 
@@ -326,10 +326,8 @@ class TransactionViewModel(
                         successMessage = message
                     )
                     SnackbarManager.showSuccess(message)
-                    // Refresh notifications after successful transaction
-                    viewModelScope.launch {
-                        notificationRepository?.refreshNotifications()
-                    }
+                    // Refresh all data including balance and transactions
+                    refreshAllData()
                 }
                 .onFailure { error ->
                     val message = "Failed to pay bill: ${error.message}"
@@ -359,10 +357,8 @@ class TransactionViewModel(
                         successMessage = message
                     )
                     SnackbarManager.showSuccess(message)
-                    // Refresh notifications after successful transaction
-                    viewModelScope.launch {
-                        notificationRepository?.refreshNotifications()
-                    }
+                    // Refresh all data including balance and transactions
+                    refreshAllData()
                 }
                 .onFailure { error ->
                     val message = "Failed to pay bill: ${error.message}"

@@ -25,7 +25,7 @@ data class AuthUiState(
 )
 
 class AuthViewModel(
-    private val authRepository: AuthRepository = AuthRepository()
+    val authRepository: AuthRepository = AuthRepository()
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(AuthUiState())
@@ -200,6 +200,47 @@ class AuthViewModel(
             } else {
                 SnackbarManager.showError(response.message)
             }
+        }
+    }
+
+    fun loginAsGuest() {
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(
+                isLoading = true,
+                errorMessage = null,
+                successMessage = null
+            )
+
+            // Create a guest user with mock data
+            val guestUser = User(
+                id = "guest-${System.currentTimeMillis()}",
+                username = "Guest User",
+                walletAddress = "guest-wallet",
+                fullName = "Guest User",
+                email = "guest@axiobank.com",
+                phoneNumber = "+254700000000",
+                customerNumber = "GUEST000000",
+                accountNumber = null,
+                creditScore = 650,
+                kycStatus = KycStatus.PENDING,
+                totalBorrowed = 0.0,
+                totalRepaid = 0.0,
+                activeLoans = 0,
+                defaultedLoans = 0,
+                joinedDate = "2024-01-01T00:00:00Z"
+            )
+
+            // Manually set the user in repository
+            authRepository.setGuestUser(guestUser)
+
+            _uiState.value = _uiState.value.copy(
+                isLoading = false,
+                authState = AuthState.LOGGED_IN,
+                currentUser = guestUser,
+                successMessage = "Welcome, Guest! Explore the dashboard."
+            )
+
+            SnackbarManager.showSuccess("Logged in as Guest")
         }
     }
 

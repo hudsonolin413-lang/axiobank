@@ -22,7 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.jetbrains.compose.resources.painterResource
-import decentralizedaccessloan.composeapp.generated.resources.*
+import org.dals.project.resources.*
 import org.dals.project.model.PaymentMethod
 import org.dals.project.utils.getPaymentMethodName
 import org.dals.project.utils.getPaymentMethodDescription

@@ -50,6 +50,7 @@ data class SubAccountResponse(
     val id: String,
     val customerId: String,
     val parentAccountId: String,
+    val accountNumber: String,
     val name: String,
     val description: String?,
     val targetAmount: String?,
@@ -76,6 +77,12 @@ data class TransferResponse(
 
 class SubAccountService {
 
+    private fun generateSubAccountNumber(): String {
+        // Generate sub-account number: SA + 10 random digits
+        val randomDigits = (1..10).map { kotlin.random.Random.nextInt(0, 10) }.joinToString("")
+        return "SA$randomDigits"
+    }
+
     suspend fun getAllSubAccounts(customerId: UUID): List<SubAccountResponse> = DatabaseFactory.dbQuery {
         SubAccounts.select { SubAccounts.customerId eq customerId }
             .orderBy(SubAccounts.createdAt to SortOrder.DESC)
@@ -92,6 +99,7 @@ class SubAccountService {
                     id = row[SubAccounts.id].toString(),
                     customerId = row[SubAccounts.customerId].toString(),
                     parentAccountId = row[SubAccounts.parentAccountId].toString(),
+                    accountNumber = row[SubAccounts.accountNumber],
                     name = row[SubAccounts.name],
                     description = row[SubAccounts.description],
                     targetAmount = row[SubAccounts.targetAmount]?.toString(),
@@ -125,6 +133,7 @@ class SubAccountService {
                     id = row[SubAccounts.id].toString(),
                     customerId = row[SubAccounts.customerId].toString(),
                     parentAccountId = row[SubAccounts.parentAccountId].toString(),
+                    accountNumber = row[SubAccounts.accountNumber],
                     name = row[SubAccounts.name],
                     description = row[SubAccounts.description],
                     targetAmount = targetAmount?.toString(),
@@ -161,6 +170,7 @@ class SubAccountService {
                     id = row[SubAccounts.id].toString(),
                     customerId = row[SubAccounts.customerId].toString(),
                     parentAccountId = row[SubAccounts.parentAccountId].toString(),
+                    accountNumber = row[SubAccounts.accountNumber],
                     name = row[SubAccounts.name],
                     description = row[SubAccounts.description],
                     targetAmount = targetAmount?.toString(),
@@ -200,9 +210,13 @@ class SubAccountService {
             throw Exception("Invalid parent account ID: ${e.message}")
         }
 
+        // Generate unique sub-account number (SA prefix + 10 digits)
+        val accountNumber = generateSubAccountNumber()
+
         val subAccountId = SubAccounts.insertAndGetId {
             it[customerId] = UUID.fromString(request.customerId)
             it[parentAccountId] = actualParentAccountId
+            it[SubAccounts.accountNumber] = accountNumber
             it[name] = request.name
             it[description] = request.description
             it[targetAmount] = request.targetAmount?.toBigDecimalOrNull()
@@ -227,6 +241,7 @@ class SubAccountService {
             id = subAccountId.toString(),
             customerId = request.customerId,
             parentAccountId = actualParentAccountId.toString(),
+            accountNumber = accountNumber,
             name = request.name,
             description = request.description,
             targetAmount = targetAmountBD?.toString(),

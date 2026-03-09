@@ -37,6 +37,13 @@ fun AppNavigationDrawer(
     onNavigateToLoans: () -> Unit,
     onNavigateToInvestments: () -> Unit,
     onNavigateToKYC: () -> Unit,
+    onNavigateToSpendingAnalytics: () -> Unit = {},
+    onNavigateToBudgetManagement: () -> Unit = {},
+    onNavigateToReferral: () -> Unit = {},
+    onNavigateToSplitBill: () -> Unit = {},
+    onNavigateToATMLocator: () -> Unit = {},
+    onNavigateToBeneficiaries: () -> Unit = {},
+    onNavigateToLoanCalculator: () -> Unit = {},
     onLogout: () -> Unit,
     onCloseDrawer: () -> Unit
 ) {
@@ -149,6 +156,69 @@ fun AppNavigationDrawer(
                 icon = Icons.Default.VerifiedUser,
                 onClick = {
                     onNavigateToKYC()
+                    onCloseDrawer()
+                }
+            ),
+            NavigationDrawerItem(
+                title = "Spending Analytics",
+                subtitle = "Track your spending patterns",
+                icon = Icons.Default.PieChart,
+                onClick = {
+                    onNavigateToSpendingAnalytics()
+                    onCloseDrawer()
+                }
+            ),
+            NavigationDrawerItem(
+                title = "Budget Management",
+                subtitle = "Set and manage budgets",
+                icon = Icons.Default.AccountBalanceWallet,
+                onClick = {
+                    onNavigateToBudgetManagement()
+                    onCloseDrawer()
+                }
+            ),
+            NavigationDrawerItem(
+                title = "Loan Calculator",
+                subtitle = "Calculate EMI and interest",
+                icon = Icons.Default.Calculate,
+                onClick = {
+                    onNavigateToLoanCalculator()
+                    onCloseDrawer()
+                }
+            ),
+            NavigationDrawerItem(
+                title = "Split Bill",
+                subtitle = "Split expenses with friends",
+                icon = Icons.Default.Groups,
+                onClick = {
+                    onNavigateToSplitBill()
+                    onCloseDrawer()
+                }
+            ),
+            NavigationDrawerItem(
+                title = "Beneficiaries",
+                subtitle = "Manage saved beneficiaries",
+                icon = Icons.Default.People,
+                onClick = {
+                    onNavigateToBeneficiaries()
+                    onCloseDrawer()
+                }
+            ),
+            NavigationDrawerItem(
+                title = "ATM Locator",
+                subtitle = "Find nearby ATMs",
+                icon = Icons.Default.LocationOn,
+                onClick = {
+                    onNavigateToATMLocator()
+                    onCloseDrawer()
+                }
+            ),
+            NavigationDrawerItem(
+                title = "Refer a Friend",
+                subtitle = "Earn rewards for referrals",
+                icon = Icons.Default.Share,
+                onClick = {
+                    onNavigateToReferral()
                     onCloseDrawer()
                 }
             )

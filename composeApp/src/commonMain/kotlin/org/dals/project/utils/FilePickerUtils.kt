@@ -27,6 +27,11 @@ interface FileManager {
     suspend fun getFileSize(filePath: String): Long
 }
 
+interface ShareManager {
+    fun shareText(text: String, title: String = "Share")
+    fun shareImage(bytes: ByteArray, fileName: String, title: String = "Share Image")
+}
+
 // Expect/Actual declarations for platform-specific implementations
 expect class PlatformFilePickerManager() : FilePickerManager
 
@@ -35,6 +40,8 @@ expect class PlatformCameraManager() : CameraManager
 expect class PlatformLocationManager() : LocationManager
 
 expect class PlatformFileManager() : FileManager
+
+expect class PlatformShareManager() : ShareManager
 
 // File validation utilities
 object FileValidator {

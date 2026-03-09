@@ -24,8 +24,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import decentralizedaccessloan.composeapp.generated.resources.Res
-import decentralizedaccessloan.composeapp.generated.resources.ladyholdingphone
+import org.dals.project.resources.Res
+import org.dals.project.resources.ladyholdingphone
 import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.painterResource
 

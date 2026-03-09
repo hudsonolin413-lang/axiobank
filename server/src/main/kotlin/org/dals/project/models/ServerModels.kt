@@ -1109,6 +1109,15 @@ data class LoanPaymentDto(
     val createdAt: String
 )
 
+// Loan Refinancing Models
+@Serializable
+data class LoanRefinanceRequest(
+    val loanId: String,
+    val newTermMonths: Int,
+    val newInterestRate: String,
+    val processedBy: String? = null
+)
+
 // Notification Models
 @Serializable
 data class NotificationDto(

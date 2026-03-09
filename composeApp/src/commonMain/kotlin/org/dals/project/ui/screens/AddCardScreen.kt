@@ -34,8 +34,8 @@ import org.dals.project.model.BillingAddress
 import org.dals.project.viewmodel.CardViewModel
 import org.dals.project.viewmodel.AuthViewModel
 import org.jetbrains.compose.resources.painterResource
-import decentralizedaccessloan.composeapp.generated.resources.Res
-import decentralizedaccessloan.composeapp.generated.resources.AxioBank
+import org.dals.project.resources.Res
+import org.dals.project.resources.AxioBank
 import kotlin.reflect.KProperty
 
 @OptIn(ExperimentalMaterial3Api::class)

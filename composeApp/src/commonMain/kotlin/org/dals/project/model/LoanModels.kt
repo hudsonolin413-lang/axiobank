@@ -43,6 +43,7 @@ data class LoanApplication(
 data class Loan(
     val id: String,
     val applicationId: String,
+    val loanType: String,
     val borrowerId: String,
     val lenderId: String? = null,
     val amount: Double,
