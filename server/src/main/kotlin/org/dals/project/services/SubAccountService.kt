@@ -212,7 +212,35 @@ class SubAccountService {
             it[autoTransferFrequency] = request.autoTransferFrequency
         }
 
-        getSubAccountById(UUID.fromString(subAccountId.toString()))!!
+        // Return the newly created sub-account
+        val row = SubAccounts.select { SubAccounts.id eq subAccountId }.single()
+        val targetAmountBD = row[SubAccounts.targetAmount]
+        val currentBalanceBD = row[SubAccounts.currentBalance]
+        val progressPercentage = if (targetAmountBD != null && targetAmountBD > java.math.BigDecimal.ZERO) {
+            (currentBalanceBD.toDouble() / targetAmountBD.toDouble() * 100).coerceAtMost(100.0)
+        } else {
+            0.0
+        }
+
+        SubAccountResponse(
+            id = subAccountId.toString(),
+            customerId = request.customerId,
+            parentAccountId = actualParentAccountId.toString(),
+            name = request.name,
+            description = request.description,
+            targetAmount = targetAmountBD?.toString(),
+            currentBalance = currentBalanceBD.toString(),
+            iconName = request.iconName,
+            colorHex = request.colorHex,
+            targetDate = row[SubAccounts.targetDate]?.toString(),
+            isLocked = row[SubAccounts.isLocked],
+            autoTransferAmount = row[SubAccounts.autoTransferAmount]?.toString(),
+            autoTransferFrequency = row[SubAccounts.autoTransferFrequency],
+            isActive = row[SubAccounts.isActive],
+            progressPercentage = progressPercentage,
+            createdAt = row[SubAccounts.createdAt].toString(),
+            updatedAt = row[SubAccounts.updatedAt].toString()
+        )
     }
 
     suspend fun updateSubAccount(subAccountId: UUID, request: UpdateSubAccountRequest): SubAccountResponse? = DatabaseFactory.dbQuery {
