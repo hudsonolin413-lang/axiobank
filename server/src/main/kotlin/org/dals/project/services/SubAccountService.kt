@@ -100,7 +100,7 @@ class SubAccountService {
                     id = row[SubAccounts.id].toString(),
                     customerId = row[SubAccounts.customerId].toString(),
                     parentAccountId = row[SubAccounts.parentAccountId].toString(),
-                    accountNumber = row[SubAccounts.accountNumber],
+                    accountNumber = row[SubAccounts.accountNumber] ?: "0000000000", // Default for old records
                     name = row[SubAccounts.name],
                     description = row[SubAccounts.description],
                     targetAmount = row[SubAccounts.targetAmount]?.toString(),
@@ -134,7 +134,7 @@ class SubAccountService {
                     id = row[SubAccounts.id].toString(),
                     customerId = row[SubAccounts.customerId].toString(),
                     parentAccountId = row[SubAccounts.parentAccountId].toString(),
-                    accountNumber = row[SubAccounts.accountNumber],
+                    accountNumber = row[SubAccounts.accountNumber] ?: "0000000000", // Default for old records
                     name = row[SubAccounts.name],
                     description = row[SubAccounts.description],
                     targetAmount = targetAmount?.toString(),
@@ -171,7 +171,7 @@ class SubAccountService {
                     id = row[SubAccounts.id].toString(),
                     customerId = row[SubAccounts.customerId].toString(),
                     parentAccountId = row[SubAccounts.parentAccountId].toString(),
-                    accountNumber = row[SubAccounts.accountNumber],
+                    accountNumber = row[SubAccounts.accountNumber] ?: "0000000000", // Default for old records
                     name = row[SubAccounts.name],
                     description = row[SubAccounts.description],
                     targetAmount = targetAmount?.toString(),
