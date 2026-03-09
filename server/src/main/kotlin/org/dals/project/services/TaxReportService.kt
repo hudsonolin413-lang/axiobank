@@ -266,6 +266,16 @@ class TaxReportService {
                     TransactionType.REVERSAL -> {
                         // Reversals are handled separately
                     }
+
+                    TransactionType.BULK_TRANSFER, TransactionType.NFC_PAYMENT, TransactionType.INTERNATIONAL_TRANSFER,
+                    TransactionType.CRYPTO_BUY, TransactionType.CRYPTO_SEND -> {
+                        totalExpenses = totalExpenses.add(amount)
+                    }
+
+                    TransactionType.NFC_RECEIPT, TransactionType.CRYPTO_SELL,
+                    TransactionType.CRYPTO_RECEIVE -> {
+                        totalIncome = totalIncome.add(amount)
+                    }
                 }
             }
         }
