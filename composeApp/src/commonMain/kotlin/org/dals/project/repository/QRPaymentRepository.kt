@@ -7,6 +7,7 @@ import io.ktor.client.statement.*
 import io.ktor.http.*
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import org.dals.project.API_BASE_URL
 
 @Serializable
 data class QRCodeData(
@@ -35,14 +36,12 @@ data class QRPaymentResponse(
 )
 
 class QRPaymentRepository(private val httpClient: HttpClient) {
-    private val baseUrl = "https://axiobank-production.up.railway.app"
-
     /**
      * Generate QR code data for a customer
      */
     suspend fun generateQRCode(customerId: String): Result<QRCodeData> {
         return try {
-            val url = "$baseUrl/api/v1/qr-payment/generate/$customerId"
+            val url = "$API_BASE_URL/qr-payment/generate/$customerId"
             println("🔹 QRPaymentRepository: Calling API: $url")
 
             val response: HttpResponse = httpClient.get(url)
@@ -70,7 +69,7 @@ class QRPaymentRepository(private val httpClient: HttpClient) {
      */
     suspend fun validateQRCode(qrData: String): Result<QRPaymentResponse> {
         return try {
-            val response: HttpResponse = httpClient.post("$baseUrl/api/v1/qr-payment/validate") {
+            val response: HttpResponse = httpClient.post("$API_BASE_URL/qr-payment/validate") {
                 contentType(ContentType.Application.Json)
                 setBody(mapOf("qrData" to qrData))
             }
@@ -92,7 +91,7 @@ class QRPaymentRepository(private val httpClient: HttpClient) {
      */
     suspend fun processQRPayment(request: QRPaymentRequest): Result<QRPaymentResponse> {
         return try {
-            val response: HttpResponse = httpClient.post("$baseUrl/api/v1/qr-payment/process") {
+            val response: HttpResponse = httpClient.post("$API_BASE_URL/qr-payment/process") {
                 contentType(ContentType.Application.Json)
                 setBody(request)
             }

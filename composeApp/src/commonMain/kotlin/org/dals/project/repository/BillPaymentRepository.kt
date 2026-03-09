@@ -5,6 +5,7 @@ import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 import kotlinx.serialization.Serializable
+import org.dals.project.API_BASE_URL
 
 @Serializable
 data class BillVendor(
@@ -98,7 +99,6 @@ data class PaymentHistoryResponse(
 )
 
 class BillPaymentRepository(private val client: HttpClient) {
-    private val baseUrl = "https://axionbank.up.railway.app/api"
 
     /**
      * Get all bill payment vendors
@@ -106,9 +106,9 @@ class BillPaymentRepository(private val client: HttpClient) {
     suspend fun getAllVendors(category: String? = null): Result<List<BillVendor>> {
         return try {
             val url = if (category != null) {
-                "$baseUrl/bill-payment/vendors?category=$category"
+                "$API_BASE_URL/bill-payment/vendors?category=$category"
             } else {
-                "$baseUrl/bill-payment/vendors"
+                "$API_BASE_URL/bill-payment/vendors"
             }
 
             val response: VendorsResponse = client.get(url).body()
@@ -127,7 +127,7 @@ class BillPaymentRepository(private val client: HttpClient) {
      */
     suspend fun getVendorCategories(): Result<List<String>> {
         return try {
-            val response: CategoriesResponse = client.get("$baseUrl/bill-payment/categories").body()
+            val response: CategoriesResponse = client.get("$API_BASE_URL/bill-payment/categories").body()
             if (response.success) {
                 Result.success(response.categories)
             } else {
@@ -143,7 +143,7 @@ class BillPaymentRepository(private val client: HttpClient) {
      */
     suspend fun getSavedBillers(userId: String): Result<List<SavedBiller>> {
         return try {
-            val response: SavedBillersResponse = client.get("$baseUrl/bill-payment/saved-billers?userId=$userId").body()
+            val response: SavedBillersResponse = client.get("$API_BASE_URL/bill-payment/saved-billers?userId=$userId").body()
             if (response.success) {
                 Result.success(response.billers)
             } else {
@@ -159,7 +159,7 @@ class BillPaymentRepository(private val client: HttpClient) {
      */
     suspend fun payBill(request: PayBillRequest): Result<PayBillResponse> {
         return try {
-            val response: PayBillResponse = client.post("$baseUrl/bill-payment/pay") {
+            val response: PayBillResponse = client.post("$API_BASE_URL/bill-payment/pay") {
                 contentType(ContentType.Application.Json)
                 setBody(request)
             }.body()
@@ -179,7 +179,7 @@ class BillPaymentRepository(private val client: HttpClient) {
      */
     suspend fun getPaymentHistory(userId: String, limit: Int = 50): Result<List<BillPaymentRecord>> {
         return try {
-            val response: PaymentHistoryResponse = client.get("$baseUrl/bill-payment/history?userId=$userId&limit=$limit").body()
+            val response: PaymentHistoryResponse = client.get("$API_BASE_URL/bill-payment/history?userId=$userId&limit=$limit").body()
             if (response.success) {
                 Result.success(response.payments)
             } else {

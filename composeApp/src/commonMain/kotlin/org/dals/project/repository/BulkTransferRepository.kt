@@ -5,6 +5,7 @@ import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 import kotlinx.serialization.Serializable
+import org.dals.project.API_BASE_URL
 
 @Serializable
 data class BulkTransferRecipientDto(
@@ -58,11 +59,10 @@ data class BulkTransferStatusDto(
 )
 
 class BulkTransferRepository(private val httpClient: HttpClient) {
-    private val baseUrl = "https://axiobank-production.up.railway.app"
 
     suspend fun createBulkTransfer(request: BulkTransferRequestDto): Result<BulkTransferResponseDto> {
         return try {
-            val response = httpClient.post("$baseUrl/api/v1/bulk-transfer/create") {
+            val response = httpClient.post("$API_BASE_URL/bulk-transfer/create") {
                 contentType(ContentType.Application.Json)
                 setBody(request)
             }
@@ -85,7 +85,7 @@ class BulkTransferRepository(private val httpClient: HttpClient) {
 
     suspend fun processBulkTransfer(bulkTransferId: String): Result<BulkTransferStatusDto> {
         return try {
-            val response = httpClient.post("$baseUrl/api/v1/bulk-transfer/process/$bulkTransferId")
+            val response = httpClient.post("$API_BASE_URL/bulk-transfer/process/$bulkTransferId")
 
             if (response.status.isSuccess()) {
                 val data = response.body<BulkTransferStatusDto>()
@@ -105,7 +105,7 @@ class BulkTransferRepository(private val httpClient: HttpClient) {
 
     suspend fun getBulkTransferStatus(bulkTransferId: String): Result<BulkTransferStatusDto> {
         return try {
-            val response = httpClient.get("$baseUrl/api/v1/bulk-transfer/status/$bulkTransferId")
+            val response = httpClient.get("$API_BASE_URL/bulk-transfer/status/$bulkTransferId")
 
             if (response.status.isSuccess()) {
                 val data = response.body<BulkTransferStatusDto>()
@@ -123,7 +123,7 @@ class BulkTransferRepository(private val httpClient: HttpClient) {
 
     suspend fun getCustomerBulkTransfers(customerId: String): Result<List<BulkTransferStatusDto>> {
         return try {
-            val response = httpClient.get("$baseUrl/api/v1/bulk-transfer/customer/$customerId")
+            val response = httpClient.get("$API_BASE_URL/bulk-transfer/customer/$customerId")
 
             if (response.status.isSuccess()) {
                 val data = response.body<List<BulkTransferStatusDto>>()
