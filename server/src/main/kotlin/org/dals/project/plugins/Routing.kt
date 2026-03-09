@@ -6231,7 +6231,7 @@ fun Application.configureRouting() {
             // digitalSignatureRoutes()  // TEMPORARILY DISABLED - route file not in Railway repo
 
             // NFC Payment routes
-            // nfcPaymentRoutes()  // TEMPORARILY DISABLED - route file not in Railway repo
+            nfcPaymentRoutes()
 
             // Overdraft Protection routes
             // overdraftProtectionRoutes()  // TEMPORARILY DISABLED - route file not in Railway repo
